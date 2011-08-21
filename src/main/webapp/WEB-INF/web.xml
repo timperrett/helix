@@ -9,7 +9,8 @@
     <filter-name>LiftFilter</filter-name>
     <display-name>Lift Filter</display-name>
     <description>The Filter that intercepts lift calls</description>
-    <filter-class>net.liftweb.http.LiftFilter</filter-class>
+    <!-- <filter-class>net.liftweb.http.LiftFilter</filter-class> -->
+    <filter-class>bootstrap.liftweb.CloudBeesLiftFilter</filter-class>  
   </filter>
   <filter-mapping>
     <filter-name>LiftFilter</filter-name>

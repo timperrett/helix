@@ -1,6 +1,6 @@
-organization := "org.scalatools"
+organization := "eu.getintheloop"
 
-name := "alghanim"
+name := "helix"
 
 version := "0.1"
 
@@ -16,10 +16,13 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % "7.3.0.v20110203" % "jetty",
   "net.databinder" %% "dispatch-http" % "0.8.5",
   "net.databinder" %% "dispatch-json" % "0.8.5",
-  "net.databinder" %% "dispatch-lift-json" % "0.8.5"
+  "net.databinder" %% "dispatch-lift-json" % "0.8.5",
+  "javax.servlet" % "servlet-api" % "2.5" % "provided"
   // "net.databinder" %% "dispatch-lift-json" % "0.8.5",
 )
 
 resolvers += Resolver.file(".m2", file(Path.userHome+"/.m2/repository"))
 
 seq(com.github.siasia.WebPlugin.webSettings :_*)
+
+seq(bees.RunCloudPlugin.deploymentSettings :_*)

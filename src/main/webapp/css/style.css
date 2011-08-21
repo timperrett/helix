@@ -163,6 +163,7 @@ margin-top: -20px;
 float: right;
 margin-right: 58px;
 }
+.header p { float: right; margin-right: 58px; }
 .header .nav {
 float: left;
 margin-left: 40px;

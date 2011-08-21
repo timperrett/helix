@@ -1,4 +1,4 @@
-package scalastack.github
+package helix.github
 
 import net.liftweb.common.{Box,Full,Empty}
 import net.liftweb.util.{NamedPF,Props}
@@ -16,7 +16,7 @@ import dispatch.json.Js._
 import dispatch.liftjson.Js._
 import net.liftweb.http.SessionVar
 import net.liftweb.json.JsonAST._
-import scalastack.domain.Contributor
+import helix.domain.Contributor
 
 object GithubClient extends Dispatcher {
   
@@ -48,7 +48,7 @@ object GithubClient extends Dispatcher {
   override def dispatch = {
     import net.liftweb.http.S
     import net.liftweb.http.provider.HTTPCookie
-    import scalastack.db.Storage._
+    import helix.db.Storage._
     
     val login: LiftRules.DispatchPF = NamedPF("Send to Github"){
       case Req("oauth" :: "login" :: Nil, "", GetRequest) => () => 
@@ -73,6 +73,7 @@ object GithubClient extends Dispatcher {
           val TokenResponse(token,typez) = response
           // set the token into a cookie for later
           // and also into the session for this session
+          println(">>>>>>>>>")
           S.addCookie(HTTPCookie(tokenCookie, token))
           AccessToken(Full(token))
           

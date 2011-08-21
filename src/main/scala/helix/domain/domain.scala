@@ -1,4 +1,4 @@
-package scalastack.domain
+package helix.domain
 
 trait ReleaseType
 case object Final extends ReleaseType
@@ -15,8 +15,14 @@ case class Project(id: Int, name: String,
   addedAt: Option[java.sql.Timestamp] = None,
   addedBy: Option[String] = None,
   currentVersion: Option[String] = None,
-  contributor: Option[Contributor] = None
-)
+  contributor: Option[Contributor] = None,
+  tgs: List[Tag] = Nil
+){
+  import helix.db.Storage
+  def tags: List[Tag] = 
+    if(tgs.isEmpty) Storage.listTagsForProject(id)
+    else tgs
+}
 
 case class Contributor(
   name: String, 
@@ -24,3 +30,5 @@ case class Contributor(
   avatar: Option[String] = None,
   style: String = "User"
 )
+
+case class Tag(name: String)

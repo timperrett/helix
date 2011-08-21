@@ -1,4 +1,4 @@
-package scalastack.db
+package helix.db
 
 import org.scalaquery.session._
 import org.scalaquery.session.Database.threadLocalSession
@@ -8,16 +8,20 @@ import org.scalaquery.ql.extended.MySQLDriver.Implicit._
 import org.scalaquery.ql.extended.{ExtendedTable => Table}
 import net.liftweb.util.{Props,Helpers}
 import java.sql.Timestamp
-import scalastack.domain._
+import helix.domain._
 
 object Storage extends Connection with Queries with Tables {
-  def listNewestAdded = db withSession {
+  def listNewestAdded: List[Project] = db withSession {
     for(p <- ListTopFiveProjects.list) 
       yield Project(p._1,p._2,Some(p._3), 
         permalink = Some(p._4),
         addedAt = Some(p._5),
         contributor = Some(Contributor(p._6,p._7,Some(p._8)))
       )
+  }
+  
+  def listTagsForProject(id: Int) = db withSession {
+    for(t <- ListTagsForProject(id).list) yield Tag(t._2)
   }
   
   def findContributorByLogin(login: String): Option[Int] = db withSession {
@@ -36,7 +40,7 @@ object Storage extends Connection with Queries with Tables {
   }
   
   def setup_!() = db withSession {
-    (ScalaVersions.ddl ++ Projects.ddl ++ Contributors.ddl) create
+    (ScalaVersions.ddl ++ Projects.ddl ++ ProjectVersions.ddl ++ ProjectTags.ddl ++ Tags.ddl ++ Contributors.ddl) create
   }
 }
 
@@ -55,10 +59,21 @@ trait Queries { _: Tables with Connection =>
    
    lazy val ListTopFiveProjects = for {
      p <- Projects
+     // t <- ProjectTags if t.projectId === p.id
      c <- p.contributor
      _ <- Query orderBy p.addedAt.desc
      _ <- Query take 5
    } yield p.id ~ p.name ~ p.description ~ p.permalink ~ p.addedAt ~ c.name ~ c.login ~ c.avatarUrl
+   
+   lazy val ListTagsForProject = for {
+     id <- Parameters[Int]
+     pt <- ProjectTags if pt.projectId === id
+     t <- Tags if t.id === pt.tagId
+   } yield t.id ~ t.name
+   
+   lazy val ListAllTags = for {
+     t <- Tags
+   } yield t.id ~ t.name
    
    lazy val FindProjectByPermaLink = for {
      l <- Parameters[String]
@@ -107,6 +122,23 @@ trait Tables {
     // fks
     def contributor = foreignKey("contributor_id_fk", contributorId, Contributors)(_.id)
     def * = id ~ contributorId ~ name ~ description ~ permalink ~ groupId ~ artifactId ~ usagePhase ~ sourceURL ~ addedAt
+  }
+  
+  lazy val ProjectTags = new Table[(Int,Int,Int)]("project_tags"){
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def projectId = column[Int]("project_id")
+    def tagId = column[Int]("tag_id")
+    // fks
+    def project = foreignKey("project_fk", projectId, Projects)(_.id)
+    def tags = foreignKey("tag_fk", tagId, Tags)(_.id)
+    // projection
+    def * = id ~ projectId ~ tagId
+  }
+  
+  lazy val Tags = new Table[(Int,String)]("tags"){
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("name")
+    def * = id ~ name
   }
   
   lazy val ProjectVersions = new Table[(Int,Int,Int,String)]("project_versions"){

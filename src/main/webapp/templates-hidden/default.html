@@ -24,14 +24,15 @@
 
 
   <!-- CSS: implied media="all" -->
-  <link rel="stylesheet" href="css/bootstrap-1.0.0.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/bootstrap-1.0.0.min.css">
+  <link rel="stylesheet" href="/css/style.css">
 
   <!-- Uncomment if you are specifically targeting less enabled mobile browsers
   <link rel="stylesheet" media="handheld" href="css/handheld.css?v=2">  -->
 
   <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-  <script src="http://felixrenicks.com/scalastack/js/libs/modernizr-1.7.min.js"></script>
+  <!-- // <script src="http://felixrenicks.com/scalastack/js/libs/modernizr-1.7.min.js"></script> -->
+  <script type="text/javascript" src="/classpath/jquery.js" id="jquery"></script>
 
 </head>
 
@@ -42,16 +43,19 @@
   <div class="container">
     <div class="row">
       <div class="span5 columns">
-        <a class="logo" href="index.html#">
-          <img src="images/logo.png" />
-          <h1>scalastack</h1>
-          <span class="slogan">search over 291 scala packages</span>
+        <a class="logo" href="/">
+          <img src="/images/logo.png" />
+          <h1>Helix</h1>
+          <span class="slogan">Search over 000 Scala libraries</span>
         </a>
       </div>
       <div class="span11 columns header">
         <span class="nav">
-          <a href="/tags">all tags</a> &middot;
-          <a href="/projects">all packages</a>
+          <lift:test_cond.loggedin>
+            <a href="/project/add">add library</a> &middot;
+          </lift:test_cond.loggedin> 
+          <a href="/projects">all libraries</a> &middot;
+          <a href="/tags">all tags</a> 
         </span>
         
         <lift:test_cond.loggedout>
@@ -59,7 +63,9 @@
         </lift:test_cond.loggedout>
         
         <lift:test_cond.loggedin>
-          <a>Welcome YOURNAME</a>
+          <p lift="contributor_info">
+            <img src="" height="20" width="20" /> Welcome <a href="/whatever" target="_blank" class="lgnname">NAME</a>
+          </p>
         </lift:test_cond.loggedin>
         
         <input class="search" />
@@ -73,7 +79,8 @@
     
     <div class="row">
       <div class="span16 columns" id="footer">
-        By <a href="http://twitter.com/timperrett">@timperrett</a> and <a href="http://twitter.com/ffffelix">@ffffelix</a></span>
+        By <a href="http://twitter.com/timperrett" target="_blank">@timperrett</a> and 
+        <a href="http://twitter.com/ffffelix" target="_blank">@ffffelix</a></span>
       </div>
     </div>
     
