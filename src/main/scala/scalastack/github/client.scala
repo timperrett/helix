@@ -21,6 +21,7 @@ import scalastack.domain.Contributor
 object GithubClient extends Dispatcher {
   
   object AccessToken extends SessionVar[Box[String]](Empty)
+  object CurrentContributor extends SessionVar[Box[Contributor]](Empty)
   
   private val tokenCookie = "acstkn"
   private val clientId = Props.get("github.clientid").openOr("unknown")
@@ -40,7 +41,7 @@ object GithubClient extends Dispatcher {
         JField("login", JString(login)) <- child
         JField("type", JString(style)) <- child
         JField("avatar_url", JString(url)) <- child
-      } yield Contributor(name, login, style, url))
+      } yield Contributor(name, login, Some(url), style))
     }
   }
   
@@ -74,7 +75,7 @@ object GithubClient extends Dispatcher {
           // and also into the session for this session
           S.addCookie(HTTPCookie(tokenCookie, token))
           AccessToken(Full(token))
-
+          
 
           import org.scalaquery.session._
           import org.scalaquery.session.Database.threadLocalSession
@@ -85,14 +86,13 @@ object GithubClient extends Dispatcher {
           
           // check to see if this person is already in
           // the app database, if not, add them
-          db.withSession {
-            contributor.foreach { c =>
-              println(">>>>>>>>>>>")
-              println(c)
-              findContributorByLogin(c.login) match {
-                case Some(id) => println("++++++++++") // do nothing
-                case None => Contributors.insert(0, c.name, c.login, c.avatar, c.style)
-              }
+          contributor.foreach { c =>
+            // set their username into the session as it'll 
+            // be needed later for making API calls
+            CurrentContributor(Full(c))
+            findContributorByLogin(c.login) match {
+              case None => createContributor(c)
+              case _ => // do nothing
             }
           }
           

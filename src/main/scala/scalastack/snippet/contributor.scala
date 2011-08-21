@@ -1,0 +1,2 @@
+package scalastack.snippet
+
