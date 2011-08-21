@@ -2,7 +2,7 @@ package bootstrap.liftweb
 
 import net.liftweb.common.{Box,Full,Empty}
 import net.liftweb.http.{LiftRules,RewriteRequest,Req,RedirectResponse,
-  Html5Properties,RewriteResponse,ParsePath,DocType}
+  Html5Properties,RewriteResponse,ParsePath,S}
 import net.liftweb.sitemap._
 import helix.github.GithubClient
 import helix.github.GithubClient.AccessToken
@@ -34,8 +34,11 @@ class Boot {
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
       Menu("Projects: Add") / "project" / "add" >> Unless(
-        () => AccessToken.isEmpty, () => RedirectResponse("/oauth/login")),
-      Menu("Projects: Detail") / "project" / "detail"
+        () => AccessToken.isEmpty, 
+        () => RedirectResponse("/oauth/login")),
+      Menu("Projects: Detail") / "project" / "detail" >> Unless(
+        () => S.param("project").isEmpty,
+        () => RedirectResponse("/"))
     ))
   }
 }

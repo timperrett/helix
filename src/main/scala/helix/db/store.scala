@@ -40,7 +40,13 @@ object Storage extends Connection with Queries with Tables {
   }
   
   def setup_!() = db withSession {
-    (ScalaVersions.ddl ++ Projects.ddl ++ ProjectVersions.ddl ++ ProjectTags.ddl ++ Tags.ddl ++ Contributors.ddl) create
+    (ScalaVersions.ddl ++ 
+     ProjectScalaVersions.ddl ++ 
+     Projects.ddl ++ 
+     ProjectVersions.ddl ++ 
+     ProjectTags.ddl ++ 
+     Tags.ddl ++ 
+     Contributors.ddl) create
   }
 }
 
@@ -53,13 +59,11 @@ trait Connection {
 }
 
 trait Queries { _: Tables with Connection =>
-   lazy val ListScalaVersions = for {
-     v <- ScalaVersions
-   } yield v.*
+   
+   /** lists for projects **/
    
    lazy val ListTopFiveProjects = for {
      p <- Projects
-     // t <- ProjectTags if t.projectId === p.id
      c <- p.contributor
      _ <- Query orderBy p.addedAt.desc
      _ <- Query take 5
@@ -71,9 +75,23 @@ trait Queries { _: Tables with Connection =>
      t <- Tags if t.id === pt.tagId
    } yield t.id ~ t.name
    
+   lazy val ListScalaVersionsForProject = for {
+     id <- Parameters[Int]
+     psv <- ProjectScalaVersions if psv.projectId === id
+     s <- ScalaVersions if s.id === psv.scalaVersionId
+   } yield s.id ~ s.version ~ s.releaseType
+   
+   /** Listers **/
+   
+   lazy val ListScalaVersions = for {
+     v <- ScalaVersions
+   } yield v.*
+   
    lazy val ListAllTags = for {
      t <- Tags
    } yield t.id ~ t.name
+   
+   /** Finders **/
    
    lazy val FindProjectByPermaLink = for {
      l <- Parameters[String]
@@ -84,82 +102,4 @@ trait Queries { _: Tables with Connection =>
      login <- Parameters[String]
      c <- Contributors if c.login === login
    } yield c.id
-}
-
-trait Tables {
-  implicit object ReleaseTypeMapper extends MappedTypeMapper[ReleaseType, String] with BaseTypeMapper[ReleaseType] {
-     def map(e: ReleaseType) = e match {
-       case Final => "final"
-       case RC => "rc"
-       case Snapshot => "snapshot"
-     }
-     def comap(s: String) = s match {
-       case "final" => Final
-       case "rc" => RC
-       case "snapshot" => Snapshot 
-     }
-     override def sqlTypeName = Some("enum('final', 'rc', 'snapshot')")
-  }
-  
-  lazy val ScalaVersions = new Table[(Int,String,ReleaseType)]("scala_versions"){
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def version = column[String]("version", O.NotNull)
-    def releaseType = column[ReleaseType]("release_type")
-    def * = id ~ version ~ releaseType
-  }
-  
-  lazy val Projects = new Table[(Int, Int, String, String, String, String, String, String, String, Timestamp)]("projects"){
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def contributorId = column[Int]("contributor_id")
-    def name = column[String]("name", O.NotNull)
-    def description = column[String]("description")
-    def permalink = column[String]("permalink")
-    def groupId = column[String]("group_id")
-    def artifactId = column[String]("artifact_id")
-    def usagePhase = column[String]("usage_phase")
-    def sourceURL = column[String]("source_url")
-    def addedAt = column[Timestamp]("added_at", O.Default(new Timestamp(Helpers.millis)))
-    // fks
-    def contributor = foreignKey("contributor_id_fk", contributorId, Contributors)(_.id)
-    def * = id ~ contributorId ~ name ~ description ~ permalink ~ groupId ~ artifactId ~ usagePhase ~ sourceURL ~ addedAt
-  }
-  
-  lazy val ProjectTags = new Table[(Int,Int,Int)]("project_tags"){
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def projectId = column[Int]("project_id")
-    def tagId = column[Int]("tag_id")
-    // fks
-    def project = foreignKey("project_fk", projectId, Projects)(_.id)
-    def tags = foreignKey("tag_fk", tagId, Tags)(_.id)
-    // projection
-    def * = id ~ projectId ~ tagId
-  }
-  
-  lazy val Tags = new Table[(Int,String)]("tags"){
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("name")
-    def * = id ~ name
-  }
-  
-  lazy val ProjectVersions = new Table[(Int,Int,Int,String)]("project_versions"){
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def projectId = column[Int]("project_id")
-    def scalaVersionId = column[Int]("scala_version_id")
-    def version = column[String]("version", O.NotNull)
-    // fks
-    def scalaVersion = foreignKey("scala_version_fk", scalaVersionId, ScalaVersions)(_.id)
-    def project = foreignKey("project_fk", projectId, Projects)(_.id)
-    // projection 
-    def * = id ~ projectId ~ scalaVersionId ~ version
-  }
-  
-  lazy val Contributors = new Table[(Int,String,String,String,String)]("contributors"){
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("name")
-    def login = column[String]("login", O.NotNull)
-    def avatarUrl = column[String]("avatar_url")
-    def style = column[String]("style")
-    def * = id ~ name ~ login ~ avatarUrl ~ style
-  }
-  
 }
