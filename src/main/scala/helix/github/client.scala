@@ -77,14 +77,6 @@ object GithubClient extends Dispatcher {
           S.addCookie(HTTPCookie(tokenCookie, token))
           AccessToken(Full(token))
           
-
-          import org.scalaquery.session._
-          import org.scalaquery.session.Database.threadLocalSession
-          import org.scalaquery.ql._
-          import org.scalaquery.ql.TypeMapper._
-          import org.scalaquery.ql.extended.MySQLDriver.Implicit._
-          import org.scalaquery.ql.extended.{ExtendedTable => Table}
-          
           // check to see if this person is already in
           // the app database, if not, add them
           contributor.foreach { c =>

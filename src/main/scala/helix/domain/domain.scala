@@ -5,6 +5,8 @@ case object Final extends ReleaseType
 case object RC extends ReleaseType
 case object Snapshot extends ReleaseType
 
+case class ScalaVersion(major: Int, minor: Int, mico: String, mode: ReleaseType)
+
 case class Project(id: Int, name: String, 
   description: Option[String] = None,
   permalink: Option[String] = None,

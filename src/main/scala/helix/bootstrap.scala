@@ -4,11 +4,15 @@ import net.liftweb.common.{Box,Full,Empty}
 import net.liftweb.http.{LiftRules,RewriteRequest,Req,RedirectResponse,
   Html5Properties,RewriteResponse,ParsePath,S}
 import net.liftweb.sitemap._
+
 import helix.github.GithubClient
 import helix.github.GithubClient.AccessToken
+import helix.db.Storage
 
 class Boot {
   def boot {
+    Storage.connect()
+    
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
     LiftRules.dispatch.append(GithubClient)

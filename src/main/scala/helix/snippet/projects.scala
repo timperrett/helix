@@ -10,7 +10,7 @@ object MostRecentlyAdded extends DispatchSnippet {
   def dispatch = {
     case _ => render
   }
-  def render = ".prj" #> listNewestAdded.map { project =>
+  def render = ".prj" #> listFiveNewestProjects.map { project =>
     ".project-name *" #> project.name &
     ".project-name [href]" #> project.permalink.map("/projects/%s".format(_)).getOrElse("/") & 
     "p *" #> project.description &
