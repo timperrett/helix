@@ -12,7 +12,8 @@ scalacOptions += "-deprecation"
 // "mysql" % "mysql-connector-java" % "5.1.12" % "compile",
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile",
-  "com.foursquare" %% "rogue" % "1.0.20" % "compile",
+  "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT",
+  "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
   "net.liftweb" %% "lift-webkit" % "2.4-M2" % "compile",
   "net.databinder" %% "dispatch-http" % "0.8.5",
   "net.databinder" %% "dispatch-json" % "0.8.5",
@@ -21,7 +22,10 @@ libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % "7.3.0.v20110203" % "jetty"
 )
 
-resolvers += Resolver.file(".m2", file(Path.userHome+"/.m2/repository"))
+resolvers ++= Seq(
+  Resolver.file(".m2", file(Path.userHome+"/.m2/repository")),
+  Resolver.url("salat", url("http://repo.novus.com/snapshots/"))
+)
 
 seq(com.github.siasia.WebPlugin.webSettings :_*)
 

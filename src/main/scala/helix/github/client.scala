@@ -19,6 +19,7 @@ import net.liftweb.json.JsonAST._
 import helix.domain.Contributor
 
 object GithubClient extends Dispatcher {
+  import helix.db.Storage._
   
   object AccessToken extends SessionVar[Box[String]](Empty)
   object CurrentContributor extends SessionVar[Box[Contributor]](Empty)
@@ -34,21 +35,22 @@ object GithubClient extends Dispatcher {
   }
   
   def contributor: Box[Contributor] = {
-    get("/user"){ json => 
-      Box(for { 
+    get("/user"){ json => Box(for { 
         JObject(child) <- json
         JField("name", JString(name)) <- child
         JField("login", JString(login)) <- child
         JField("type", JString(style)) <- child
         JField("avatar_url", JString(url)) <- child
-      } yield Contributor(name, login, Some(url), style))
+      } yield Contributor(
+          login = login, name = name, 
+          avatar = Some(url), style = style)
+      )
     }
   }
   
   override def dispatch = {
     import net.liftweb.http.S
     import net.liftweb.http.provider.HTTPCookie
-    import helix.db.Storage._
     
     val login: LiftRules.DispatchPF = NamedPF("Send to Github"){
       case Req("oauth" :: "login" :: Nil, "", GetRequest) => () => 
@@ -76,19 +78,9 @@ object GithubClient extends Dispatcher {
           println(">>>>>>>>>")
           S.addCookie(HTTPCookie(tokenCookie, token))
           AccessToken(Full(token))
-          
-          // check to see if this person is already in
-          // the app database, if not, add them
-          contributor.foreach { c =>
-            // set their username into the session as it'll 
-            // be needed later for making API calls
-            CurrentContributor(Full(c))
-            findContributorByLogin(c.login) match {
-              case None => createContributor(c)
-              case _ => // do nothing
-            }
-          }
-          
+          // set their contributor instance into the session as it'll 
+          // be needed later for making API calls
+          contributor.foreach(c => CurrentContributor(Full(c)))
           // send to index
           RedirectResponse("/")
         }

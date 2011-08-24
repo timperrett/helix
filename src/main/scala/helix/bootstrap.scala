@@ -11,8 +11,6 @@ import helix.db.Storage
 
 class Boot {
   def boot {
-    Storage.connect()
-    
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
     LiftRules.dispatch.append(GithubClient)
@@ -23,13 +21,16 @@ class Boot {
       new Html5Properties(r.userAgent))
     
     LiftRules.statelessRewrite.append {
-      case RewriteRequest(ParsePath("projects" :: link :: Nil,"",true,_),_,_) =>
-           RewriteResponse("project" :: "detail" :: Nil, Map("project" -> link))
+      // e.g. /projects/net.liftweb/lift-webkit/2.3
+      case RewriteRequest(ParsePath("projects" :: gid :: aid :: Nil,"",true,_),_,_) =>
+           RewriteResponse("project" :: "show" :: Nil, 
+             Map("groupId" -> gid, "artifactId" -> aid))
     }
     
     LiftRules.snippetDispatch.append {
-      case "projects_recently_added" => helix.snippet.MostRecentlyAdded
-      case "projects_detail" => helix.snippet.Detail
+      case "add_new_project" => helix.snippet.AddProjectForm
+      case "recently_added_projects" => helix.snippet.RecentlyAddedProject
+      case "project_details" => helix.snippet.ProjectDetails
       case "contributor_info" => helix.snippet.CurrentContributorInfo
     }
     

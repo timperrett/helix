@@ -1,3 +1,102 @@
 <lift:surround with="default" at="content">
-  <h1>Add project</h1>
+  
+  <div class="row">
+
+    <div class="span15 columns">
+      <h2>Add Project Definition</h2>
+      
+      <lift:msgs> 
+        <lift:error_msg><strong>Oh Snap!</strong></lift:error_msg>
+        <lift:error_class>alert-message error</lift:error_class>
+      </lift:msgs>
+      
+      <form lift="add_new_project?form=post">
+        <fieldset>
+          <div class="clearfix">
+            <label for="prependedInput">Source URL</label>
+            <div class="input">
+              <div class="input-prepend">
+                <span class="add-on">github.com/</span>
+                <input class="medium" type="text" size="16" name="sourceurl">
+                <span class="help-block">e.g. n8han/unfiltered</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="clearfix">
+            <label for="">Project Name</label>
+            <div class="input">
+              <input class="xlarge" type="text" size="30" name="name">
+              <span class="help-block">e.g. Unfiltered OAuth</span>
+            </div>
+          </div>
+
+          <div class="clearfix">
+            <label for="">Group ID</label>
+            <div class="input">
+              <input class="xlarge" type="text" size="30" name="groupid">
+              <span class="help-block">e.g. net.databinder</span>
+            </div>
+          </div>
+
+          <div class="clearfix">
+            <label for="">Artefact ID</label>
+            <div class="input">
+              <input class="xlarge" type="text" size="30" name="artifactid">
+              <span class="help-block">e.g. unfiltered-oauth</span>
+            </div>
+          </div>
+
+          <div class="clearfix">
+            <label for="">Version</label>
+            <div class="input">
+              <input class="xlarge" type="text" size="30" name="version">
+              <span class="help-block">e.g. 0.4.2-SNAPSHOT</span>
+            </div>
+          </div>
+
+
+          <!-- <div class="clearfix">
+            <label for="">Usage Phase</label>
+            <div class="input">
+              <select name="phase">
+                <option value="">-- please select --</option>
+                <option value="">compile</option>
+                <option value="">test</option>
+                <option value="">provided</option>
+              </select>
+            </div>
+          </div> -->
+
+          <div class="clearfix">
+            <label for="">Description</label>
+            <div class="input">
+              <textarea id="description" class="xxlarge" name="description"></textarea>
+              <span class="help-block">Write a few words about this project: what its purpose is and if its awesome or not</span>
+            </div>
+          </div>
+
+        </fieldset>
+        
+        <div class="actions">
+          <button class="btn primary" type="submit">Save Changes</button>
+          <button class="btn" type="reset">Cancel</button>
+        </div>
+        
+      </form>
+      
+    </div>
+
+  </div>
+  
+  <lift:tail>
+    <script type="text/javascript">
+      //<![CDATA[
+      $(document).ready(function(){
+        $('form :input:visible:enabled:first').focus();
+      });
+      //]]>
+    </script>
+  </lift:tail>
+  
 </lift:surround>
