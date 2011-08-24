@@ -13,7 +13,8 @@ trait MongoRepositories extends Repositories {
   class MongoRepository extends HelixRepository {
     /** lists for projects **/
     def listFiveNewestProjects: List[Project] = 
-      ProjectDAO.find(MongoDBObject()).limit(5).toList
+      ProjectDAO.find(MongoDBObject()
+        ).limit(5).sort(orderBy = MongoDBObject("_id" -> -1)).toList
     
     /** global lists **/
     // def listAllTags: List[Tag]

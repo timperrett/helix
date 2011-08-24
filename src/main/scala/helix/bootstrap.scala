@@ -38,6 +38,8 @@ class Boot {
     
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
+      Menu("Tags: List") / "tags",
+      Menu("Projects: List") / "projects",
       Menu("Projects: Add") / "project" / "add" >> Unless(
         () => AccessToken.isEmpty, 
         () => RedirectResponse("/oauth/login")),
