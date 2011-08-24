@@ -16,7 +16,7 @@ trait Repositories {
     // def listAllTags: List[Tag]
     
     /** finders **/
-    def findProjectByGroupAndArtifact(group: String, artifact: String): List[Project]
+    def findProjectByGroupAndArtifact(group: String, artifact: String): Option[Project]
     
     /** creator **/
     def createProject(project: Project): Boolean
@@ -29,6 +29,9 @@ trait HelixService { _: Repositories =>
   
   def listFiveNewestProjects: List[Project] = 
     repository.listFiveNewestProjects
+  
+  def findProjectByGroupAndArtifact(group: String, artifact: String) = 
+    repository.findProjectByGroupAndArtifact(group,artifact)
   
   // def listTagsForProject(id: Int): List[Tag] = 
   //   repository.listTagsForProject(id)

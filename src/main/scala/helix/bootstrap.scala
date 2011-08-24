@@ -41,8 +41,8 @@ class Boot {
       Menu("Projects: Add") / "project" / "add" >> Unless(
         () => AccessToken.isEmpty, 
         () => RedirectResponse("/oauth/login")),
-      Menu("Projects: Detail") / "project" / "detail" >> Unless(
-        () => S.param("project").isEmpty,
+      Menu("Projects: Detail") / "project" / "show" >> Unless(
+        () => S.param("groupId").isEmpty,
         () => RedirectResponse("/"))
     ))
   }

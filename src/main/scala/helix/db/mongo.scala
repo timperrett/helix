@@ -22,8 +22,8 @@ trait MongoRepositories extends Repositories {
     // def findContributorByLogin(login: String): Option[Contributor] //= 
       // ContributorDAO.findOne(MongoDBObject("login" -> login))
       
-    def findProjectByGroupAndArtifact(group: String, artifact: String): List[Project] = 
-      ProjectDAO.find(MongoDBObject("groupId" -> group, "artifactId" -> artifact)).toList
+    def findProjectByGroupAndArtifact(group: String, artifact: String): Option[Project] = 
+      ProjectDAO.findOne(MongoDBObject("groupId" -> group, "artifactId" -> artifact))
     
     /** creators **/
     def createProject(project: Project) = 

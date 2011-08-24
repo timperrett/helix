@@ -8,6 +8,9 @@ import helix.db.Storage._
 import helix.domain.Project
 import helix.github.GithubClient.CurrentContributor
 
+/** 
+ * Add a new project to the helix directory
+ */
 object AddProjectForm extends DispatchSnippet {
   def dispatch = {
     case _ => render
@@ -33,6 +36,9 @@ object AddProjectForm extends DispatchSnippet {
   }
 }
 
+/**
+ * List the top 5 recently added projects
+ */
 object RecentlyAddedProject extends DispatchSnippet {
   def dispatch = {
     case _ => render
@@ -43,20 +49,28 @@ object RecentlyAddedProject extends DispatchSnippet {
     artifact <- project.artifactId
   } yield {
     ".project-name *" #> project.name &
-    ".project-name [href]" #> "/projects/%s/%s".format(group,artifact)
+    ".project-name [href]" #> "/projects/%s/%s".format(group,artifact) &
+    "p *" #> project.description &
+    ".tags *" #> project.tags.map { tag => 
+      "a [href]" #> "/tags/%s".format(tag.name) &
+      "a *" #> tag.name
+    }
   })
 }
 
+/** 
+ * Display the full set of project information
+ */
 object ProjectDetails extends DispatchSnippet {
   def dispatch = {
     case _ => render
   }
-  def render = "*" #> <p>You didnt specify a project fool!</p>
-  
-  // S.param("project") flatMap { link => 
-  //   Box(findProjectByPermalink(link)) map { proj =>
-  //     ".name" #> proj.name
-  //   }
-  // } openOr "*" #> <p>You didnt specify a project fool!</p>
+  def render = (for {
+    group <- S.param("groupId")
+    artifact <- S.param("artifactId")
+    project <- findProjectByGroupAndArtifact(group,artifact)
+  } yield {
+    "h2 *" #> project.name
+  }) openOr "*" #> <p>You didnt specify a project fool!</p>
 }
 
