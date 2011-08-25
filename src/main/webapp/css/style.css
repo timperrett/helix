@@ -36,6 +36,9 @@ body {
   font-size: 11px;
   padding-top: 5px;
 }
+#main {
+  min-height: 500px;
+}
 
 /** logo **/
 .logo {

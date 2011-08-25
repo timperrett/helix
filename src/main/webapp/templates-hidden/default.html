@@ -6,7 +6,7 @@
   <meta name="author" content="Timothy Perrett">
   <link rel="stylesheet" href="/css/bootstrap-1.1.0.min.css" />
   <link rel="stylesheet" href="/css/style.css" />
-  <script type="text/javascript" src="/classpath/jquery.js" id="jquery"></script>
+  <script type="text/javascript" src="/js/jquery-1.6.2.min.js" id="jquery"></script>
 </head>
 <body>
   <div class="container">
@@ -42,7 +42,9 @@
     </div><!-- eo.row -->
     
     <!-- content -->
-    <lift:bind name="content" />
+    <div id="main">
+      <lift:bind name="content" />
+    </div>
     <!-- eo#content -->
     
     <!-- footer -->

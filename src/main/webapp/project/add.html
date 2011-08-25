@@ -1,5 +1,11 @@
 <lift:surround with="default" at="content">
   
+  <head>
+    <script type="text/javascript" src="/js/jquery.typing-0.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/github.js"></script>
+    <script type="text/javascript" src="/js/helix.js"></script>
+  </head>
+  
   <div class="row">
 
     <div class="span15 columns">
@@ -12,21 +18,26 @@
       
       <form lift="add_new_project?form=post">
         <fieldset>
-          <div class="clearfix">
+          <div class="clearfix" id="sourceurl-wrapper">
             <label for="prependedInput">Source URL</label>
             <div class="input">
               <div class="input-prepend">
                 <span class="add-on">github.com/</span>
-                <input class="medium" type="text" size="16" name="sourceurl">
+                <input class="medium" id="sourceurl" type="text" size="16" name="sourceurl">
+                <span class="help-inline" id="loading" style="display: none;">
+                  <img src="/images/loading.gif" width="18" height="18" />
+                </span>
+                <span class="help-inline" id="sourceurl-error"></span>
                 <span class="help-block">e.g. n8han/unfiltered</span>
               </div>
             </div>
           </div>
-
+        </fieldset>
+        <fieldset id="mainform" style="display: none">
           <div class="clearfix">
             <label for="">Project Name</label>
             <div class="input">
-              <input class="xlarge" type="text" size="30" name="name">
+              <input class="xlarge" type="text" size="30" name="name" id="projectname" />
               <span class="help-block">e.g. Unfiltered OAuth</span>
             </div>
           </div>
@@ -79,8 +90,8 @@
         </fieldset>
         
         <div class="actions">
-          <button class="btn primary" type="submit">Save Changes</button>
-          <button class="btn" type="reset">Cancel</button>
+          <button class="btn primary" type="submit" disabled="disabled">Save Changes</button>
+          <button class="btn" type="reset" onclick="$('#mainform').slideUp();">Cancel</button>
         </div>
         
       </form>
