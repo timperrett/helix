@@ -1,0 +1,6 @@
+h2. TODO
+
+* Invoke the contributors API to get a list of the contributors to stuff into the db when the project is registered
+* Implement the "most popular" projects thing (currently thinking to note the number of followers a repo has and then sort by that?)
+* Implement the details page
+* Project versions and Scala version compatibility
