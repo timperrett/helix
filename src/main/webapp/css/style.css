@@ -11,12 +11,12 @@ a:link, a:visited {
 }
 
 /** app styling **/
+html {
+  height: 100%;
+  background: url('../images/bg.png') repeat-x bottom left;
+}
 body {
-  background-color: #fff;
-  background-image: url('../images/bg.png');
-  background-position: bottom;
-  background-repeat: repeat-x;
-  background-attachment: fixed;
+  background: none;
 }
 .header {
   margin-top: -20px;

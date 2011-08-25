@@ -27,6 +27,13 @@ resolvers ++= Seq(
   Resolver.url("salat", url("http://repo.novus.com/snapshots/"))
 )
 
-seq(com.github.siasia.WebPlugin.webSettings :_*)
+seq(deploymentSettings :_*)
 
-seq(bees.RunCloudPlugin.deploymentSettings :_*)
+seq(webSettings :_*)
+
+jettyClasspaths <<= (jettyClasspaths, sourceDirectory).map((j, src) => j.copy(classpath = j.classpath +++ src / "development" / "resources"))
+
+jettyScanDirs := Nil
+
+temporaryWarPath <<= (sourceDirectory in Compile)(_ / "webapp")
+
