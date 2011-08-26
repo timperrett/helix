@@ -28,6 +28,7 @@ class Boot {
     }
     
     LiftRules.snippetDispatch.append {
+      case "project_wizard" => helix.snippet.ProjectWizard
       case "add_new_project" => helix.snippet.AddProjectForm
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
       case "project_details" => helix.snippet.ProjectDetails

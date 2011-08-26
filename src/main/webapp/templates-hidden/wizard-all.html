@@ -1,0 +1,58 @@
+<div class="row">
+
+  <div class="span15 columns">
+    <!-- <wizard:screen_info><div>Page <wizard:screen_number></wizard:screen_number> of <wizard:total_screens></wizard:total_screens></div></wizard:screen_info> -->
+    <!-- <wizard:wizard_top> <div> <wizard:bind></wizard:bind> </div> </wizard:wizard_top> -->
+    <wizard:screen_top> 
+      <wizard:bind></wizard:bind>
+    </wizard:screen_top>
+    <!-- <wizard:errors> <div> <ul> <wizard:item> <li> <wizard:bind></wizard:bind> </li> </wizard:item> </ul> </div> </wizard:errors> -->
+    <br />
+    <fieldset>
+      <wizard:fields>
+
+        <div class="clearfix" lift:bind="wizard:line">
+          <wizard:label>
+            <label wizard:for=""><wizard:bind></wizard:bind></label>
+          </wizard:label>
+          <div class="input">
+            <wizard:form></wizard:form>
+
+            <wizard:field_errors>
+              <span class="help-inline errors">
+                <wizard:error><wizard:bind /></wizard:error> 
+              </span>
+            </wizard:field_errors>
+
+            <wizard:help>
+              <span class="help-block"><wizard:bind></wizard:bind></span>
+            </wizard:help>
+
+          </div>
+        </div>
+
+      </wizard:fields>
+    </fieldset>
+
+    <div class="actions">
+      <wizard:prev class="btn primary"></wizard:prev> 
+      <wizard:cancel class="btn"></wizard:cancel>
+      <wizard:next class="btn primary"></wizard:next>
+      <!-- <button class="btn primary" type="submit" disabled="disabled">Save Changes</button> -->
+      <!-- <button class="btn" type="reset" onclick="$('#mainform').slideUp();">Cancel</button> -->
+    </div>
+
+    <!-- <wizard:screen_bottom> <div> <wizard:bind></wizard:bind> </div> </wizard:screen_bottom> -->
+    <!-- <wizard:wizard_bottom> <div> <wizard:bind></wizard:bind> </div> </wizard:wizard_bottom> -->
+
+    <script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+      $('form :input:visible:enabled:first').focus();
+      $('.errors').closest('.clearfix').addClass('error')
+    });
+    //]]>
+    </script>
+
+  </div><!-- eo.row -->
+</div>
