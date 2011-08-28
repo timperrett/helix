@@ -21,7 +21,7 @@ class Boot {
       new Html5Properties(r.userAgent))
     
     LiftRules.statelessRewrite.append {
-      // e.g. /projects/net.liftweb/lift-webkit/2.3
+      // e.g. /projects/net.liftweb/lift-webkit/2.4
       case RewriteRequest(ParsePath("projects" :: gid :: aid :: Nil,"",true,_),_,_) =>
            RewriteResponse("project" :: "show" :: Nil, 
              Map("groupId" -> gid, "artifactId" -> aid))
@@ -29,7 +29,7 @@ class Boot {
     
     LiftRules.snippetDispatch.append {
       case "project_wizard" => helix.snippet.ProjectWizard
-      case "add_new_project" => helix.snippet.AddProjectForm
+      // case "add_new_project" => helix.snippet.AddProjectForm
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
       case "project_details" => helix.snippet.ProjectDetails
       case "contributor_info" => helix.snippet.CurrentContributorInfo

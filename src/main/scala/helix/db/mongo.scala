@@ -30,14 +30,7 @@ trait MongoRepositories extends Repositories {
     def createProject(project: Project) = 
       !ProjectDAO.insert(project).isEmpty
     
-    /** DAOs **/
-    
-    object ProjectDAO extends SalatDAO[Project, ObjectId](
-      collection = mongo("projects")){
-      // val contributors = new ChildCollection[Contributor, String]
-      }
-    
-    private val mongo: MongoDB = {
+    private lazy val mongo: MongoDB = {
       val db = MongoConnection(
         Props.get("mongo.host").openOr("localhost"), 
         Props.get("mongo.port").map(_.toInt).openOr(10011))(
@@ -48,5 +41,9 @@ trait MongoRepositories extends Repositories {
         Props.get("mongo.password").openOr("secret"))) db
       else throw new IllegalArgumentException("DEATH AND DESTRUCTION! PASSWORD FAILURE!")
     }
+    
+    /** DAOs **/
+    object ProjectDAO extends SalatDAO[Project, ObjectId](
+      collection = mongo("projects"))
   }
 }

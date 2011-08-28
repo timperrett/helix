@@ -42,7 +42,7 @@ object GithubClient extends Dispatcher {
         JField("type", JString(style)) <- child
         JField("avatar_url", JString(url)) <- child
       } yield Contributor(
-          login = login, name = name, 
+          login = login, name = Some(name), 
           avatar = Some(url), style = style)
       )
     }

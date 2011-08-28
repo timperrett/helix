@@ -20,7 +20,8 @@ case class Project(
   // permalink: Option[String] = None,
   groupId: Option[String] = None,
   artifactId: Option[String] = None,
-  version: String = "0.1-SNAPSHOT",
+  //version: String = "0.1-SNAPSHOT",
+  version: Map[String, List[ScalaVersion]] = Map.empty,
   usagePhase: Option[String] = None,
   sourceURL: Option[String] = None,
   // addedBy represents the adder's github login
@@ -28,7 +29,12 @@ case class Project(
   addedAt: java.util.Date = Helpers.now,
   contributors: List[Contributor] = Nil,
   tags: List[Tag] = Nil
-)//{
+){
+  import helix.util.Random.randomSelect
+  def randomContributor: Option[Contributor] = 
+    randomSelect(1, contributors).headOption
+  
+}
   //import helix.db.Storage
   // def tags: List[Tag] = 
   //   if(tgs.isEmpty) Storage.listTagsForProject(id)
@@ -36,10 +42,13 @@ case class Project(
 //}
 
 case class Contributor(
-  @Key("_id") login: String, 
-  name: String, 
+  login: String, 
+  name: Option[String] = None, 
   avatar: Option[String] = None,
+  contributions: Int = 0,
   style: String = "User"
-)
+){
+  def picture = avatar getOrElse "http://gravatar.com/unknown"
+}
 
 case class Tag(name: String)

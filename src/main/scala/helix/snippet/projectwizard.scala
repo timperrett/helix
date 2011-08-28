@@ -16,7 +16,7 @@ object ProjectWizard extends Wizard {
   val general = new HelixScreen {
     override def screenName = "Project Information"
     
-    val source = builder("Github Repo URL", "",
+    val sourceURL = builder("Github Repo URL", "",
       valMaxLen(150, "URL too long"),
       valRegex("^https://github.com/([a-z0-9-]+)/([a-z0-9-]+)$".r.pattern, 
                "Not a valid github project URL")
@@ -86,9 +86,35 @@ object ProjectWizard extends Wizard {
     val currentVersion = field("Current Version", "", notNull)
   }
   
+  import helix.github.GithubClient
+  import helix.github.GithubClient.CurrentContributor
+  import net.liftweb.json.JsonAST._
+  import helix.domain._
+  import helix.db.Storage._
+  
   def finish(){
+    // fetch the contributors from github
+    val contributors = GithubClient.get("/repos/%s/contributors"
+      .format(general.sourceURL.is.substring(19))){ json => 
+        for {
+          JArray(contributors) <- json
+          JObject(child) <- contributors
+          JField("login", JString(login)) <- child
+          JField("avatar_url", JString(avatar)) <- child
+          JField("contributions", JInt(contributions)) <- child
+        } yield Contributor(login = login,
+          avatar = Some(avatar),
+          contributions = contributions.toInt
+        )
+      }
     // add to the db
-    println(">>>>>>> DONE")
-    println(general.name.is)
+    createProject(Project(
+      name = general.name.is, 
+      description = Some(general.description.is), 
+      groupId = Some(general.groupId.is), 
+      artifactId = Some(general.artifactId.is), 
+      sourceURL = Some(general.sourceURL.is),
+      addedBy = CurrentContributor.is.map(_.login).toOption,
+      contributors = contributors))
   }
 }

@@ -32,7 +32,7 @@ seq(deploymentSettings :_*)
 
 seq(webSettings :_*)
 
-jettyClasspaths <<= (jettyClasspaths, sourceDirectory).map((j, src) => j.copy(classpath = j.classpath +++ src / "development" / "resources"))
+// jettyClasspaths <<= (jettyClasspaths, sourceDirectory).map((j, src) => j.copy(classpath = j.classpath +++ src / "development" / "resources"))
 
 jettyScanDirs := Nil
 

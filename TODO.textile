@@ -1,6 +1,6 @@
 h2. TODO
 
-* Invoke the contributors API to get a list of the contributors to stuff into the db when the project is registered (http://github.com/api/v2/json/repos/show/n8han/unfiltered/contributors)
+* Invoke the contributors API to get a list of the contributors to stuff into the db when the project is registered (https://api.github.com/repos/lift/framework/contributors)
 * Contributor avatars on the home page - randomly cycle from those in the project
 * Implement the "most popular" projects thing (currently thinking to note the number of followers a repo has and then sort by that?)
 * Implement the details page
