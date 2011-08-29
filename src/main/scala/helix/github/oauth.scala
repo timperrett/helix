@@ -27,16 +27,12 @@ object OAuth extends Dispatcher {
         // set their contributor instance into the session as it'll 
         // be needed later for making API calls
         contributor.foreach(c => CurrentContributor(Full(c)))
-        RedirectResponse(LoginRedirect.is.openOr("/")) //, HTTPCookie(tokenCookie, token))
+        RedirectResponse(LoginRedirect.is.openOr("/"))
       }
   
   private val callbackErrorHandler: Req => Box[LiftResponse] = r => 
     for(e <- r.param("error"))
-     yield e match {
-       case "user_denied" => println("USER DENIED ACCESS"); 
-         ForbiddenResponse("You deined us access")
-       case other => PlainTextResponse(other)
-     }
+     yield RedirectResponse("/error?because=%s".format(e))
   
   override def dispatch = {
     import net.liftweb.http.S
