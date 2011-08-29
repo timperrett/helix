@@ -27,13 +27,7 @@ case class Project(
   import helix.util.Random.randomSelect
   def randomContributor: Option[Contributor] = 
     randomSelect(1, contributors).headOption
-  
 }
-  //import helix.db.Storage
-  // def tags: List[Tag] = 
-  //   if(tgs.isEmpty) Storage.listTagsForProject(id)
-  //   else tgs
-//}
 
 case class Contributor(
   login: String, 
