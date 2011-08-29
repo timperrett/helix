@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
   "net.liftweb" %% "lift-webkit" % "2.4-M2" % "compile",
   "net.liftweb" %% "lift-wizard" % "2.4-M2" % "compile",
+  "net.liftweb" %% "lift-textile" % "2.4-M2" % "compile",
   "net.databinder" %% "dispatch-http" % "0.8.5",
   "net.databinder" %% "dispatch-json" % "0.8.5",
   "net.databinder" %% "dispatch-lift-json" % "0.8.5",

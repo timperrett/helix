@@ -40,6 +40,22 @@ object Client {
       )
     }
   }
+  
+  def contributorsFor(repo: String) = 
+    get("/repos/%s/contributors".format(repo)){ json => 
+      for {
+        JArray(contributors) <- json
+        JObject(child) <- contributors
+        JField("login", JString(login)) <- child
+        JField("avatar_url", JString(avatar)) <- child
+        JField("contributions", JInt(contributions)) <- child
+      } yield Contributor(login = login,
+        avatar = Some(avatar),
+        contributions = contributions.toInt
+      )
+    }
+  
+  
   // FIXME: This is FUGLY. 
   def requestAccessToken(clientId: String, clientSecret: String, code: String): Box[String] = {
     val endpoint = "https://github.com/login/oauth/access_token"

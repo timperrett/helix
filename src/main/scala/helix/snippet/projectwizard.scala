@@ -24,11 +24,20 @@ object ProjectWizard extends Wizard with CommonScreens {
       valMaxLen(50, "Name too long")
     ).help("e.g. Unfiltered OAuth").make
     
+    val tags = builder("Project Tags", ""
+      ).help("e.g. sbt, web, lift").make
+    
+    val headline = builder("Project Headline", "",
+      valMinLen(5, "Headline too short"),
+      valMaxLen(80, "Headline too long")
+    ).help("e.g. A toolkit for servicing HTTP requests in Scala").make
+    
     val description = new Field { 
       type ValueType = String
       override def name = "Description" 
       override implicit def manifest = buildIt[String] 
       override def default = ""
+      override def helpAsHtml = Full(Text("You can use Textile markup"))
       override def validations = List(valMinLen(10, "Description too short"))
       override def toForm: Box[NodeSeq] = 
         SHtml.textarea(is, set _) % ("class" -> "xlarge")
@@ -37,24 +46,6 @@ object ProjectWizard extends Wizard with CommonScreens {
     // val publishesPOM_? = field("Published Binary?", true)
     
     override def nextScreen = publishing
-      
-    // val githubURL = new Field { 
-    //   type ValueType = String
-    //   override def name = "Github URL"
-    //   override def validations = List(valMinLen(2, "Name Too Short"))
-    //   override implicit def manifest = buildIt[String] 
-    //   override def default = ""
-    //   override def helpAsHtml = Full(Text("e.g. n8han/unfiltered"))
-    //   override def toForm: Box[NodeSeq] = Full({
-    //     <div class="input-prepend">
-    //       <span class="add-on">github.com/</span>
-    //       {SHtml.text(is, set _) % ("class" -> "large")}
-    //       <span class="help-inline" id="loading">
-    //         <img src="/images/loading.gif" width="18" height="18" />
-    //       </span>
-    //     </div>
-    //   })
-    // }
   }
   
   val publishing = new HelixScreen {
@@ -83,34 +74,26 @@ object ProjectWizard extends Wizard with CommonScreens {
   
   def finish(){
     // fetch the contributors from github
-    val contributors = Github.get("/repos/%s/contributors"
-      .format(general.sourceURL.is.substring(19))){ json => 
-        for {
-          JArray(contributors) <- json
-          JObject(child) <- contributors
-          JField("login", JString(login)) <- child
-          JField("avatar_url", JString(avatar)) <- child
-          JField("contributions", JInt(contributions)) <- child
-        } yield Contributor(login = login,
-          avatar = Some(avatar),
-          contributions = contributions.toInt
-        )
-      }
+    val contributors = Github.contributorsFor(
+      general.sourceURL.is.substring(19))
+    
+    val proj = Project(
+        name = general.name.is, 
+        headline = Some(general.headline.is), 
+        description = Some(general.description.is), 
+        sourceURL = Some(general.sourceURL.is),
+        groupId = Some(publishing.groupId.is), 
+        artifactId = Some(publishing.artifactId.is), 
+        repositoryURL = Some(publishing.repositoryURL.is),
+        versions = Map(hexEncode(versioning.currentVersion.is.getBytes) -> 
+          versioning.versions.get.filter(_._2 == true).map(_._1).toList),
+        tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
+        // internal features
+        addedBy = CurrentContributor.is.map(_.login).toOption,
+        contributors = contributors)
     
     // add to the db
-    if(createProject(Project(
-      name = general.name.is, 
-      description = Some(general.description.is), 
-      sourceURL = Some(general.sourceURL.is),
-      groupId = Some(publishing.groupId.is), 
-      artifactId = Some(publishing.artifactId.is), 
-      repositoryURL = Some(publishing.repositoryURL.is),
-      versions = Map(versioning.currentVersion.is -> 
-        versioning.versions.get.filter(_._2 == true).map(_._1).toList),
-      // internal features
-      addedBy = CurrentContributor.is.map(_.login).toOption,
-      contributors = contributors))
-    ) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
+    if(createProject(proj)) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
     else S.error("Unable to add project. Please try again.")
   }
 }

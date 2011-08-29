@@ -3,7 +3,7 @@ h2. TODO
 Current list of shit that needs doing.
 
 h3. Quick Wins
-* Add a "headline description" and "full description" to the project definition. Use the headline on the front page and as the banner for the project (140 chars?)
+none
 
 h3. Stage One
 * Implement the tagging system

@@ -13,7 +13,7 @@ a:link, a:visited {
 /** app styling **/
 html {
   height: 100%;
-  background: url('../images/bg.png') repeat-x bottom left;
+/*  background: url('../images/bg.png') repeat-x bottom left;*/
 }
 body {
   background: none;
@@ -106,14 +106,42 @@ body {
   top: 0px;
   left: 0px;
 }
+/*.contributors .avatar-frame {
+  margin-left: 0px;
+  top: 0px;
+}
+*/
+.contributors ol {
+  list-style: none;
+/*  background-color: blue;*/
+}
+.contributors ol li {
+  padding-left: 50px;
+  padding-top: 0px;
+  margin-top: 3px;
+}
+.contributors h2 {
+  text-align: center
+}
+.contribtor {
+  margin-left: 80px;
+}
+.project .restrict {
+  padding-left: 50px;
+  padding-right: 20px;
+}
+.project .restrict p {
+  padding-top: 8px;
+  line-height: 22px;
+  font-size: 15px;
+}
 
 /*** boxes ***/
 h2 {
-  font-size: 15px;
+/*  font-size: 15px;*/
   color: #333;
   font-weight: bold;
   background: #F6F6F6;
-  padding: 5px 80px;
 }
 .box {
   border: 1px solid #CCC;
@@ -123,6 +151,12 @@ h2 {
   -webkit-box-shadow: 0px 0px 5px #DDD;
   -moz-box-shadow: 0px 0px 5px #DDD;
   box-shadow: 0px 0px 5px #DDD;
+}
+h2 {
+  padding: 5px 50px;
+}
+.home h2 {
+  padding: 5px 80px;
 }
 .items {
   list-style: none;
@@ -185,6 +219,11 @@ h2 {
 .tags li a:hover {
   opacity: 0.85;
   text-decoration: none;
+}
+
+/** project **/
+.project {
+  
 }
 
 /** footer **/

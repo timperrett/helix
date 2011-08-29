@@ -9,6 +9,7 @@ import net.liftweb.util.Helpers
 case class Project(
   @Key("_id") id: ObjectId = new ObjectId, 
   name: String, 
+  headline: Option[String] = None,
   description: Option[String] = None,
   // permalink: Option[String] = None,
   groupId: Option[String] = None,
@@ -27,6 +28,8 @@ case class Project(
   import helix.util.Random.randomSelect
   def randomContributor: Option[Contributor] = 
     randomSelect(1, contributors).headOption
+  def versionsDecoded = 
+    versions.map(x => new String(Helpers.hexDecode(x._1)))
 }
 
 case class Contributor(
