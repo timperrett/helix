@@ -9,12 +9,7 @@ import net.liftweb._,
 import helix.db.Storage._
 import helix.domain._
 
-object ProjectWizard extends Wizard {
-  trait HelixScreen extends Screen {
-    override def screenTop = Full(<h2>{screenNameAsHtml}</h2>)
-    implicit def strToNodeSeq(s: String): NodeSeq = Text(s)
-  }
-  
+object ProjectWizard extends Wizard with CommonScreens {
   val general = new HelixScreen {
     override def screenName = "Project Information"
     
@@ -80,30 +75,7 @@ object ProjectWizard extends Wizard {
     override def nextScreen = versioning
   }
   
-  val versioning = new HelixScreen {
-    import scala.collection.mutable.{Map => MM}
-    // Mutate some shit because its late and night and i 
-    // cant think of an immutable way to do this with the
-    // way SHtml.checkbox works within wizard screens. 
-    // mmmmmm late night mutation. 
-    object versions extends WizardVar[MM[ScalaVersion, Boolean]](MM.empty)
-    override def screenName = "Project Versioning"
-    
-    val currentVersion = field("Current Version", "", notNull)
-    
-    val scalaVersions = listScalaVersions.map { v => 
-       new Field { 
-        type ValueType = Boolean
-        override def name = v.toString
-        override implicit def manifest = buildIt[Boolean] 
-        override def default = false
-        override def toForm: Box[NodeSeq] = 
-          Full(SHtml.checkbox(false, bool => {
-            versions.is += v -> bool
-          }))
-      }
-    }
-  }
+  val versioning = new AddProjectVersionScreen { }
   
   import helix.github.GithubClient
   import helix.github.GithubClient.CurrentContributor
@@ -134,7 +106,7 @@ object ProjectWizard extends Wizard {
       artifactId = Some(publishing.artifactId.is), 
       repositoryURL = Some(publishing.repositoryURL.is),
       versions = Map(versioning.currentVersion.is -> 
-        versioning.versions.get.filter(_._2 == true).map(_._1))
+        versioning.versions.get.filter(_._2 == true).map(_._1).toList),
       // internal
       addedBy = CurrentContributor.is.map(_.login).toOption,
       contributors = contributors))

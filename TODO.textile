@@ -2,5 +2,5 @@ h2. TODO
 
 * Implement the "most popular" projects thing (currently thinking to note the number of followers a repo has and then sort by that?)
 * Implement the details page
-* Project versions and Scala version compatibility
-* Make the github OAuth redirect back to the original referrer so the user does not always get redirect back to the home page. this is annoying.
+* Sort out the parsing of the access token cookie so its not nessicary to continually login
+* Do a validation on the group ID and artefact ID with the repository URL

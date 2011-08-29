@@ -1,11 +1,10 @@
 package bootstrap.liftweb
 
 import net.liftweb.common.{Box,Full,Empty}
-import net.liftweb.http.{LiftRules,RewriteRequest,Req,RedirectResponse,
-  Html5Properties,RewriteResponse,ParsePath,S}
+import net.liftweb.http._
 import net.liftweb.sitemap._
 
-import helix.github.GithubClient
+import helix.github.{GithubClient,LoginRedirect}
 import helix.github.GithubClient.AccessToken
 import helix.db.Storage
 
@@ -37,13 +36,16 @@ class Boot {
     
     import net.liftweb.sitemap.Loc.Unless
     
+    def Redirect(to: String) = Unless(
+      () => AccessToken.isEmpty, 
+      () => RedirectWithState("/oauth/login", 
+        RedirectState(() => LoginRedirect.set(Full(to)))))
+    
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
       Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
-      Menu("Projects: Add") / "project" / "add" >> Unless(
-        () => AccessToken.isEmpty, 
-        () => RedirectResponse("/oauth/login")),
+      Menu("Projects: Add") / "project" / "add" >> Redirect("/project/add"),
       Menu("Projects: Detail") / "project" / "show" >> Unless(
         () => S.param("groupId").isEmpty,
         () => RedirectResponse("/"))
