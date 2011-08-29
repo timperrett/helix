@@ -6,13 +6,6 @@ import com.novus.salat.annotations.Key
 import com.mongodb.casbah.Imports._
 import net.liftweb.util.Helpers
 
-trait ReleaseType
-case object Final extends ReleaseType
-case object RC extends ReleaseType
-case object Snapshot extends ReleaseType
-
-case class ScalaVersion(major: Int, minor: Int, mico: String, mode: ReleaseType)
-
 case class Project(
   @Key("_id") id: ObjectId = new ObjectId, 
   name: String, 
@@ -21,8 +14,9 @@ case class Project(
   groupId: Option[String] = None,
   artifactId: Option[String] = None,
   //version: String = "0.1-SNAPSHOT",
-  version: Map[String, List[ScalaVersion]] = Map.empty,
+  versions: Map[String, List[ScalaVersion]] = Map.empty,
   usagePhase: Option[String] = None,
+  repositoryURL: Option[String] = None,
   sourceURL: Option[String] = None,
   // addedBy represents the adder's github login
   addedBy: Option[String] = None,

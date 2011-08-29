@@ -17,6 +17,9 @@ trait MongoRepositories extends Repositories {
         ).limit(5).sort(orderBy = MongoDBObject("_id" -> -1)).toList
     
     /** global lists **/
+    def listScalaVersions = ScalaVersionDAO.find(MongoDBObject()
+      ).sort(orderBy = MongoDBObject("major" -> -1)).toList
+    
     // def listAllTags: List[Tag]
     
     /** finders **/
@@ -27,9 +30,13 @@ trait MongoRepositories extends Repositories {
       ProjectDAO.findOne(MongoDBObject("groupId" -> group, "artifactId" -> artifact))
     
     /** creators **/
-    def createProject(project: Project) = 
+    def createProject(project: Project): Boolean = 
       !ProjectDAO.insert(project).isEmpty
     
+    def createScalaVersion(version: ScalaVersion) = 
+      !ScalaVersionDAO.insert(version).isEmpty
+    
+    /** internals **/
     private lazy val mongo: MongoDB = {
       val db = MongoConnection(
         Props.get("mongo.host").openOr("localhost"), 
@@ -45,5 +52,8 @@ trait MongoRepositories extends Repositories {
     /** DAOs **/
     object ProjectDAO extends SalatDAO[Project, ObjectId](
       collection = mongo("projects"))
+    
+    object ScalaVersionDAO extends SalatDAO[ScalaVersion, ObjectId](
+      collection = mongo("scala_versions"))
   }
 }

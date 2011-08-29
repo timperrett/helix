@@ -6,6 +6,8 @@ import net.liftweb._,
   util.Helpers._,
   http.{SHtml,S},
   wizard.Wizard
+import helix.db.Storage._
+import helix.domain._
 
 object ProjectWizard extends Wizard {
   trait HelixScreen extends Screen {
@@ -18,7 +20,7 @@ object ProjectWizard extends Wizard {
     
     val sourceURL = builder("Github Repo URL", "",
       valMaxLen(150, "URL too long"),
-      valRegex("^https://github.com/([a-z0-9-]+)/([a-z0-9-]+)$".r.pattern, 
+      valRegex("^https://github.com/([a-zA-Z0-9-]+)/([a-z0-9-]+)$".r.pattern, 
                "Not a valid github project URL")
     ).help("e.g. https://github.com/n8han/unfiltered").make
     
@@ -26,14 +28,6 @@ object ProjectWizard extends Wizard {
       valMinLen(3, "Name too short"),
       valMaxLen(50, "Name too long")
     ).help("e.g. Unfiltered OAuth").make
-    
-    val groupId = builder("Group ID", "",
-      valMinLen(5, "Group ID too short")
-    ).help("e.g. net.databinder").make
-    
-    val artifactId = builder("Artifact ID", "",
-      valMinLen(3, "ArtifactId too short")
-    ).help("e.g. unfiltered-oauth").make
     
     val description = new Field { 
       type ValueType = String
@@ -45,11 +39,9 @@ object ProjectWizard extends Wizard {
         SHtml.textarea(is, set _) % ("class" -> "xlarge")
     }
     
-    val publishesPOM_? = field("Published POM?", true)
+    // val publishesPOM_? = field("Published Binary?", true)
     
-    override def nextScreen = 
-      if(publishesPOM_?) dependencies
-      else versioning
+    override def nextScreen = publishing
       
     // val githubURL = new Field { 
     //   type ValueType = String
@@ -70,27 +62,52 @@ object ProjectWizard extends Wizard {
     // }
   }
   
-  val dependencies = new HelixScreen {
-    override def screenName = "Project Dependencies"
-      
+  val publishing = new HelixScreen {
+    override def screenName = "Project Publishing"
+    
+    val groupId = builder("Group ID", "",
+      valMinLen(5, "Group ID too short")
+    ).help("e.g. net.databinder").make
+    
+    val artifactId = builder("Artifact ID", "",
+      valMinLen(3, "ArtifactId too short")
+    ).help("e.g. unfiltered-oauth").make
+    
     private val regex = """^(http|https)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$""".r
-    val repositoryURL = field("Repository URL", "",
+    val repositoryURL = field("Repository URL", "http://scala-tools.org/repo-releases/",
       valRegex(regex.pattern, "Not a valid URL format: must be http/https"))
     
     override def nextScreen = versioning
   }
   
   val versioning = new HelixScreen {
-    override def screenName = "Scala Compatibility"
+    import scala.collection.mutable.{Map => MM}
+    // Mutate some shit because its late and night and i 
+    // cant think of an immutable way to do this with the
+    // way SHtml.checkbox works within wizard screens. 
+    // mmmmmm late night mutation. 
+    object versions extends WizardVar[MM[ScalaVersion, Boolean]](MM.empty)
+    override def screenName = "Project Versioning"
     
     val currentVersion = field("Current Version", "", notNull)
+    
+    val scalaVersions = listScalaVersions.map { v => 
+       new Field { 
+        type ValueType = Boolean
+        override def name = v.toString
+        override implicit def manifest = buildIt[Boolean] 
+        override def default = false
+        override def toForm: Box[NodeSeq] = 
+          Full(SHtml.checkbox(false, bool => {
+            versions.is += v -> bool
+          }))
+      }
+    }
   }
   
   import helix.github.GithubClient
   import helix.github.GithubClient.CurrentContributor
   import net.liftweb.json.JsonAST._
-  import helix.domain._
-  import helix.db.Storage._
   
   def finish(){
     // fetch the contributors from github
@@ -107,13 +124,18 @@ object ProjectWizard extends Wizard {
           contributions = contributions.toInt
         )
       }
+    
     // add to the db
     createProject(Project(
       name = general.name.is, 
       description = Some(general.description.is), 
-      groupId = Some(general.groupId.is), 
-      artifactId = Some(general.artifactId.is), 
       sourceURL = Some(general.sourceURL.is),
+      groupId = Some(publishing.groupId.is), 
+      artifactId = Some(publishing.artifactId.is), 
+      repositoryURL = Some(publishing.repositoryURL.is),
+      versions = Map(versioning.currentVersion.is -> 
+        versioning.versions.get.filter(_._2 == true).map(_._1))
+      // internal
       addedBy = CurrentContributor.is.map(_.login).toOption,
       contributors = contributors))
   }

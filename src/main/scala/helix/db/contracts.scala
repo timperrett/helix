@@ -12,7 +12,7 @@ trait Repositories {
     
     /** global lists **/
     def listFiveNewestProjects: List[Project]
-    // def listScalaVersions: List[ScalaVersion]
+    def listScalaVersions: List[ScalaVersion]
     // def listAllTags: List[Tag]
     
     /** finders **/
@@ -20,12 +20,19 @@ trait Repositories {
     
     /** creator **/
     def createProject(project: Project): Boolean
+    def createScalaVersion(version: ScalaVersion): Boolean
   }
 }
 
 trait HelixService { _: Repositories => 
   def createProject(p: Project) = 
     repository.createProject(p)
+  
+  def createScalaVersion(v: ScalaVersion) = 
+    repository.createScalaVersion(v)
+    
+  def listScalaVersions: List[ScalaVersion] = 
+    repository.listScalaVersions
   
   def listFiveNewestProjects: List[Project] = 
     repository.listFiveNewestProjects
