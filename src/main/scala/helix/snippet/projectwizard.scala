@@ -98,7 +98,7 @@ object ProjectWizard extends Wizard with CommonScreens {
       }
     
     // add to the db
-    createProject(Project(
+    if(createProject(Project(
       name = general.name.is, 
       description = Some(general.description.is), 
       sourceURL = Some(general.sourceURL.is),
@@ -107,8 +107,10 @@ object ProjectWizard extends Wizard with CommonScreens {
       repositoryURL = Some(publishing.repositoryURL.is),
       versions = Map(versioning.currentVersion.is -> 
         versioning.versions.get.filter(_._2 == true).map(_._1).toList),
-      // internal
+      // internal features
       addedBy = CurrentContributor.is.map(_.login).toOption,
       contributors = contributors))
+    ) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
+    else S.error("Unable to add project. Please try again.")
   }
 }

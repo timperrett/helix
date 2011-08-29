@@ -8,33 +8,6 @@ import helix.db.Storage._
 import helix.domain.Project
 import helix.github.GithubClient.CurrentContributor
 
-/** 
- * Add a new project to the helix directory
- */
-// object AddProjectForm extends DispatchSnippet {
-//   def dispatch = {
-//     case _ => render
-//   }
-//   def render = {
-//     var name, description, groupId, artifactId, version, sourceURL = ""
-//     "@sourceurl" #> SHtml.text(sourceURL, sourceURL = _) &
-//     "@name" #> SHtml.text(name, name = _) &
-//     "@groupid" #> SHtml.text(groupId, groupId = _) &
-//     "@artifactid" #> SHtml.text(artifactId, artifactId = _) &
-//     // "@version" #> SHtml.text(version, version = _) &
-//     "@description" #> SHtml.textarea(description, description = _) &
-//     "button" #> SHtml.onSubmitUnit(() => {
-//       if(createProject(
-//         Project(name = name, description = Some(description), 
-//           groupId = Some(groupId), artifactId = Some(artifactId), version = version,
-//           sourceURL = Some(sourceURL),
-//           addedBy = CurrentContributor.is.map(_.login).toOption
-//         )
-//       )) S.redirectTo("/projects/%s/%s".format(groupId,artifactId))
-//       else S.error("Unable to add project. Please try again.")
-//     })
-//   }
-// }
 
 /**
  * List the top 5 recently added projects
