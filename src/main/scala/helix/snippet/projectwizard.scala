@@ -77,13 +77,13 @@ object ProjectWizard extends Wizard with CommonScreens {
   
   val versioning = new AddProjectVersionScreen { }
   
-  import helix.github.GithubClient
-  import helix.github.GithubClient.CurrentContributor
+  import helix.github.{Client => Github}
+  import helix.github.Client.CurrentContributor
   import net.liftweb.json.JsonAST._
   
   def finish(){
     // fetch the contributors from github
-    val contributors = GithubClient.get("/repos/%s/contributors"
+    val contributors = Github.get("/repos/%s/contributors"
       .format(general.sourceURL.is.substring(19))){ json => 
         for {
           JArray(contributors) <- json

@@ -3,7 +3,7 @@ package helix.snippet
 import scala.xml.NodeSeq
 import net.liftweb.util.Helpers._
 import net.liftweb.http.DispatchSnippet
-import helix.github.GithubClient.CurrentContributor
+import helix.github.Client.CurrentContributor
 
 object CurrentContributorInfo extends DispatchSnippet {
   def dispatch = {

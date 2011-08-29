@@ -6,7 +6,7 @@ import net.liftweb.util.Helpers._
 import net.liftweb.http.{S,SHtml,DispatchSnippet}
 import helix.db.Storage._
 import helix.domain.Project
-import helix.github.GithubClient.CurrentContributor
+import helix.github.Client.CurrentContributor
 
 
 /**

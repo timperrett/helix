@@ -4,17 +4,17 @@ import net.liftweb.common.{Box,Full,Empty}
 import net.liftweb.http._
 import net.liftweb.sitemap._
 
-import helix.github.{GithubClient,LoginRedirect}
-import helix.github.GithubClient.AccessToken
+import helix.github.{Client => Github}
+// import helix.github.GithubClient.AccessToken
 import helix.db.Storage
 
 class Boot {
   def boot {
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
-    LiftRules.dispatch.append(GithubClient)
+    LiftRules.dispatch.append(helix.github.OAuth)
 
-    LiftRules.loggedInTest = Full(() => !AccessToken.isEmpty)
+    LiftRules.loggedInTest = Full(() => Github.isAuthenticated)
     
     LiftRules.htmlProperties.default.set((r: Req) =>
       new Html5Properties(r.userAgent))
@@ -28,18 +28,17 @@ class Boot {
     
     LiftRules.snippetDispatch.append {
       case "project_wizard" => helix.snippet.ProjectWizard
-      // case "add_new_project" => helix.snippet.AddProjectForm
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
       case "project_details" => helix.snippet.ProjectDetails
       case "contributor_info" => helix.snippet.CurrentContributorInfo
     }
     
-    import net.liftweb.sitemap.Loc.Unless
+    import net.liftweb.sitemap.Loc.{Unless,If}
     
-    def Redirect(to: String) = Unless(
-      () => AccessToken.isEmpty, 
+    def Redirect(to: String) = If(
+      () => Github.isAuthenticated, 
       () => RedirectWithState("/oauth/login", 
-        RedirectState(() => LoginRedirect.set(Full(to)))))
+        RedirectState(() => Github.LoginRedirect.set(Full(to)))))
     
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
