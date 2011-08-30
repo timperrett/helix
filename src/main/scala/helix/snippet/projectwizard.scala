@@ -40,7 +40,7 @@ object ProjectWizard extends Wizard with CommonScreens {
       override def helpAsHtml = Full(Text("You can use Textile markup"))
       override def validations = List(valMinLen(10, "Description too short"))
       override def toForm: Box[NodeSeq] = 
-        SHtml.textarea(is, set _) % ("class" -> "xlarge")
+        SHtml.textarea(is, set _) % ("class" -> "xxlarge") % ("rows" -> "10")
     }
     
     // val publishesPOM_? = field("Published Binary?", true)

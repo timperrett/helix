@@ -41,6 +41,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
   
   /** snippets **/
   import net.liftweb.util.Helpers._
+  import helix.util.DomainBindings._
   
   override val snippets: SnippetTest = {
     case ("information", Full(pd)) => information(pd)
@@ -59,9 +60,9 @@ object ProjectInformation extends Loc[ProjectDetail]{
   
   def information(details: ProjectDetail) = 
     (for(project <- details.project)
-      yield "h2 *" #> project.name) getOrElse suggestAddingProject
+      yield project.bind) getOrElse suggestAddingProject
   
   def suggestAddingProject = 
-    "*" #> <p>That project does not exist, <a href="/projects/add">add it?</a></p>
+    "*" #> <lift:embed what="_nonexistant_project" />
   
 }

@@ -1,6 +1,7 @@
 package bootstrap.liftweb
 
 import net.liftweb.common.{Box,Full,Empty}
+import net.liftweb.util.NamedPF
 import net.liftweb.http._
 import net.liftweb.sitemap._
 
@@ -11,26 +12,22 @@ import helix.db.Storage
 class Boot {
   def boot {
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
-
+    
     LiftRules.dispatch.append(helix.github.OAuth)
-
+    
     LiftRules.loggedInTest = Full(() => Github.isAuthenticated)
     
     LiftRules.htmlProperties.default.set((r: Req) =>
       new Html5Properties(r.userAgent))
     
-    // LiftRules.statelessRewrite.append {
-    //   // e.g. /projects/net.liftweb/lift-webkit
-    //   case RewriteRequest(ParsePath("projects" :: gid :: aid :: Nil,"",true,_),_,_) =>
-    //        RewriteResponse("project" :: "show" :: Nil, 
-    //          Map("groupId" -> gid, "artifactId" -> aid))
-    // }
+    LiftRules.uriNotFound.prepend(NamedPF("404handler"){
+      case (req,failure) => NotFoundAsTemplate(ParsePath(List("404"),"html",false,false))
+    })
     
     LiftRules.snippetDispatch.append {
       case "project_wizard" => helix.snippet.ProjectWizard
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
       case "contributor_info" => helix.snippet.CurrentContributorInfo
-      // case "project_details" => helix.snippet.ProjectDetails
     }
     
     import net.liftweb.sitemap.Loc.{Unless,If}
@@ -48,7 +45,6 @@ class Boot {
       Menu("Projects: List") / "projects",
       Menu("Projects: Add") / "project" / "add" >> RequiresLogin("/project/add"),
       Menu(ProjectInformation)
-      // Menu("Projects: Detail") / "project" / "show" >> 
     ))
   }
 }

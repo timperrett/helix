@@ -1,13 +1,10 @@
 <lift:surround with="default" at="content">
   
   <div class="row project">
-    <div class="span10 columns box">
-      <h2>Salat</h2>
+    <div class="span10 columns box" lift="information">
+      <h2>Project: <name>Name</name></h2>
       <div class="restrict">
-        <p>Salat is a bi-directional Scala case class serialization library that leverages MongoDB's DBObject (which uses BSON underneath) as its target format.
-        The Salat project focuses on speed and simplicity of serializing case classes to and from target formats.</p>
-        <p>Salat is a bi-directional Scala case class serialization library that leverages MongoDB's DBObject (which uses BSON underneath) as its target format.
-        The Salat project focuses on speed and simplicity of serializing case classes to and from target formats.</p>
+        <description />
       </div>
       
       <h2>Compatibility</h2>
@@ -31,6 +28,24 @@
         </table>
         
       </div>
+      
+      <h2>Usage</h2>
+      <div class="restrict">
+        <p><strong>SBT 0.10+</strong></p>
+        <pre>libraryDependencies += 
+  "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT"
+
+resolvers += 
+  Resolver.url("salat", url("http://repo.novus.com/snapshots/"))</pre>
+        <p><strong>Maven</strong></p>
+        <pre>
+&lt;dependency&gt;
+  &lt;groupId&gt;com.novus&lt;/groupId&gt;
+  &lt;artifactId&gt;salat-util&lt;/artifactId&gt;
+  &lt;version&gt;0.0.8-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+      </div>
+      
     </div>
     
     <div class="span5 columns box contributors">

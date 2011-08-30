@@ -24,7 +24,9 @@ object Client {
       Map("access_token" -> AccessToken.is.openOr("unknown")))(f: JValue => T) = {
     val http = new Http
     val req = url("https://api.github.com" + path) <<? params
-    http(req ># f)
+    var resp = http(req ># f)
+    http.shutdown()
+    resp
   }
   
   def contributor: Box[Contributor] = {
@@ -65,6 +67,7 @@ object Client {
     Helpers.tryo {
       // make the POST
       val response = http(req.secure as_str)
+      http.shutdown()
       // parse the token response
       val TokenResponse = "access_token=(.+)&token_type=(.+)".r
       val TokenResponse(token,typez) = response

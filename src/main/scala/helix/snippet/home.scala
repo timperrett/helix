@@ -1,5 +1,6 @@
 package helix.snippet
 
+import scala.xml.NodeSeq
 import net.liftweb.util.Helpers._
 import net.liftweb.http.{S,SHtml,DispatchSnippet}
 import helix.db.Storage._
@@ -11,18 +12,9 @@ object RecentlyAddedProject extends DispatchSnippet {
   def dispatch = {
     case _ => render
   }
-  def render = ".prj" #> (for {
-    project <- listFiveNewestProjects
-    group <- project.groupId
-    artifact <- project.artifactId
-  } yield {
-    ".project-name *" #> project.name &
-    ".project-name [href]" #> "/projects/%s/%s".format(group,artifact) &
-    "img [src]" #> project.randomContributor.map(_.picture).get &
-    "p *" #> project.headline &
-    ".tags *" #> project.tags.map { tag => 
-      "a [href]" #> "/tags/%s".format(tag.name) &
-      "a *" #> tag.name
-    }
-  })
+  import helix.util.DomainBindings._
+  
+  def render = ".prj" #> 
+    (for(project <- listFiveNewestProjects)
+      yield project.bind)
 }
