@@ -19,36 +19,36 @@ class Boot {
     LiftRules.htmlProperties.default.set((r: Req) =>
       new Html5Properties(r.userAgent))
     
-    LiftRules.statelessRewrite.append {
-      // e.g. /projects/net.liftweb/lift-webkit
-      case RewriteRequest(ParsePath("projects" :: gid :: aid :: Nil,"",true,_),_,_) =>
-           RewriteResponse("project" :: "show" :: Nil, 
-             Map("groupId" -> gid, "artifactId" -> aid))
-    }
+    // LiftRules.statelessRewrite.append {
+    //   // e.g. /projects/net.liftweb/lift-webkit
+    //   case RewriteRequest(ParsePath("projects" :: gid :: aid :: Nil,"",true,_),_,_) =>
+    //        RewriteResponse("project" :: "show" :: Nil, 
+    //          Map("groupId" -> gid, "artifactId" -> aid))
+    // }
     
     LiftRules.snippetDispatch.append {
       case "project_wizard" => helix.snippet.ProjectWizard
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
-      case "project_details" => helix.snippet.ProjectDetails
       case "contributor_info" => helix.snippet.CurrentContributorInfo
+      // case "project_details" => helix.snippet.ProjectDetails
     }
     
     import net.liftweb.sitemap.Loc.{Unless,If}
+    import helix.sitemap.ProjectInformation
     
-    def Redirect(to: String) = If(
+    def RequiresLogin(to: String) =If(
       () => Github.isAuthenticated, 
       () => RedirectWithState("/oauth/login", 
-        RedirectState(() => Github.LoginRedirect.set(Full(to)))))
+          RedirectState(() => Github.LoginRedirect.set(Full(to)))))
     
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
       Menu("Error") / "error",
       Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
-      Menu("Projects: Add") / "project" / "add" >> Redirect("/project/add"),
-      Menu("Projects: Detail") / "project" / "show" >> Unless(
-        () => S.param("groupId").isEmpty,
-        () => RedirectResponse("/"))
+      Menu("Projects: Add") / "project" / "add" >> RequiresLogin("/project/add"),
+      Menu(ProjectInformation)
+      // Menu("Projects: Detail") / "project" / "show" >> 
     ))
   }
 }
