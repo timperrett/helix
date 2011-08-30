@@ -106,35 +106,6 @@ body {
   top: 0px;
   left: 0px;
 }
-/*.contributors .avatar-frame {
-  margin-left: 0px;
-  top: 0px;
-}
-*/
-.contributors ol {
-  list-style: none;
-/*  background-color: blue;*/
-}
-.contributors ol li {
-  padding-left: 50px;
-  padding-top: 0px;
-  margin-top: 3px;
-}
-.contributors h2 {
-  text-align: center
-}
-.contribtor {
-  margin-left: 80px;
-}
-.project .restrict {
-  padding-left: 50px;
-  padding-right: 20px;
-}
-.project .restrict p {
-  padding-top: 8px;
-  line-height: 22px;
-  font-size: 15px;
-}
 
 /*** boxes ***/
 h2 {
@@ -222,8 +193,36 @@ h2 {
 }
 
 /** project **/
-.project {
-  
+.contributors ol {
+  list-style: none;
+/*  background-color: blue;*/
+}
+.contributors ol li {
+  padding-left: 75px;
+  padding-top: 0px;
+  margin-top: -12px;
+}
+.contributors .buffer {
+/*  background-color:red;*/
+  height: 10px;
+}
+.contributors h2 {
+  text-align: center
+}
+.contribtor {
+  margin-left: 80px;
+}
+.project .restrict {
+  padding-left: 50px;
+  padding-right: 20px;
+}
+.project .restrict p, .description ul li {
+  padding-top: 8px;
+  line-height: 22px;
+  font-size: 15px;
+}
+.description ul {
+  list-style-type: square;
 }
 
 /** footer **/

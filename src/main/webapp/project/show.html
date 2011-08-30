@@ -3,12 +3,19 @@
   <div class="row project">
     <div class="span10 columns box" lift="information">
       <h2>Project: <name>Name</name></h2>
-      <div class="restrict">
+      <div class="restrict description">
         <description />
       </div>
       
       <h2>Compatibility</h2>
       <div class="restrict">
+        <div class="row">
+          <p class="span6 columns">Versions of <name></name> are compatible with:</p>
+          <div class="span2 columns">
+            <a class="btn success">Add version</a>
+          </div>
+          
+        </div>
         
         <table class="zebra-striped">
           <thead>
@@ -24,6 +31,9 @@
               <td>0.7-SNAPSHOT</td>
               <td>2.9.0, 2.8.1, 2.8.0</td>
             </tr>
+            <!-- <tr>
+              <td colspan="2"><a href="">Add version</a></td>
+            </tr> -->
           </tbody>
         </table>
         
@@ -50,9 +60,9 @@ resolvers +=
     
     <div class="span5 columns box contributors">
       <h2>Contributors</h2>
-      <ol lift="contributors">
-        
-        <li class="row">
+      <ol >
+        <li class="row buffer"></li>
+        <li class="row" lift="contributors">
           <span class="avatar-frame">
             <img src="http://0.gravatar.com/avatar/63bc2441352e761a0eff115fb713a904?s=69&d=monsterid" />
             <span class="overlay"></span>
