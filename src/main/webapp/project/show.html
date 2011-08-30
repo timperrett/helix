@@ -1,5 +1,18 @@
 <lift:surround with="default" at="content">
   
+  <head_merge>
+    <script type="text/javascript" src="/js/jquery.simplemodal.1.4.1.min.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
+      $(function(){
+        $('#newVersionBtn').click(function(){
+          $('#newVersionModal').modal({ closeClass: 'close' });
+        });
+      });
+    //]]>
+    </script>
+  </head_merge>
+  
   <div class="row project">
     <div class="span10 columns box" lift="information">
       <h2>Project: <name>Name</name></h2>
@@ -12,7 +25,8 @@
         <div class="row">
           <p class="span6 columns">Versions of <name></name> are compatible with:</p>
           <div class="span2 columns">
-            <a class="btn success">Add version</a>
+            <a class="btn success" id="newVersionBtn" lift="test_cond.loggedin">Add version</a>
+            <a class="btn success disabled" id="newVersionBtn" lift="test_cond.loggedout">Add version</a>
           </div>
           
         </div>
@@ -74,7 +88,52 @@ resolvers +=
       </ol>
     </div>
     
-    
   </div>
+  
+  <lift:tail>
+    <div id="newVersionModal" class="modal" style="display: none; position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1">
+      <div class="modal-header">
+        <h3>Add New Version</h3>
+        <a href="javascript://" class="close">×</a>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="clearfix">
+            <label for="xlInput">Version number</label>
+            <div class="input">
+              <input class="xlarge" id="xlInput" name="xlInput" size="30" type="text">
+            </div>
+          </div>
+          <div class="clearfix">
+            <label id="optionsCheckboxes">Scala compatibility</label>
+            <div class="input">
+              <ul class="inputs-list">
+                <li>
+                  <label>
+                    <input type="checkbox" name="optionsCheckboxes" value="option1">
+                    <span>2.9.0-1</span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    <input type="checkbox" name="optionsCheckboxes" value="option2">
+                    <span>2.9.0</span>
+                  </label>
+                </li>
+              </ul>
+              <span class="help-block">
+                <strong>Note:</strong> Only check the Scala version numbers that <br />
+                <em>this</em> release is compatible with.
+              </span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn primary">Add</button>
+        <button class="btn secondary close">Cancel</button>
+      </div>
+    </div>
+  </lift:tail>
   
 </lift:surround>

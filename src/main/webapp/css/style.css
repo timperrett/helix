@@ -193,6 +193,9 @@ h2 {
 }
 
 /** project **/
+#simplemodal-overlay {
+  background-color: #000;
+}
 .contributors ol {
   list-style: none;
 /*  background-color: blue;*/
