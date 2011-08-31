@@ -9,7 +9,17 @@ import net.liftweb._,
 import helix.db.Storage._
 import helix.domain._
 
-
-
-// object VersionWizard extends Wizard {
-// }
+object VersionWizard extends Wizard with CommonScreens {
+  override def allTemplatePath = "templates-hidden" :: "wizard-modal" :: Nil
+  override def finishButton = <button>Add</button>
+  
+  val versioning = new AddProjectVersionScreen {
+    override def screenName = "Add Version"
+    override def screenTop = Full(<h3>{screenNameAsHtml}</h3>)
+  }
+  
+  def finish(){
+    println(">>>>>>>>>>> ADDING Version")
+    println(versioning.versions.is.foreach(println))
+  }
+}

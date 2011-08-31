@@ -1,0 +1,38 @@
+<div id="newVersionModal" class="modal" style="display: none; position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1">
+  <div class="modal-header">
+    <wizard:screen_top> 
+      <wizard:bind></wizard:bind>
+    </wizard:screen_top>
+    <a href="javascript://" class="close">×</a>
+  </div>
+  <div class="modal-body">
+    <wizard:fields>
+      <div class="clearfix" lift:bind="wizard:line">
+        <wizard:label>
+          <label wizard:for=""><wizard:bind></wizard:bind></label>
+        </wizard:label>
+        <div class="input">
+          <wizard:form></wizard:form>
+
+          <wizard:field_errors>
+            <span class="help-inline errors">
+              <wizard:error><wizard:bind /></wizard:error> 
+            </span>
+          </wizard:field_errors>
+
+          <wizard:help>
+            <span class="help-block"><wizard:bind></wizard:bind></span>
+          </wizard:help>
+
+        </div>
+      </div>
+    </wizard:fields>
+    
+  </div>
+  <div class="modal-footer">
+    <!-- <wizard:prev class="btn primary"></wizard:prev>  -->
+    <wizard:next class="btn primary"></wizard:next>
+    <button class="btn secondary close">Cancel</button>
+    <!-- <wizard:cancel class="btn secondary close"></wizard:cancel> -->
+  </div>
+</div>

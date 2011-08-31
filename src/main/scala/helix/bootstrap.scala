@@ -1,15 +1,14 @@
 package bootstrap.liftweb
 
-import net.liftweb.common.{Box,Full,Empty}
-import net.liftweb.util.NamedPF
+import scala.xml.{Text,Node}
+import net.liftweb.common.{Box,Full,Empty,LazyLoggable}
+import net.liftweb.util.{NamedPF,Props}
 import net.liftweb.http._
 import net.liftweb.sitemap._
-
 import helix.github.{Client => Github}
-// import helix.github.GithubClient.AccessToken
 import helix.db.Storage
 
-class Boot {
+class Boot extends LazyLoggable {
   def boot {
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
     
@@ -24,8 +23,18 @@ class Boot {
       case (req,failure) => NotFoundAsTemplate(ParsePath(List("404"),"html",false,false))
     })
     
+    // LiftRules.exceptionHandler.append {
+    //   case (_, r, e) => 
+    //     logger.error("Exception being returned to browser when processing " + r.uri.toString + ": " + e.getMessage)
+    //     XhtmlResponse(S.runTemplate("500" :: Nil).openOr(<h1>Unexpected Error</h1>), 
+    //       S.htmlProperties.docType, 
+    //       List("Content-Type" -> "text/html; charset=utf-8"), 
+    //       Nil, 500, S.ieMode)
+    // }
+    
     LiftRules.snippetDispatch.append {
       case "project_wizard" => helix.snippet.ProjectWizard
+      case "version_wizard" => helix.snippet.VersionWizard
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
       case "contributor_info" => helix.snippet.CurrentContributorInfo
     }

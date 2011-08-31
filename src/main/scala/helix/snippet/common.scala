@@ -26,17 +26,26 @@ trait CommonScreens { _: Wizard =>
 
     val currentVersion = field("Current Version", "", notNull)
 
-    val scalaVersions = listScalaVersions.map { v => 
-       new Field { 
+    val scalaVersions = new Field { 
         type ValueType = Boolean
-        override def name = v.toString
+        override def name = "Scala Compatibility"
         override implicit def manifest = buildIt[Boolean] 
         override def default = false
-        override def toForm: Box[NodeSeq] = 
-          Full(SHtml.checkbox(false, bool => {
-            versions.is += v -> bool
-          }))
-      }
+        override def toForm: Box[NodeSeq] = Full(
+          <ul class="inputs-list">
+            { listScalaVersions.map { v =>
+              <li><label>{
+                SHtml.checkbox(false, bool => 
+                  versions.is += v -> bool) ++ 
+                <span>{" " + v.toString}</span>
+              }</label></li>
+            }
+          }</ul>
+          <span class="help-block">
+            <strong>Note:</strong> Only check the Scala version numbers that <br />
+            <em>this</em> release is compatible with.
+          </span>
+        )
     }
   }
   
