@@ -8,9 +8,6 @@ object Client {
   
   object AccessToken extends SessionVar[Box[String]](Empty)
   object CurrentContributor extends SessionVar[Box[Contributor]](Empty)
-  object LoginRedirect extends SessionVar[Box[String]](Empty){
-    override def __nameSalt = Helpers.nextFuncName
-  }
   
   def isAuthenticated: Boolean = 
     !AccessToken.is.isEmpty

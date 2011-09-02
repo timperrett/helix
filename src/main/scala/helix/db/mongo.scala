@@ -3,6 +3,7 @@ package helix.db
 import helix.domain._
 
 trait MongoRepositories extends Repositories {
+  import net.liftweb.common.Full
   import net.liftweb.util.Props
   import com.novus.salat._
   import com.novus.salat.global._
@@ -40,13 +41,18 @@ trait MongoRepositories extends Repositories {
     private lazy val mongo: MongoDB = {
       val db = MongoConnection(
         Props.get("mongo.host").openOr("localhost"), 
-        Props.get("mongo.port").map(_.toInt).openOr(10011))(
+        Props.get("mongo.port").map(_.toInt).openOr(27017))(
         Props.get("mongo.db").openOr("helix")
       )
-      if (db.authenticate(
-        Props.get("mongo.username").openOr("user"), 
-        Props.get("mongo.password").openOr("secret"))) db
-      else throw new IllegalArgumentException("DEATH AND DESTRUCTION! PASSWORD FAILURE!")
+      
+      // if the env specifies username and password, try to use
+      // them, otherwise, just try to connect without auth.
+      (Props.get("mongo.username"), Props.get("mongo.password")) match {
+        case (Full(username), Full(password)) => 
+          if(db.authenticate(username, password)) db
+          else throw new IllegalArgumentException("Inavlid username and/or password")
+        case _ => db
+      }
     }
     
     /** DAOs **/

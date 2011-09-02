@@ -8,10 +8,7 @@ import helix.db.Storage._
 /**
  * List the top 5 recently added projects
  */
-object RecentlyAddedProject extends DispatchSnippet {
-  def dispatch = {
-    case _ => render
-  }
+object RecentlyAddedProject extends Snippet {
   import helix.util.DomainBindings._
   
   def render = ".prj" #> 

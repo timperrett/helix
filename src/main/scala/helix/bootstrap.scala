@@ -37,27 +37,22 @@ class Boot extends LazyLoggable {
       case "version_wizard" => helix.snippet.VersionWizard
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
       case "contributor_info" => helix.snippet.CurrentContributorInfo
+      case "login_link" => helix.snippet.LoginLink
     }
     
     import net.liftweb.sitemap.Loc.{Unless,If}
     import helix.sitemap.ProjectInformation
-    
-    def RequiresLogin(to: String) =If(
-      () => Github.isAuthenticated, 
-      () => RedirectWithState("/oauth/login", 
-          RedirectState(() => Github.LoginRedirect.set(Full(to)))))
     
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
       Menu("Error") / "error",
       Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
-      Menu("Projects: Add") / "project" / "add" >> RequiresLogin("/project/add"),
+      Menu("Projects: Add") / "project" / "add",
       Menu(ProjectInformation)
     ))
   }
 }
-
 
 import javax.servlet._ 
 import javax.servlet.http._ 

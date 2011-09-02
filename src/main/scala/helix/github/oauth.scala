@@ -1,7 +1,7 @@
 package helix.github
 
 import net.liftweb.common.{Box,Full,Empty}
-import net.liftweb.util.NamedPF
+import net.liftweb.util.{NamedPF,Helpers}
 import net.liftweb.http.{Req,LiftRules}
 import net.liftweb.http._
 
@@ -27,21 +27,28 @@ object OAuth extends Dispatcher {
         // set their contributor instance into the session as it'll 
         // be needed later for making API calls
         contributor.foreach(c => CurrentContributor(Full(c)))
-        RedirectResponse(LoginRedirect.is.openOr("/"))
+        RedirectResponse(r.param("return_to").map(Helpers.urlDecode).openOr("/"))
       }
   
   private val callbackErrorHandler: Req => Box[LiftResponse] = r => 
     for(e <- r.param("error"))
-     yield RedirectResponse("/error?because=%s".format(e))
+     yield RedirectResponse("/500?because=%s".format(e))
   
   override def dispatch = {
     import net.liftweb.http.S
     import net.liftweb.http.provider.HTTPCookie
     
     val login: LiftRules.DispatchPF = NamedPF("Send to Github"){
-      case Req("oauth" :: "login" :: Nil, "", GetRequest) => () => Full(
-        RedirectResponse(
-          "https://github.com/login/oauth/authorize?client_id=%s".format(clientId)))
+      case r@Req("oauth" :: "login" :: Nil, "", GetRequest) => () => {
+        val returnURL = S.param("return_to").map(Helpers.urlDecode).openOr("/")
+        val callbackURL = "%s/oauth/callback?return_to=%s".format(r.hostAndPath,returnURL)
+        Full((for(c <- CurrentContributor)
+          yield RedirectResponse(returnURL)) openOr RedirectResponse {
+            "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s"
+              .format(clientId, Helpers.urlEncode(callbackURL))
+          } 
+        )
+      }
     }
     
     val token: LiftRules.DispatchPF = NamedPF("Token Handler"){
