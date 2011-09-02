@@ -18,8 +18,14 @@ object VersionWizard extends Wizard with CommonScreens {
     override def screenTop = Full(<h3>{screenNameAsHtml}</h3>)
   }
   
+  import net.liftweb.http.js.JE.Call
+  
+  override def calcAjaxOnDone = 
+    Call("prependNewVersionRow", 
+      versioning.currentVersion.is,
+      versioning.versions.is.filter(_._2 == true).map(_._1).mkString(", ")).cmd
+  
   def finish(){
-    println(">>>>>>>>>>> ADDING Version")
-    println(versioning.versions.is.foreach(println))
+    // add version to the database
   }
 }

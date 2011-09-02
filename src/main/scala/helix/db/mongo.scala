@@ -19,7 +19,8 @@ trait MongoRepositories extends Repositories {
     
     /** global lists **/
     def listScalaVersions = ScalaVersionDAO.find(MongoDBObject()
-      ).sort(orderBy = MongoDBObject("major" -> -1)).toList
+      ).sort(orderBy = MongoDBObject(
+        "major" -> -1, "minor" -> -1, "micro" -> -1, "mode" -> 1)).toList
     
     // def listAllTags: List[Tag]
     

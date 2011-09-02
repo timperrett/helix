@@ -9,6 +9,16 @@
           $('#newVersionModal').modal({ closeClass: 'close' });
         });
       });
+      function prependNewVersionRow(version, compatibiltiy){
+        $('#versions').prepend('<tr>'+
+          '<td>'+version+'</td>'+
+          '<td>'+compatibiltiy+'</td>'+
+        '</tr>');
+        // close the modal dialog programaticlaly. 
+        // this is hacky as fuck tho.
+        $('#newVersionModal').hide();
+        $('#simplemodal-overlay').hide();
+      }
     //]]>
     </script>
   </head_merge>
@@ -36,7 +46,7 @@
             <th>Version</th>
             <th>Scala Version</th>
           </thead>
-          <tbody>
+          <tbody id="versions">
             <tr>
               <td>0.8-SNAPSHOT</td>
               <td>2.9.0-1, 2.9.0</td>
