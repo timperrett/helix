@@ -48,7 +48,9 @@ class Boot extends LazyLoggable {
       Menu("Error") / "error",
       Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
-      Menu("Projects: Add") / "project" / "add",
+      Menu("Projects: Add") / "project" / "add" >> Unless(
+        () => !Github.isAuthenticated, 
+        () => RedirectResponse("/oauth/login?return_to=%2Fproject%2Fadd")),
       Menu(ProjectInformation)
     ))
   }
