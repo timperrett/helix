@@ -11,6 +11,7 @@ trait Repositories {
     // def listScalaVersionsForProject(projectId: Int): List[ScalaVersion]
     
     /** global lists **/
+    def listProjectsAlphabetically(limit: Int, offset: Int): List[Project]
     def listFiveNewestProjects: List[Project]
     def listScalaVersions: List[ScalaVersion]
     // def listAllTags: List[Tag]
@@ -33,6 +34,9 @@ trait HelixService { _: Repositories =>
     
   def listScalaVersions: List[ScalaVersion] = 
     repository.listScalaVersions
+  
+  def listProjectsAlphabetically(limit: Int = 10, offset: Int = 0): List[Project] = 
+    repository.listProjectsAlphabetically(limit,offset)
   
   def listFiveNewestProjects: List[Project] = 
     repository.listFiveNewestProjects

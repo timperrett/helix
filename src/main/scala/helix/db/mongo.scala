@@ -12,6 +12,10 @@ trait MongoRepositories extends Repositories {
   import com.mongodb.casbah.MongoURI
   
   class MongoRepository extends HelixRepository {
+    def listProjectsAlphabetically(limit: Int, offset: Int): List[Project] = 
+      ProjectDAO.find(MongoDBObject()).limit(limit)
+        .sort(orderBy = MongoDBObject("name" -> 1)).toList
+    
     /** lists for projects **/
     def listFiveNewestProjects: List[Project] = 
       ProjectDAO.find(MongoDBObject()
@@ -37,6 +41,9 @@ trait MongoRepositories extends Repositories {
     
     def createScalaVersion(version: ScalaVersion) = 
       !ScalaVersionDAO.insert(version).isEmpty
+    
+    // def createProjectVersion(project: Project) = 
+      // ProjectDAO.update()
     
     /** internals **/
     private lazy val mongo: MongoDB = {
