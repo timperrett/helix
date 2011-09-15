@@ -31,14 +31,7 @@ object ListAllProjects extends Snippet with ProjectLists {
  * Ask the statistics actor for the latest figures
  * about system and project counts
  */
-import akka.actor.ActorRef
-import akka.dispatch.Future
-import helix.actor.SystemStatistics
-
-class ProjectStatistics(actor: ActorRef) extends Snippet {
-  import SystemStatistics._ 
-  
-  def render = "count" #> (for {
-    r <- actor !! GetProjectCount
-  } yield r.toString).getOrElse(" a bunch ")
+object ProjectStatistics extends Snippet {
+  import helix.async.TotalProjectCount
+  def render = "count" #> TotalProjectCount.get
 }

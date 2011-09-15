@@ -28,8 +28,8 @@ class Boot extends LazyLoggable {
      * Akka setup and teardown
      */
     import akka.actor.Actor.actorOf
-    val statistics = actorOf[helix.actor.SystemStatistics]
-    statistics.start()
+    val dailyRunner = actorOf[helix.async.DaliyRunner]
+    dailyRunner.start()
     
     LiftRules.unloadHooks.append(() => 
       akka.actor.Actor.registry.shutdownAll)
@@ -50,7 +50,7 @@ class Boot extends LazyLoggable {
       case "all_projects" => helix.snippet.ListAllProjects
       case "contributor_info" => helix.snippet.CurrentContributorInfo
       case "login_link" => helix.snippet.LoginLink
-      case "statistics" => new helix.snippet.ProjectStatistics(statistics)
+      case "statistics" => helix.snippet.ProjectStatistics
     }
     
     /**

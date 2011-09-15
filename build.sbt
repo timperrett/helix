@@ -10,6 +10,8 @@ scalacOptions += "-deprecation"
 
 libraryDependencies ++= Seq(
   "se.scalablesolutions.akka" % "akka-actor" % "1.1.3",
+  "se.scalablesolutions.akka" % "akka-stm" % "1.1.3",
+  "org.multiverse" % "multiverse-alpha" % "0.6.2",
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile",
   "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT",
   "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",

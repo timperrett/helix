@@ -6,13 +6,19 @@ h3. Quick Wins
 none
 
 h3. Stage One
-* Implement the tagging system
 * Implement searching for projects... Solr???
 * Implement the details page:
   * If the project is "not ready" display a friendly message 
   * If the project does not exist ask the user to add it
 * Implement the list of all projects
 * Implement the list of all tags
+
+https://api.github.com/repos/djspiewak/42omega
+created_at
+
+https://api.github.com/repos/djspiewak/42omega/commits/5ddbd17e3028ba0c2d9cd015343fbcac505e49b7
+size of array
+tail sha
 
 h3. Stage Two
 * Implement asynchronous project setup. Add an isReady flag to the Project definition and then make the calls to the github API asynchronous (number of followers, number of forks, number of contributions, list of contributors).
