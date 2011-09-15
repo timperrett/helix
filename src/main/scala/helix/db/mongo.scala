@@ -29,11 +29,11 @@ trait MongoRepositories extends Repositories {
     // def listAllTags: List[Tag]
     
     /** finders **/
-    // def findContributorByLogin(login: String): Option[Contributor] //= 
-      // ContributorDAO.findOne(MongoDBObject("login" -> login))
-      
     def findProjectByGroupAndArtifact(group: String, artifact: String): Option[Project] = 
       ProjectDAO.findOne(MongoDBObject("groupId" -> group, "artifactId" -> artifact))
+    
+    def findAllProjectCount = 
+      ProjectDAO.count()
     
     /** creators **/
     def createProject(project: Project): Boolean = 

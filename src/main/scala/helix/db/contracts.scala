@@ -18,6 +18,7 @@ trait Repositories {
     
     /** finders **/
     def findProjectByGroupAndArtifact(group: String, artifact: String): Option[Project]
+    def findAllProjectCount: Long
     
     /** creator **/
     def createProject(project: Project): Boolean
@@ -43,6 +44,9 @@ trait HelixService { _: Repositories =>
   
   def findProjectByGroupAndArtifact(group: String, artifact: String) = 
     repository.findProjectByGroupAndArtifact(group,artifact)
+  
+  def findAllProjectCount: Long = 
+    repository.findAllProjectCount
   
   // def listTagsForProject(id: Int): List[Tag] = 
   //   repository.listTagsForProject(id)

@@ -22,10 +22,3 @@ case class ScalaVersion(major: Int, minor: Int, micro: String, mode: ReleaseType
     case Snapshot => "-SNAPSHOT"
   })
 }
-
-// object ScalaVersions {
-//   def all = 
-//     ScalaVersion(2,8,"1",Final) :: 
-//     ScalaVersion(2,9,"0-1",Final) :: 
-//     ScalaVersion(2,9,"1",RC(1))
-// }

@@ -20,6 +20,25 @@ object RecentlyAddedProject extends Snippet with ProjectLists {
   def render = bind(listFiveNewestProjects)
 }
 
+/**
+ * List all projects in the system (paginated)
+ */
 object ListAllProjects extends Snippet with ProjectLists {
   def render = bind(listProjectsAlphabetically())
+}
+
+/**
+ * Ask the statistics actor for the latest figures
+ * about system and project counts
+ */
+import akka.actor.ActorRef
+import akka.dispatch.Future
+import helix.actor.SystemStatistics
+
+class ProjectStatistics(actor: ActorRef) extends Snippet {
+  import SystemStatistics._ 
+  
+  def render = "count" #> (for {
+    r <- actor !! GetProjectCount
+  } yield r.toString).getOrElse(" a bunch ")
 }

@@ -1,25 +1,40 @@
 <lift:surround with="default" at="content">
   
+  <head_merge>
+    <script type="text/javascript">
+    //<![CDATA[
+    $(function(){
+      $('.activity').hover(function(){
+        var p = $(this).position();
+        $('.popover')
+          .css('top', (p.top - 48) + 'px')
+          .css('left', (p.left - 300) + 'px')
+          .css('display', 'block');
+      }, function(){
+        if('.popover:visible') $('.popover').hide();
+      });
+    })
+    //]]>
+    </script>
+  </head_merge>
+  
   <div class="row">
     <div class="span15 columns box">
       <h2>Projects</h2>
-      <ul class="items">
+      <ul class="items" lift="all_projects">
         <li class="prj">
           <span class="avatar-frame">
-            <img src="http://0.gravatar.com/avatar/63bc2441352e761a0eff115fb713a904?s=69&d=monsterid" />
+            <img alt="avatar" src="http://0.gravatar.com/avatar/63bc2441352e761a0eff115fb713a904?s=69&d=monsterid" />
             <span class="overlay"></span>
           </span>
           <h3><a href="project">lift-webkit</a></h3>
           <div class="activity">
-            <img src="/images/activity-3.png" alt="" />
-            High
+            <img alt="activity" src="/images/activity-3.png" />
+            <span class="activity-text">High</span>
           </div>
           <p>Lift is a sophisticated web  sdfsdf sdfs dfsd fsd fsdframework for building rich, vibrant applications</p>
           <ul class="tags">
             <li><a href="index.html#">geolocation</a></li>
-            <li><a href="index.html#">web</a></li>
-            <li><a href="index.html#">http</a></li>
-            <li><a href="index.html#">sbt</a></li>
           </ul>
         </li>
       </ul>
@@ -42,11 +57,10 @@
     </div>
   </div>
   
-  <!--  -->
-  <div class="popover left" style="display: block; position: absolute; top: 155px; left: 560px">
+  <div class="popover left">
     <div class="arrow"></div>
     <div class="inner">
-      <h3 class="title">Relatively Busy</h3>
+      <h3 class="title">High Activity</h3>
       <div class="content">
         <p>Looks like this project is <strong>relatively busy</strong>: you should be able to expect fair support from its community of active users.</p>
       </div>

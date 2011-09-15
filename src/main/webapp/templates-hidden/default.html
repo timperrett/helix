@@ -15,7 +15,9 @@
         <a class="logo" href="/">
           <img src="/images/logo.png" />
           <h1>Helix</h1>
-          <span class="slogan">Search over ZZZ Scala libraries</span>
+          <span class="slogan" lift="statistics">
+            Search over <count></count> Scala libraries
+          </span>
         </a>
       </div><!-- eo.span5 columns -->
       <div class="span11 columns header">
@@ -23,8 +25,8 @@
           <!-- <lift:test_cond.loggedin> -->
             <a href="/project/add">add library</a> &middot;
           <!-- </lift:test_cond.loggedin>  -->
-          <a href="/projects">all libraries</a> &middot;
-          <a href="/tags">all tags</a> 
+          <a href="/projects">all projects</a>
+          <!-- <a href="/tags">all tags</a>  -->
         </span>
         
         <lift:test_cond.loggedout>

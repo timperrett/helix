@@ -7,6 +7,7 @@ import net.liftweb.http._
 import net.liftweb.sitemap._
 import helix.github.{Client => Github}
 import helix.db.Storage
+import akka.actor.Actor.actorOf
 
 class Boot extends LazyLoggable {
   def boot {
@@ -23,6 +24,16 @@ class Boot extends LazyLoggable {
       case (req,failure) => NotFoundAsTemplate(ParsePath(List("404"),"html",false,false))
     })
     
+    /** 
+     * Akka setup and teardown
+     */
+    import akka.actor.Actor.actorOf
+    val statistics = actorOf[helix.actor.SystemStatistics]
+    statistics.start()
+    
+    LiftRules.unloadHooks.append(() => 
+      akka.actor.Actor.registry.shutdownAll)
+    
     // LiftRules.exceptionHandler.append {
     //   case (_, r, e) => 
     //     logger.error("Exception being returned to browser when processing " + r.uri.toString + ": " + e.getMessage)
@@ -36,10 +47,15 @@ class Boot extends LazyLoggable {
       case "project_wizard" => helix.snippet.ProjectWizard
       case "version_wizard" => helix.snippet.VersionWizard
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
+      case "all_projects" => helix.snippet.ListAllProjects
       case "contributor_info" => helix.snippet.CurrentContributorInfo
       case "login_link" => helix.snippet.LoginLink
+      case "statistics" => new helix.snippet.ProjectStatistics(statistics)
     }
     
+    /**
+     * Sitemap setup
+     */
     import net.liftweb.sitemap.Loc.{Unless,If}
     import helix.sitemap.ProjectInformation
     

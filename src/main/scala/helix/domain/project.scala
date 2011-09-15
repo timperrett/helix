@@ -6,24 +6,31 @@ import com.novus.salat.annotations.Key
 import com.mongodb.casbah.Imports._
 import net.liftweb.util.Helpers
 
+trait Activity
+case object Obsolete extends Activity
+case object Quiet extends Activity
+case object Moderate extends Activity
+case object Fair extends Activity
+case object Busy extends Activity
+case object Hectic extends Activity
+
 case class Project(
   @Key("_id") id: ObjectId = new ObjectId, 
   name: String, 
   headline: Option[String] = None,
   description: Option[String] = None,
-  // permalink: Option[String] = None,
   groupId: Option[String] = None,
   artifactId: Option[String] = None,
-  //version: String = "0.1-SNAPSHOT",
   versions: Map[String, List[ScalaVersion]] = Map.empty,
   usagePhase: Option[String] = None,
-  repositoryURL: Option[String] = None,
-  sourceURL: Option[String] = None,
+  repositoryURL: Option[String] = None, // maven repo
+  sourceURL: Option[String] = None, // github repo
   // addedBy represents the adder's github login
   addedBy: Option[String] = None,
   addedAt: java.util.Date = Helpers.now,
   contributors: List[Contributor] = Nil,
-  tags: List[Tag] = Nil
+  tags: List[Tag] = Nil,
+  activity: Option[Activity] = None
 ){
   import helix.util.Random.randomSelect
   def randomContributor: Option[Contributor] = 

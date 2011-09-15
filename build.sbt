@@ -8,15 +8,14 @@ scalaVersion := "2.9.0-1"
 
 scalacOptions += "-deprecation"
 
-// "org.scalaquery" %% "scalaquery" % "0.9.5" % "compile",
-// "mysql" % "mysql-connector-java" % "5.1.12" % "compile",
 libraryDependencies ++= Seq(
+  "se.scalablesolutions.akka" % "akka-actor" % "1.1.3",
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile",
   "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT",
   "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT",
+  "net.liftweb" %% "lift-textile" % "2.4-M2" % "compile",
   "net.liftweb" %% "lift-webkit" % "2.4-M2" % "compile",
   "net.liftweb" %% "lift-wizard" % "2.4-M2" % "compile",
-  "net.liftweb" %% "lift-textile" % "2.4-M2" % "compile",
   "net.databinder" %% "dispatch-http" % "0.8.5",
   "net.databinder" %% "dispatch-json" % "0.8.5",
   "net.databinder" %% "dispatch-lift-json" % "0.8.5",
@@ -26,7 +25,8 @@ libraryDependencies ++= Seq(
 
 resolvers ++= Seq(
   Resolver.file(".m2", file(Path.userHome+"/.m2/repository")),
-  Resolver.url("salat", url("http://repo.novus.com/snapshots/"))
+  Resolver.url("salat", url("http://repo.novus.com/snapshots/")),
+  Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/releases/"))
 )
 
 seq(deploymentSettings :_*)
