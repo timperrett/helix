@@ -13,7 +13,7 @@ trait Dispatcher extends LiftRules.DispatchPF {
 
 object OAuth extends Dispatcher {
   import net.liftweb.util.Props
-  import helix.db.Storage._
+  import helix.domain.Service._
   import Client._ 
   
   private val clientId = Props.get("github.clientid").openOr("unknown")

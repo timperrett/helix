@@ -21,6 +21,8 @@ trait MongoRepositories extends Repositories {
       ProjectDAO.find(MongoDBObject()
         ).limit(5).sort(orderBy = MongoDBObject("_id" -> -1)).toList
     
+    def listFiveMostActiveProjects: List[Project] = Nil
+    
     /** global lists **/
     def listScalaVersions = ScalaVersionDAO.find(MongoDBObject()
       ).sort(orderBy = MongoDBObject(

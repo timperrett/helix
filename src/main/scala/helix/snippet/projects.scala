@@ -3,7 +3,7 @@ package helix.snippet
 import scala.xml.NodeSeq
 import net.liftweb.util.Helpers._
 import net.liftweb.http.{S,SHtml,DispatchSnippet}
-import helix.db.Storage._
+import helix.domain.Service._
 import helix.util.DomainBindings._
 import helix.domain.Project
 

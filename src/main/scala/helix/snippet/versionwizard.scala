@@ -6,7 +6,7 @@ import net.liftweb._,
   util.Helpers._,
   http.{SHtml,S},
   wizard.Wizard
-import helix.db.Storage._
+import helix.domain.Service._
 import helix.domain._
 
 object VersionWizard extends Wizard with CommonScreens {

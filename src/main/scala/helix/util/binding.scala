@@ -23,15 +23,14 @@ object DomainBindings {
     def apply(project: Project) = (for {
       group <- project.groupId
       artifact <- project.artifactId
-      activity = project.activity.map(_.toString).getOrElse("Unknown")
     } yield 
       "name" #> project.name &
       "headline" #> project.headline &
       "description" #> project.description.map(TextileParser.toHtml(_)).getOrElse(DefaultDescription) &
       "href=project [href]" #> "/projects/%s/%s".format(group, artifact) &
       "alt=avatar [src]" #> project.randomContributor.map(_.picture).getOrElse(DefaultAvatar) &
-      "alt=activity [src]" #> "/images/activity-%s.png".format(activity.toLowerCase) &
-      ".activity-text" #> activity &
+      "alt=activity [src]" #> "/images/activity-%s.png".format(project.activity.toString.toLowerCase) &
+      ".activity-text" #> project.activity.toString &
       ".tags *" #> project.tags.map { tag => 
         "a [href]" #> "/tags/%s".format(tag.name) &
         "a *" #> tag.name

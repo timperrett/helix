@@ -3,15 +3,16 @@ h2. TODO
 Current list of shit that needs doing.
 
 h3. Quick Wins
-none
-
-h3. Stage One
-* Implement searching for projects... Solr???
+* Implement proper rendering of project versions within the details Loc
 * Implement the details page:
   * If the project is "not ready" display a friendly message 
-  * If the project does not exist ask the user to add it
+
+h3. Stage One
+* Implement project activity rating
 * Implement the list of all projects
+  * only pagination remains
 * Implement the list of all tags
+* Implement searching for projects... Solr???
 
 https://api.github.com/repos/djspiewak/42omega
 created_at

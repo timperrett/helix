@@ -6,7 +6,7 @@ import net.liftweb.util.{NamedPF,Props}
 import net.liftweb.http._
 import net.liftweb.sitemap._
 import helix.github.{Client => Github}
-import helix.db.Storage
+import helix.domain.Service
 import akka.actor.Actor.actorOf
 
 class Boot extends LazyLoggable {
@@ -31,8 +31,10 @@ class Boot extends LazyLoggable {
     val dailyRunner = actorOf[helix.async.DaliyRunner]
     dailyRunner.start()
     
-    LiftRules.unloadHooks.append(() => 
-      akka.actor.Actor.registry.shutdownAll)
+    LiftRules.unloadHooks.append(() => {
+      helix.async.TotalProjectCount.close()
+      akka.actor.Actor.registry.shutdownAll
+    })
     
     // LiftRules.exceptionHandler.append {
     //   case (_, r, e) => 
@@ -77,11 +79,11 @@ import javax.servlet.http._
 import net.liftweb.http.LiftFilter 
 
 class CloudBeesLiftFilter extends LiftFilter { 
-  private def run_mode_set_? = (null != System.getProperty("run.mode"))
-  private def run_mode_from(config: FilterConfig) = Option(config.getServletContext.getInitParameter("run.mode"))
+  private def hasRunMode = (null != System.getProperty("run.mode"))
+  private def runModeFrom(config: FilterConfig) = Option(config.getServletContext.getInitParameter("run.mode"))
   override def init(config: FilterConfig) { 
-    if (!run_mode_set_?) {
-      val mode = run_mode_from(config) getOrElse "development"
+    if (!hasRunMode) {
+      val mode = runModeFrom(config) getOrElse "development"
       System.setProperty("run.mode", mode)
     }
     super.init(config) 

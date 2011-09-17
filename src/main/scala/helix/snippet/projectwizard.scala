@@ -6,7 +6,7 @@ import net.liftweb._,
   util.Helpers._,
   http.{SHtml,S},
   wizard.Wizard
-import helix.db.Storage._
+import helix.domain.Service._
 import helix.domain._
 
 object ProjectWizard extends Wizard with CommonScreens {
@@ -77,6 +77,11 @@ object ProjectWizard extends Wizard with CommonScreens {
     val contributors = Github.contributorsFor(
       general.sourceURL.is.substring(19))
     
+    val vs: Map[String, String] = Map(
+      hexEncode(versioning.currentVersion.is.getBytes) -> 
+      versioning.versions.get.filter(_._2 == true).map(_._1.asVersion).toList.reverse.mkString(", ")
+    )
+    
     val proj = Project(
         name = general.name.is, 
         headline = Some(general.headline.is), 
@@ -85,8 +90,7 @@ object ProjectWizard extends Wizard with CommonScreens {
         groupId = Some(publishing.groupId.is), 
         artifactId = Some(publishing.artifactId.is), 
         repositoryURL = Some(publishing.repositoryURL.is),
-        versions = Map(hexEncode(versioning.currentVersion.is.getBytes) -> 
-          versioning.versions.get.filter(_._2 == true).map(_._1).toList),
+        versions = vs,
         tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
         // internal features
         addedBy = CurrentContributor.is.map(_.login).toOption,

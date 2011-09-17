@@ -18,7 +18,7 @@ object Client {
   import net.liftweb.json.JsonAST._
   
   def get[T](path: String, params: Map[String,String] = 
-      Map("access_token" -> AccessToken.is.openOr("unknown")))(f: JValue => T) = {
+      AccessToken.is.map(t => Map("access_token" -> t)).openOr(Map.empty))(f: JValue => T) = {
     val http = new Http
     val req = url("https://api.github.com" + path) <<? params
     var resp = http(req ># f)

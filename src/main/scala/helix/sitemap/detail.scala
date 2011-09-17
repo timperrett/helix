@@ -1,9 +1,9 @@
 package helix.sitemap
 
-import helix.domain.Project
+import helix.domain.{Project,ScalaVersion}
 
 case class ProjectDetail(groupId: String, artifactId: String){
-  import helix.db.Storage._
+  import helix.domain.Service._
   lazy val project: Option[Project] = 
     findProjectByGroupAndArtifact(groupId, artifactId)
 }
@@ -46,6 +46,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
   override val snippets: SnippetTest = {
     case ("information", Full(pd)) => information(pd)
     case ("contributors", Full(pd)) => contributors(pd.project)
+    case ("versions", Full(pd)) => versions(pd.project.map(_.versionsDecoded).getOrElse(Map.empty))
   }
   
   def contributors(project: Option[Project]): NodeSeq => NodeSeq = 
@@ -56,7 +57,13 @@ object ProjectInformation extends Loc[ProjectDetail]{
         "img [src]" #> c.avatar
       }
     } getOrElse "*" #> NodeSeq.Empty
-
+  
+  def versions(versions: Map[String, String]) = {
+    "tr" #> versions.map { case (version, scalaversion) =>
+      "version" #> version &
+      "scalaversion" #> scalaversion
+    }
+  }
   
   def information(details: ProjectDetail) = 
     (for(project <- details.project)

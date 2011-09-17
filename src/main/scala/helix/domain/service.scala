@@ -1,9 +1,9 @@
-package helix.db
+package helix.domain
 
 import net.liftweb.util.{Props,Helpers}
 import java.sql.Timestamp
-import helix.domain._
+import helix.db.{MongoRepositories}
 
-object Storage extends MongoRepositories with HelixService {
+object Service extends HelixService with MongoRepositories {
   protected val repository = new MongoRepository
 }

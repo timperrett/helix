@@ -4,7 +4,7 @@ import scala.xml.{NodeSeq,Text}
 import net.liftweb._, common.{Box,Empty,Full}, 
   util.CssSel, util.Helpers._, 
   http.{SHtml,S,DispatchSnippet}, wizard.Wizard
-import helix.db.Storage._
+import helix.domain.Service._
 import helix.domain._
 
 trait Snippet extends DispatchSnippet {
@@ -42,7 +42,7 @@ trait CommonScreens { _: Wizard =>
               <li><label>{
                 SHtml.checkbox(false, bool => 
                   versions.is += v -> bool) ++ 
-                <span>{" " + v.toString}</span>
+                <span>{" " + v.asVersion}</span>
               }</label></li>
             }
           }</ul>
