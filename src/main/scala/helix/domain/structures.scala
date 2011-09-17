@@ -7,16 +7,16 @@ import com.mongodb.casbah.Imports._
 import net.liftweb.util.Helpers
 
 // @Salat
-sealed class Activity(val scoreRange: Range = Range.inclusive(0,0))
+sealed class Activity(val judge: Int => Boolean = _ == 0)
 object UnknownActivity extends Activity {
   override def toString = "Unknown"
 }
-object Obsolete extends Activity(Range.inclusive(1,5))
-object Quiet extends Activity(Range.inclusive(6,20))
-object Moderate extends Activity(Range.inclusive(21,40))
-object Fair extends Activity(Range.inclusive(41,60))
-object Busy extends Activity(Range.inclusive(61,80))
-object Hectic extends Activity(Range.inclusive(81,100))
+object Obsolete extends Activity(_ <= 5)
+object Quiet extends Activity(s => s > 5 && s <= 20)
+object Moderate extends Activity(s => s > 20 && s <= 40)
+object Fair extends Activity(s => s > 40 && s <= 60)
+object Busy extends Activity(s => s > 60 && s <= 80)
+object Hectic extends Activity(s => s > 80)
 
 case class Project(
   @Key("_id") id: ObjectId = new ObjectId, 
@@ -40,11 +40,15 @@ case class Project(
   import helix.util.Random.randomSelect
   def randomContributor: Option[Contributor] = 
     randomSelect(1, contributors).headOption
+  
   def versionsDecoded = 
     versions.map(x => new String(Helpers.hexDecode(x._1)) -> x._2)
+  
   def activity: Activity = 
     List(Obsolete, Quiet, Moderate, Fair, Busy, Hectic
-      ).find(_.scoreRange.contains(activityScore)).getOrElse(UnknownActivity)
+      ).find(_.judge(activityScore)).getOrElse(UnknownActivity)
+  
+  val usernameAndRepository = sourceURL.map(_.substring(19))
 }
 
 case class Contributor(

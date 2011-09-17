@@ -1,6 +1,7 @@
 package helix.db
 
 import helix.domain._
+import helix.lib.Repositories
 
 trait MongoRepositories extends Repositories {
   import net.liftweb.common.Full

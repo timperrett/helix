@@ -1,9 +1,9 @@
-package helix.db
+package helix.lib
 
 import helix.domain._
 
 trait Repositories {
-  protected val repository: HelixRepository
+  protected def repository: HelixRepository
   
   trait HelixRepository {
     /** global lists **/
@@ -23,3 +23,10 @@ trait Repositories {
   }
 }
 
+trait Scoring {
+  protected def scoring: ScoringStrategy
+  
+  trait ScoringStrategy {
+    def calculateProjectActivityScore(project: Project): Int
+  }
+}
