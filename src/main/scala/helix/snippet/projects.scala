@@ -24,7 +24,12 @@ object RecentlyAddedProject extends Snippet with ProjectLists {
  * List all projects in the system (paginated)
  */
 object ListAllProjects extends Snippet with ProjectLists {
-  def render = bind(listProjectsAlphabetically())
+  // needs () because of default params
+  def render = bind(listProjectsAlphabetically()) 
+}
+
+object ListMostActiveProjects extends Snippet with ProjectLists {
+  def render = bind(listFiveMostActiveProjects)
 }
 
 /**

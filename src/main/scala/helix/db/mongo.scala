@@ -22,7 +22,9 @@ trait MongoRepositories extends Repositories {
       ProjectDAO.find(MongoDBObject()
         ).limit(5).sort(orderBy = MongoDBObject("_id" -> -1)).toList
     
-    def listFiveMostActiveProjects: List[Project] = Nil
+    def listFiveMostActiveProjects: List[Project] = 
+      ProjectDAO.find(MongoDBObject()
+        ).limit(5).sort(orderBy = MongoDBObject("activityScore" -> -1)).toList
     
     /** global lists **/
     def listScalaVersions = ScalaVersionDAO.find(MongoDBObject()
@@ -44,6 +46,14 @@ trait MongoRepositories extends Repositories {
     
     def createScalaVersion(version: ScalaVersion) = 
       !ScalaVersionDAO.insert(version).isEmpty
+    
+    /** updaters **/
+    // this is less than ideal, but there appears to be some 
+    // nightmarish overloading issue and implicits within salat
+    def updateProject(id: String, project: Project): Unit = 
+      ProjectDAO.update(
+        MongoDBObject("_id" -> id), project, false, false,
+        new WriteConcern)
     
     // def createProjectVersion(project: Project) = 
       // ProjectDAO.update()

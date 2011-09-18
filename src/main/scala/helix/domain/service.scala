@@ -39,4 +39,7 @@ trait HelixService { _: Repositories with Scoring =>
   
   def findAllProjectCount: Long = 
     repository.findAllProjectCount
+  
+  def updateProject(id: String, project: Project): Unit = 
+    repository.updateProject(id, project)
 }

@@ -20,6 +20,10 @@ trait Repositories {
     /** creator **/
     def createProject(project: Project): Boolean
     def createScalaVersion(version: ScalaVersion): Boolean
+    
+    /** updaters **/
+    def updateProject(id: String, project: Project): Unit
+    
   }
 }
 

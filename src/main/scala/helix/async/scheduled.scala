@@ -27,10 +27,32 @@ class DaliyRunner extends Actor {
       TotalProjectCount send findAllProjectCount
       Scheduler.scheduleOnce(self, UpdateProjectCount, 24, HOURS)
     
-    case UpdateMostPopular => 
+    case UpdateMostPopular => {}
+    
+    // this really needs fixing as its simply not tenable 
+    // to update all project activites in one go, not when
+    // there will likley be thousands of libs
+    case UpdateProjectActivity => 
+      println(">>>>>>>>>>>>>>>>> UpdateProjectActivity")
+      listProjectsAlphabetically(limit = 50).foreach { project => 
+        println("ObjectID: " + project.id.toString)
+        try {
+          val score = calculateProjectActivityScore(project).toInt
+          val newpro = project.copy(activityScore = score)
+          println("New Proj: " + newpro)
+          updateProject(
+            project.id.toString,
+            newpro)
+        } catch {
+          case err => println("~~~~~~~~ ERROR: " + err) // log that error!
+        }
+      }
   }
   
   override def preStart {
-    List(UpdateProjectCount,UpdateMostPopular).foreach(self ! _)
+    List(
+      UpdateProjectCount,
+      UpdateMostPopular,
+      UpdateProjectActivity).foreach(self ! _)
   }
 }

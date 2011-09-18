@@ -50,6 +50,7 @@ class Boot extends LazyLoggable {
       case "version_wizard" => helix.snippet.VersionWizard
       case "recently_added_projects" => helix.snippet.RecentlyAddedProject
       case "all_projects" => helix.snippet.ListAllProjects
+      case "most_active_projects" => helix.snippet.ListMostActiveProjects
       case "contributor_info" => helix.snippet.CurrentContributorInfo
       case "login_link" => helix.snippet.LoginLink
       case "statistics" => helix.snippet.ProjectStatistics
