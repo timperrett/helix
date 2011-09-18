@@ -41,7 +41,7 @@ class DaliyRunner extends Actor {
           val newpro = project.copy(activityScore = score)
           println("New Proj: " + newpro)
           updateProject(
-            project.id.toString,
+            project.id,
             newpro)
         } catch {
           case err => println("~~~~~~~~ ERROR: " + err) // log that error!

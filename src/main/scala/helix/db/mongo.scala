@@ -50,7 +50,7 @@ trait MongoRepositories extends Repositories {
     /** updaters **/
     // this is less than ideal, but there appears to be some 
     // nightmarish overloading issue and implicits within salat
-    def updateProject(id: String, project: Project): Unit = 
+    def updateProject[T](id: T, project: Project): Unit = 
       ProjectDAO.update(
         MongoDBObject("_id" -> id), project, false, false,
         new WriteConcern)

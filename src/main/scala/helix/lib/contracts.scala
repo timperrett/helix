@@ -22,7 +22,7 @@ trait Repositories {
     def createScalaVersion(version: ScalaVersion): Boolean
     
     /** updaters **/
-    def updateProject(id: String, project: Project): Unit
+    def updateProject[T](id: T, project: Project): Unit
     
   }
 }
