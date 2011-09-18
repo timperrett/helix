@@ -55,7 +55,12 @@ object Client {
       )
     }
   
-  case class Repo(watchers: BigInt, forks: BigInt, pushedAt: Option[DateTime] = None)
+  case class Repo(
+    watchers: BigInt, 
+    forks: BigInt, 
+    createdAt: Option[DateTime] = None,
+    pushedAt: Option[DateTime] = None
+  )
   
   def repositoryInformation(on: String): Option[Repo] = 
     Client.get("/repos/%s".format(on)){ json => 
@@ -64,7 +69,13 @@ object Client {
         JField("watchers", JInt(watchers)) <- info
         JField("forks", JInt(forks)) <- info
         JField("pushed_at", JString(pushedAt)) <- info
-      } yield Repo(watchers, forks, parseGithubDate(pushedAt))).headOption
+        JField("created_at", JString(createdAt)) <- info
+      } yield Repo(
+        watchers, 
+        forks, 
+        parseGithubDate(createdAt),
+        parseGithubDate(pushedAt)
+      )).headOption
     }
   
   private def parseGithubDate(string: String): Option[DateTime] = 

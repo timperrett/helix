@@ -74,15 +74,13 @@ object ProjectWizard extends Wizard with CommonScreens {
   
   def finish(){
     // fetch the contributors from github
-    val contributors = Github.contributorsFor(
-      general.sourceURL.is.substring(19))
-    
     val vs: Map[String, String] = Map(
       hexEncode(versioning.currentVersion.is.getBytes) -> 
       versioning.versions.get.filter(_._2 == true).map(_._1.asVersion).toList.reverse.mkString(", ")
     )
     
-    val proj = Project(
+    val proj = for {
+      p <- Some(Project(
         name = general.name.is, 
         headline = Some(general.headline.is), 
         description = Some(general.description.is), 
@@ -92,12 +90,18 @@ object ProjectWizard extends Wizard with CommonScreens {
         repositoryURL = Some(publishing.repositoryURL.is),
         versions = vs,
         tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
-        // internal features
-        addedBy = CurrentContributor.is.map(_.login).toOption,
-        contributors = contributors)
+        addedBy = CurrentContributor.is.map(_.login).toOption))
+      unr <- p.usernameAndRepository
+      repo <- Github.repositoryInformation(unr)
+      created <- repo.createdAt
+      contributors = Github.contributorsFor(unr)
+    } yield p.copy(
+      contributors = contributors,
+      createdAt = created.toDate
+    )
     
     // add to the db
-    if(createProject(proj)) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
+    if(createProject(proj.get)) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
     else S.error("Unable to add project. Please try again.")
   }
 }

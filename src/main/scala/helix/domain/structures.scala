@@ -54,6 +54,7 @@ case class Project(
   // addedBy represents the adder's github login
   addedBy: Option[String] = None,
   addedAt: java.util.Date = Helpers.now,
+  createdAt: java.util.Date = Helpers.now,
   contributors: List[Contributor] = Nil,
   tags: List[Tag] = Nil,
   activityScore: Int = 0,

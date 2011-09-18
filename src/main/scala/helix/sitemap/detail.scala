@@ -46,6 +46,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
   override val snippets: SnippetTest = {
     case ("information", Full(pd)) => information(pd)
     case ("contributors", Full(pd)) => contributors(pd.project)
+    case ("overview", Full(pd)) => overview(pd.project)
     case ("versions", Full(pd)) => versions(pd.project.map(_.versionsDecoded).getOrElse(Map.empty))
   }
   
@@ -63,6 +64,23 @@ object ProjectInformation extends Loc[ProjectDetail]{
       "version" #> version &
       "scalaversion" #> scalaversion
     }
+  }
+  
+  def overview(project: Option[Project]): NodeSeq => NodeSeq = {
+    import org.joda.time.{Duration,DateTime}
+    import org.joda.time.format.PeriodFormatterBuilder
+    
+    val periodFormatter = new PeriodFormatterBuilder()
+        .appendDays.appendSuffix(" day", " days")
+        .toFormatter
+    
+    project.map { p => 
+      "latest_version" #> p.versionsDecoded.head._1 & 
+      "age" #> periodFormatter.print(new Duration(
+        new DateTime(p.createdAt), 
+        new DateTime(now)).toPeriod().normalizedStandard) &
+      "contributor_count" #> p.contributors.size
+    } getOrElse "*" #> NodeSeq.Empty
   }
   
   def information(details: ProjectDetail) = 
