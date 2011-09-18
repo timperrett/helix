@@ -16,6 +16,7 @@ object Client {
   import dispatch.json.Js._
   import dispatch.liftjson.Js._
   import net.liftweb.json.JsonAST._
+  import org.joda.time.DateTime
   
   def get[T](path: String, params: Map[String,String] = 
       AccessToken.is.map(t => Map("access_token" -> t)).openOr(Map.empty))(f: JValue => T) = {
@@ -54,6 +55,28 @@ object Client {
       )
     }
   
+  case class Repo(watchers: BigInt, forks: BigInt, pushedAt: Option[DateTime] = None)
+  case class Commits(count: BigInt)
+  
+  def repositoryInformation(on: String): Option[Repo] = 
+    Client.get("/repos/%s".format(on)){ json => 
+      (for {
+        JObject(info) <- json
+        JField("watchers", JInt(watchers)) <- info
+        JField("forks", JInt(forks)) <- info
+        JField("pushed_at", JString(pushedAt)) <- info
+      } yield Repo(watchers, forks, parseGithubDate(pushedAt))).headOption
+    }
+  
+  private def parseGithubDate(string: String): Option[DateTime] = 
+    try {
+      import org.joda.time.format.ISODateTimeFormat
+      Some(ISODateTimeFormat.dateTimeNoMillis.parseDateTime(string))
+    } catch {
+      case e => None
+    }
+  
+  // def commitHistoryFor(sinceSha: Option[String] = None)
   
   // FIXME: This is FUGLY. 
   def requestAccessToken(clientId: String, clientSecret: String, code: String): Box[String] = {

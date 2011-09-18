@@ -13,6 +13,9 @@ object Service extends HelixService with MongoRepositories with GithubScoring {
 import helix.lib.{Repositories,Scoring}
 
 trait HelixService { _: Repositories with Scoring => 
+  def calculateProjectActivityScore(p: Project) = 
+    scoring.calculateProjectActivityScore(p)
+  
   def createProject(p: Project) = 
     repository.createProject(p)
   

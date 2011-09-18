@@ -27,6 +27,6 @@ trait Scoring {
   protected def scoring: ScoringStrategy
   
   trait ScoringStrategy {
-    def calculateProjectActivityScore(project: Project): Int
+    def calculateProjectActivityScore(project: Project): BigInt
   }
 }

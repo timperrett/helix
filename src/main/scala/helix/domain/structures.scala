@@ -6,17 +6,27 @@ import com.novus.salat.annotations.{Key,Salat}
 import com.mongodb.casbah.Imports._
 import net.liftweb.util.Helpers
 
-// @Salat
-sealed class Activity(val judge: Int => Boolean = _ == 0)
+object ScoringPoints {
+  val Zero = 0
+  val Band1 = 5
+  val Band2 = 20
+  val Band3 = 40
+  val Band4 = 60
+  val Band5 = 80
+}
+
+import ScoringPoints._
+
+sealed class Activity(val judge: Int => Boolean = _ == Zero)
 object UnknownActivity extends Activity {
   override def toString = "Unknown"
 }
-object Obsolete extends Activity(_ <= 5)
-object Quiet extends Activity(s => s > 5 && s <= 20)
-object Moderate extends Activity(s => s > 20 && s <= 40)
-object Fair extends Activity(s => s > 40 && s <= 60)
-object Busy extends Activity(s => s > 60 && s <= 80)
-object Hectic extends Activity(s => s > 80)
+object Obsolete extends Activity(_ <= Band1)
+object Quiet extends Activity(s => s > Band1 && s <= Band2)
+object Moderate extends Activity(s => s > Band2 && s <= Band3)
+object Fair extends Activity(s => s > Band3 && s <= Band4)
+object Busy extends Activity(s => s > Band4 && s <= Band5)
+object Hectic extends Activity(s => s > Band5)
 
 case class Project(
   @Key("_id") id: ObjectId = new ObjectId, 
