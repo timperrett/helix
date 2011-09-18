@@ -115,8 +115,8 @@ resolvers +=
   <script type="text/javascript" lift="tail">
   //<![CDATA[
   $(function(){
-    $('ol li.row:gt(9)').hide();
-    $('ol li.row:nth-child(10)').after("<li><a id='morecontributors' href='#'>Show all...</a></li>");
+    $('ol li.row:gt(7)').hide();
+    $('ol li.row:nth-child(8)').after("<li><a id='morecontributors' href='#'>Show all...</a></li>");
     $('#morecontributors').live('click', function() {
       var li = $(this).parents("li:first");
       li.parent().children().show();
