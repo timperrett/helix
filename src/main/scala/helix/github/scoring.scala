@@ -5,27 +5,29 @@ import helix.lib.Scoring
 
 trait GithubScoring extends Scoring {  
   class DefaultGithubScoring extends ScoringStrategy {
-    
     /*
-    https://api.github.com/repos/djspiewak/42omega
-    created_at
-    
-    https://api.github.com/repos/djspiewak/42omega/commits/5ddbd17e3028ba0c2d9cd015343fbcac505e49b7
-    size of array
-    tail sha
-    
     + watchers 
     + commiters
+    + number of forks / 2
     + number of commits in time delta
     * number of unique commiters within that commit delta
-    + number of foks / 2
     */
     def calculateProjectActivityScore(project: Project): BigInt = (for {
       unr <- project.usernameAndRepository
       repo <- Client.repositoryInformation(unr)
-      // commits = Client.
+      commits = Client.commitHistoryFor(unr)
     } yield {
-      (repo.watchers / 2) + (repo.forks) + project.contributors.size
+      // println(">>>>>>>>>")
+      // println("repo watchers: " + repo.watchers)
+      // println("repo forks: " + repo.forks)
+      // println("project contributors: " + project.contributors.size)
+      // println("commits size: " + commits.size)
+      // println("unique commiters" + commits.groupBy(_.by).keys.size)
+      // 
+      ((repo.watchers / 2) + 
+      repo.forks + 
+      project.contributors.size + 
+      commits.size) * commits.groupBy(_.by).keys.size
     }) getOrElse BigInt.int2bigInt(0)
   }
 }

@@ -56,7 +56,6 @@ object Client {
     }
   
   case class Repo(watchers: BigInt, forks: BigInt, pushedAt: Option[DateTime] = None)
-  case class Commits(count: BigInt)
   
   def repositoryInformation(on: String): Option[Repo] = 
     Client.get("/repos/%s".format(on)){ json => 
@@ -76,7 +75,20 @@ object Client {
       case e => None
     }
   
-  // def commitHistoryFor(sinceSha: Option[String] = None)
+  // case class Commits(List[Commit])
+  case class Commit(by: String, sha: String)
+  
+  def commitHistoryFor(repo: String, sinceSha: Option[String] = None): List[Commit] = 
+    Client.get("/repos/%s/commits".format(repo), 
+      sinceSha.map(sha => Map("sha" -> sha)).getOrElse(Map.empty)){ json =>
+        for {
+          JArray(commits) <- json
+          JObject(commit) <- commits
+          JField("sha", JString(sha)) <- commit
+          JField("committer", JObject(committer)) <- commit
+          JField("login", JString(by)) <- committer
+        } yield Commit(by, sha)
+      }
   
   // FIXME: This is FUGLY. 
   def requestAccessToken(clientId: String, clientSecret: String, code: String): Box[String] = {
