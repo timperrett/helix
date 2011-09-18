@@ -67,18 +67,24 @@ object ProjectInformation extends Loc[ProjectDetail]{
   }
   
   def overview(project: Option[Project]): NodeSeq => NodeSeq = {
-    import org.joda.time.{Duration,DateTime}
+    import org.joda.time.{Period,DateTime}
     import org.joda.time.format.PeriodFormatterBuilder
     
-    val periodFormatter = new PeriodFormatterBuilder()
-        .appendDays.appendSuffix(" day", " days")
-        .toFormatter
+    val formatter = new PeriodFormatterBuilder()
+      .appendYears().appendSuffix(" year, ", " years, ")
+      .appendMonths().appendSuffix(" month, ", " months, ")
+      .appendWeeks().appendSuffix(" week, ", " weeks, ")
+      .appendDays().appendSuffix(" day", " days")
+      .printZeroNever()
+      .toFormatter()
     
     project.map { p => 
       "latest_version" #> p.versionsDecoded.head._1 & 
-      "age" #> periodFormatter.print(new Duration(
-        new DateTime(p.createdAt), 
-        new DateTime(now)).toPeriod().normalizedStandard) &
+      "age" #> formatter.print(
+        new Period(
+          new DateTime(p.createdAt), 
+          new DateTime
+        )) &
       "contributor_count" #> p.contributors.size
     } getOrElse "*" #> NodeSeq.Empty
   }

@@ -245,17 +245,20 @@ ul {
 }
 .overview {
 /*  background-color: red;*/
-  height: 90px;
+  height: 145px;
 }
 .overview ul {
-  float: left;
+/*  float: left;*/
+  list-style: none;
   padding-top: 6px;
 }
 .overview ul li {
   line-height: 24px;
 }
 .overview .activity {
-  top: 21px;
+  float: left;
+  padding-left: 55px;
+/*  top: 21px;*/
 }
 
 /** footer **/

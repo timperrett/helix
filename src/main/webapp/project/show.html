@@ -83,9 +83,9 @@ resolvers +=
           <li><strong>Age</strong>: <age></age></li>
           <li><strong>Contributors</strong>: <contributor_count></contributor_count></li>
         </ul>
-        <div class="activity">
+        <div class="activity" style="clear: both" lift="information">
           <img alt="activity" src="/images/activity-moderate.png" />
-          <span class="activity-text"><strong>High</strong></span>
+          <span class="activity-text"><strong>Fair</strong></span>
         </div>
       </div>
       
@@ -111,5 +111,20 @@ resolvers +=
       <lift:version_wizard ajax="true" />
     </lift:test_cond.loggedin>
   </lift:tail>
+  
+  <script type="text/javascript" lift="tail">
+  //<![CDATA[
+  $(function(){
+    $('ol li.row:gt(9)').hide();
+    $('ol li.row:nth-child(10)').after("<li><a id='morecontributors' href='#'>Show all...</a></li>");
+    $('#morecontributors').live('click', function() {
+      var li = $(this).parents("li:first");
+      li.parent().children().show();
+      li.remove();
+      return false;
+    });
+  });
+  //]]>
+  </script>
   
 </lift:surround>
