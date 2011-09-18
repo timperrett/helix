@@ -21,12 +21,24 @@ sealed class Activity(val judge: Int => Boolean = _ == Zero)
 object UnknownActivity extends Activity {
   override def toString = "Unknown"
 }
-object Obsolete extends Activity(_ <= Band1)
-object Quiet extends Activity(s => s > Band1 && s <= Band2)
-object Moderate extends Activity(s => s > Band2 && s <= Band3)
-object Fair extends Activity(s => s > Band3 && s <= Band4)
-object Busy extends Activity(s => s > Band4 && s <= Band5)
-object Hectic extends Activity(s => s > Band5)
+object Obsolete extends Activity(_ <= Band1){
+  override def toString = "Obsolete"
+}
+object Quiet extends Activity(s => s > Band1 && s <= Band2){
+  override def toString = "Quiet"
+}
+object Moderate extends Activity(s => s > Band2 && s <= Band3){
+  override def toString = "Moderate"
+}
+object Fair extends Activity(s => s > Band3 && s <= Band4){
+  override def toString = "Fair"
+}
+object Busy extends Activity(s => s > Band4 && s <= Band5){
+  override def toString = "Busy"
+}
+object Hectic extends Activity(s => s > Band5){
+  override def toString = "Hectic"
+}
 
 case class Project(
   @Key("_id") id: ObjectId = new ObjectId, 

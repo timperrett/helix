@@ -196,6 +196,7 @@ h2 {
 .pagination ul li.active a, .pagination ul li a:hover {
   background-color: #F3F3F3;
 }
+
 .activity {
   float: right;
   position: relative;
@@ -239,8 +240,22 @@ h2 {
   line-height: 22px;
   font-size: 15px;
 }
-.description ul {
+ul {
   list-style-type: square;
+}
+.overview {
+/*  background-color: red;*/
+  height: 90px;
+}
+.overview ul {
+  float: left;
+  padding-top: 6px;
+}
+.overview ul li {
+  line-height: 24px;
+}
+.overview .activity {
+  top: 21px;
 }
 
 /** footer **/
