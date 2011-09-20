@@ -3,7 +3,19 @@ package helix.github
 import helix.domain.Project
 import helix.lib.Scoring
 
-trait GithubScoring extends Scoring {  
+trait GithubScoring extends Scoring {
+  
+  // class BayesianGithubScoring extends ScoringStrategy {
+  //   def calculateProjectActivityScore(project: Project): BigInt = (for {
+  //     unr <- project.usernameAndRepository
+  //     repo <- Client.repositoryInformation(unr)
+  //     commits = Client.commitHistoryFor(unr)
+  //   } yield {
+  //     
+  //   }) getOrElse BigInt.int2bigInt(0)
+  // }
+  
+  
   class DefaultGithubScoring extends ScoringStrategy {
     /*
     + watchers 

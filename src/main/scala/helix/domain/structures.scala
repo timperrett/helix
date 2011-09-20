@@ -17,7 +17,7 @@ object ScoringPoints {
 
 import ScoringPoints._
 
-sealed class Activity(val judge: Int => Boolean = _ == Zero)
+sealed class Activity(val judge: Long => Boolean = _ == Zero)
 object UnknownActivity extends Activity {
   override def toString = "Unknown"
 }
@@ -48,17 +48,21 @@ case class Project(
   groupId: Option[String] = None,
   artifactId: Option[String] = None,
   versions: Map[String, String] = Map.empty,
-  usagePhase: Option[String] = None,
+  usagePhase: Option[String] = None, // compile, test, jetty etc
   repositoryURL: Option[String] = None, // maven repo
   sourceURL: Option[String] = None, // github repo
-  // addedBy represents the adder's github login
-  addedBy: Option[String] = None,
+  addedBy: Option[String] = None, // addedBy represents the adder's github login
   addedAt: java.util.Date = Helpers.now,
   createdAt: java.util.Date = Helpers.now,
   contributors: List[Contributor] = Nil,
   tags: List[Tag] = Nil,
-  activityScore: Int = 0,
-  latestSHA: Option[String] = None
+  // asyncrnous
+  contributorCount: Long = 1L,
+  forkCount: Long = 0L,
+  watcherCount: Long = 1L,
+  activityScore: Long = 0L,
+  latestSHA: Option[String] = None,
+  setupComplete: Boolean = false
 ){
   import helix.util.Random.randomSelect
   def randomContributor: Option[Contributor] = 

@@ -24,17 +24,9 @@ class Boot extends LazyLoggable {
       case (req,failure) => NotFoundAsTemplate(ParsePath(List("404"),"html",false,false))
     })
     
-    /** 
-     * Akka setup and teardown
-     */
-    import akka.actor.Actor.actorOf
-    val dailyRunner = actorOf[helix.async.DaliyRunner]
-    dailyRunner.start()
+    helix.async.Manager.start()
     
-    LiftRules.unloadHooks.append(() => {
-      helix.async.TotalProjectCount.close()
-      akka.actor.Actor.registry.shutdownAll
-    })
+    LiftRules.unloadHooks.append(() => helix.async.Manager.stop())
     
     // LiftRules.exceptionHandler.append {
     //   case (_, r, e) => 

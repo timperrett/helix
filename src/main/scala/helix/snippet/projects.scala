@@ -37,6 +37,5 @@ object ListMostActiveProjects extends Snippet with ProjectLists {
  * about system and project counts
  */
 object ProjectStatistics extends Snippet {
-  import helix.async.TotalProjectCount
-  def render = "count" #> TotalProjectCount.get
+  def render = "count" #> totalProjectCount
 }

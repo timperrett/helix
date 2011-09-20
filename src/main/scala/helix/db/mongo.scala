@@ -37,12 +37,19 @@ trait MongoRepositories extends Repositories {
     def findProjectByGroupAndArtifact(group: String, artifact: String): Option[Project] = 
       ProjectDAO.findOne(MongoDBObject("groupId" -> group, "artifactId" -> artifact))
     
-    def findAllProjectCount = 
-      ProjectDAO.count()
+    def findAllProjectCount = ProjectDAO.count()
     
+    // def findAverageContributorCount = 
+    //   ProjectDAO.find(MongoDBObject()).group(
+    //     MongoDBObject() // condition
+    //     MongoDBObject("contributors.login" -> 1) // key
+    //     MongoDBObject("count" -> 0) //initial
+    //     "function(doc, out){ out.count++; out.total_time+=doc.response_time }"
+    //   )
+      
     /** creators **/
-    def createProject(project: Project): Boolean = 
-      !ProjectDAO.insert(project).isEmpty
+    def createProject(project: Project): Option[Project] = 
+      for(r <- ProjectDAO.insert(project)) yield project
     
     def createScalaVersion(version: ScalaVersion) = 
       !ScalaVersionDAO.insert(version).isEmpty

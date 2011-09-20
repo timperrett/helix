@@ -5,19 +5,23 @@ import net.liftweb.util.{Props,Helpers}
 import helix.db.MongoRepositories
 import helix.github.GithubScoring
 
-object Service extends HelixService with MongoRepositories with GithubScoring {
+object Service extends HelixService with MongoRepositories with GithubScoring with Statistics {
   protected val repository = new MongoRepository
   protected val scoring = new DefaultGithubScoring
 }
 
 import helix.lib.{Repositories,Scoring}
 
-trait HelixService { _: Repositories with Scoring => 
+trait HelixService { _: Repositories with Scoring with Statistics => 
   def calculateProjectActivityScore(p: Project) = 
     scoring.calculateProjectActivityScore(p)
   
-  def createProject(p: Project) = 
-    repository.createProject(p)
+  // this may need revising, it feels wrong.
+  def createProject(p: Project): Boolean = 
+    (for(project <- repository.createProject(p)) yield {
+      // Whatver ! project // notify the events actor that a new project has been added.
+      true
+    }) getOrElse false
   
   def createScalaVersion(v: ScalaVersion) = 
     repository.createScalaVersion(v)
@@ -42,4 +46,9 @@ trait HelixService { _: Repositories with Scoring =>
   
   def updateProject[T](id: T, project: Project): Unit = 
     repository.updateProject(id, project)
+}
+
+trait Statistics {
+  def totalProjectCount: Long = 
+    helix.async.Agents.TotalProjectCount.get
 }

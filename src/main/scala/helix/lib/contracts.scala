@@ -18,7 +18,7 @@ trait Repositories {
     def findAllProjectCount: Long
     
     /** creator **/
-    def createProject(project: Project): Boolean
+    def createProject(project: Project): Option[Project]
     def createScalaVersion(version: ScalaVersion): Boolean
     
     /** updaters **/
