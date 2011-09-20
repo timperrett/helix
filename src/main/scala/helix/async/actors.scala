@@ -1,7 +1,11 @@
 package helix.async 
 
-import akka.actor.Actor
+import akka.actor.{Actor,ActorRef}
 import akka.actor.{Actor,Scheduler}, Actor._
+import akka.config.Supervision._
+import akka.dispatch._
+import akka.routing._
+import helix.domain.Project
 
 object Manager {
   def start(){
@@ -20,19 +24,41 @@ object Manager {
 }
 
 object ProjectManager {
-  case object UpdateProjectAttributes
+  case class UpdateAttributes(project: Project)
 }
-class ProjectManager extends Actor {
+class ProjectManager extends Actor 
+    with DefaultActorPool 
+    with BoundedCapacityStrategy
+    with ActiveFuturesPressureCapacitor 
+    with SmallestMailboxSelector 
+    with BasicNoBackoffFilter {
+  
+  self.faultHandler = OneForOneStrategy(classOf[RuntimeException] :: Nil, 10, 10000)
+  
+  def receive = _route
+  def lowerBound = 2
+  def upperBound = 4
+  def rampupRate = 0.1
+  def partialFill = true
+  def selectionCount = 1
+  def instance = actorOf[ProjectWorker]
+}
+class ProjectWorker(actor: ActorRef) extends Actor {
   import ProjectManager._
+  import helix.github.Client
+  import helix.domain.Service.updateProject
+  
   def receive = {
-    case UpdateProjectAttributes => 
-      
-  }
-  override def preStart { }
-}
-class ProjectWorker extends Actor {
-  def receive = {
-    case _ => false
+    case UpdateAttributes(project) => 
+      (for {
+        unr <- project.usernameAndRepository
+        repo <- Client.repositoryInformation(unr)
+        created <- repo.createdAt
+        contributors = Client.contributorsFor(unr)
+      } yield project.copy(
+        contributors = contributors,
+        createdAt = created.toDate
+      )) foreach(p => updateProject(p.id, p))
   }
 }
 
@@ -48,10 +74,7 @@ object Statistics {
   case object UpdateAverageProjectWatcherCount
 }
 class Statistics extends Actor {
-  // println(">>>>>>>>>>>>>>>>>")
-  
   import java.util.concurrent.TimeUnit.HOURS
-  import akka.config.Supervision._
   import helix.domain.Service._
   import Statistics._ 
   import Agents._

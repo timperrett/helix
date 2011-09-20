@@ -68,40 +68,36 @@ object ProjectWizard extends Wizard with CommonScreens {
   
   val versioning = new AddProjectVersionScreen { }
   
-  import helix.github.{Client => Github}
   import helix.github.Client.CurrentContributor
-  import net.liftweb.json.JsonAST._
+  import helix.async.ProjectManager, ProjectManager.UpdateAttributes
+  import akka.actor.Actor.registry.actorFor
   
   def finish(){
-    // fetch the contributors from github
+    // this assignment is a fucking mess. Sort it out boy'o!
     val vs: Map[String, String] = Map(
       hexEncode(versioning.currentVersion.is.getBytes) -> 
-      versioning.versions.get.filter(_._2 == true).map(_._1.asVersion).toList.reverse.mkString(", ")
-    )
+      versioning.versions.get.filter(_._2 == true).map(_._1.asVersion).toList.reverse.mkString(", "))
     
-    val proj = for {
-      p <- Some(Project(
-        name = general.name.is, 
-        headline = Some(general.headline.is), 
-        description = Some(general.description.is), 
-        sourceURL = Some(general.sourceURL.is),
-        groupId = Some(publishing.groupId.is), 
-        artifactId = Some(publishing.artifactId.is), 
-        repositoryURL = Some(publishing.repositoryURL.is),
-        versions = vs,
-        tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
-        addedBy = CurrentContributor.is.map(_.login).toOption))
-      unr <- p.usernameAndRepository
-      repo <- Github.repositoryInformation(unr)
-      created <- repo.createdAt
-      contributors = Github.contributorsFor(unr)
-    } yield p.copy(
-      contributors = contributors,
-      createdAt = created.toDate
-    )
+    // assemble the users input into a project. mess-tastic.
+    val proj = Project(
+      name = general.name.is, 
+      headline = Some(general.headline.is), 
+      description = Some(general.description.is), 
+      sourceURL = Some(general.sourceURL.is),
+      groupId = Some(publishing.groupId.is), 
+      artifactId = Some(publishing.artifactId.is), 
+      repositoryURL = Some(publishing.repositoryURL.is),
+      versions = vs,
+      tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
+      addedBy = CurrentContributor.is.map(_.login).toOption)
+    
+    // notify the actor
+    for(a <- actorFor[ProjectManager]){
+      a ! UpdateAttributes(proj)
+    }
     
     // add to the db
-    if(createProject(proj.get)) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
+    if(createProject(proj)) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
     else S.error("Unable to add project. Please try again.")
   }
 }
