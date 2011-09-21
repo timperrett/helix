@@ -23,108 +23,130 @@
     </script>
   </head_merge>
   
-  <div class="row project">
-    <div class="span10 columns box" lift="information">
-      <h2>Project: <name>Name</name></h2>
-      <div class="restrict description">
-        <description />
-      </div>
-      
-      <h2>Compatibility</h2>
-      <div class="restrict">
-        <div class="row">
-          <p class="span6 columns">Versions of <name></name> are compatible with:</p>
-          <div class="span2 columns">
-            <a class="btn success" id="newVersionBtn" lift="test_cond.loggedin">Add version</a>
-            <a class="btn success disabled" id="newVersionBtn" lift="test_cond.loggedout">Add version</a>
-          </div>
-          
+  <lift:ready_or_pending>
+  
+  <!-- content to display if the project.isReady is false -->
+  <pending>
+    <div class="row project">
+      <div class="span15 columns box" lift="information">
+        <h2>Project: <name>Name</name></h2>
+        <div class="restrict">
+          <p>
+            <img src="/images/loading.gif" /> 
+            We're just assembling the information for this newly added project. 
+            <a href="">Please try again shortly.</a></p>
         </div>
-        
-        <table class="zebra-striped">
-          <thead>
-            <th>Version</th>
-            <th>Scala Version</th>
-          </thead>
-          <tbody id="versions" lift="versions">
-            <tr>
-              <td><version></version></td>
-              <td><scalaversion></scalaversion></td>
-            </tr>
-          </tbody>
-        </table>
-        
       </div>
-      
-      <h2>Usage</h2>
-      <div class="restrict">
-        <p><strong>SBT 0.10+</strong></p>
-        <pre>libraryDependencies += 
-  "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT"
+    </div>
+  </pending>
+  
+  <!-- content to display if the project is ready -->
+  <ready>
+    <div class="row project">
+      <div class="span10 columns box" lift="information">
+        <h2>Project: <name>Name</name></h2>
+        <div class="restrict description">
+          <description />
+        </div>
 
-resolvers += 
-  Resolver.url("salat", url("http://repo.novus.com/snapshots/"))</pre>
-        <p><strong>Maven</strong></p>
-        <pre>
-&lt;dependency&gt;
-  &lt;groupId&gt;com.novus&lt;/groupId&gt;
-  &lt;artifactId&gt;salat-util&lt;/artifactId&gt;
-  &lt;version&gt;0.0.8-SNAPSHOT&lt;/version&gt;
-&lt;/dependency&gt;</pre>
-      </div>
-      
-    </div>
-    
-    <div class="span5 columns box contributors">
-      <h2>Overview</h2>
-      <div class="overview">
-        <ul lift="overview">
-          <li><strong>Version</strong>: <latest_version></latest_version></li>
-          <li><strong>Age</strong>: <age></age></li>
-          <li><strong>Contributors</strong>: <contributor_count></contributor_count></li>
-        </ul>
-        <div class="activity" style="clear: both" lift="information">
-          <img alt="activity" src="/images/activity-moderate.png" />
-          <span class="activity-text"><strong>Fair</strong></span>
+        <h2>Compatibility</h2>
+        <div class="restrict">
+          <div class="row">
+            <p class="span6 columns">Versions of <name></name> are compatible with:</p>
+            <div class="span2 columns">
+              <a class="btn success" id="newVersionBtn" lift="test_cond.loggedin">Add version</a>
+              <a class="btn success disabled" id="newVersionBtn" lift="test_cond.loggedout">Add version</a>
+            </div>
+
+          </div>
+
+          <table class="zebra-striped">
+            <thead>
+              <th>Version</th>
+              <th>Scala Version</th>
+            </thead>
+            <tbody id="versions" lift="versions">
+              <tr>
+                <td><version></version></td>
+                <td><scalaversion></scalaversion></td>
+              </tr>
+            </tbody>
+          </table>
+
         </div>
+
+        <h2>Usage</h2>
+        <div class="restrict">
+          <p><strong>SBT 0.10+</strong></p>
+          <pre>libraryDependencies += 
+    "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT"
+
+  resolvers += 
+    Resolver.url("salat", url("http://repo.novus.com/snapshots/"))</pre>
+          <p><strong>Maven</strong></p>
+          <pre>
+  &lt;dependency&gt;
+    &lt;groupId&gt;com.novus&lt;/groupId&gt;
+    &lt;artifactId&gt;salat-util&lt;/artifactId&gt;
+    &lt;version&gt;0.0.8-SNAPSHOT&lt;/version&gt;
+  &lt;/dependency&gt;</pre>
+        </div>
+
       </div>
-      
-      <h2>Contributors</h2>
-      <ol>
-        <li class="row buffer"></li>
-        <li class="row" lift="contributors">
-          <span class="avatar-frame">
-            <img src="http://0.gravatar.com/avatar/63bc2441352e761a0eff115fb713a904?s=69&d=monsterid" />
-            <span class="overlay"></span>
-          </span>
-          <h4>Timothy Perrett</h4>
-          <p>127 commits</p>
-        </li><!-- eo.row -->
-        
-      </ol>
+
+      <div class="span5 columns box contributors">
+        <h2>Overview</h2>
+        <div class="overview">
+          <ul lift="overview">
+            <li><strong>Version</strong>: <latest_version></latest_version></li>
+            <li><strong>Age</strong>: <age></age></li>
+            <li><strong>Contributors</strong>: <contributor_count></contributor_count></li>
+          </ul>
+          <div class="activity" style="clear: both" lift="information">
+            <img alt="activity" src="/images/activity-moderate.png" />
+            <span class="activity-text"><strong>Fair</strong></span>
+          </div>
+        </div>
+
+        <h2>Contributors</h2>
+        <ol>
+          <li class="row buffer"></li>
+          <li class="row" lift="contributors">
+            <span class="avatar-frame">
+              <img src="http://0.gravatar.com/avatar/63bc2441352e761a0eff115fb713a904?s=69&d=monsterid" />
+              <span class="overlay"></span>
+            </span>
+            <h4>Timothy Perrett</h4>
+            <p>127 commits</p>
+          </li><!-- eo.row -->
+
+        </ol>
+      </div>
+
     </div>
-    
-  </div>
-  
-  <lift:tail>
-    <lift:test_cond.loggedin>
-      <lift:version_wizard ajax="true" />
-    </lift:test_cond.loggedin>
-  </lift:tail>
-  
-  <script type="text/javascript" lift="tail">
-  //<![CDATA[
-  $(function(){
-    $('ol li.row:gt(7)').hide();
-    $('ol li.row:nth-child(8)').after("<li><a id='morecontributors' href='#'>Show all...</a></li>");
-    $('#morecontributors').live('click', function() {
-      var li = $(this).parents("li:first");
-      li.parent().children().show();
-      li.remove();
-      return false;
+
+    <lift:tail>
+      <lift:test_cond.loggedin>
+        <lift:version_wizard ajax="true" />
+      </lift:test_cond.loggedin>
+    </lift:tail>
+
+    <script type="text/javascript" lift="tail">
+    //<![CDATA[
+    $(function(){
+      $('ol li.row:gt(7)').hide();
+      $('ol li.row:nth-child(8)').after("<li><a id='morecontributors' href='#'>Show all...</a></li>");
+      $('#morecontributors').live('click', function() {
+        var li = $(this).parents("li:first");
+        li.parent().children().show();
+        li.remove();
+        return false;
+      });
     });
-  });
-  //]]>
-  </script>
+    //]]>
+    </script>
+  </ready>
+  
+  </lift:ready_or_pending>
   
 </lift:surround>

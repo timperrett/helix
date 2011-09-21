@@ -48,6 +48,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
     case ("contributors", Full(pd)) => contributors(pd.project)
     case ("overview", Full(pd)) => overview(pd.project)
     case ("versions", Full(pd)) => versions(pd.project.map(_.versionsDecoded).getOrElse(Map.empty))
+    case ("ready_or_pending", Full(pd)) => readyOrPending(pd.project)
   }
   
   def contributors(project: Option[Project]): NodeSeq => NodeSeq = 
@@ -96,4 +97,9 @@ object ProjectInformation extends Loc[ProjectDetail]{
   def suggestAddingProject = 
     "*" #> <lift:embed what="_nonexistant_project" />
   
+  def readyOrPending(project: Option[Project]) = 
+    (for(p <- project) yield {
+      if(p.setupComplete) "ready ^*" #> NodeSeq.Empty
+      else "pending ^*" #> NodeSeq.Empty
+    }) getOrElse "*" #> NodeSeq.Empty
 }

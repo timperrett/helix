@@ -43,13 +43,14 @@ class ProjectManager extends Actor
   def selectionCount = 1
   def instance = actorOf[ProjectWorker]
 }
-class ProjectWorker(actor: ActorRef) extends Actor {
+class ProjectWorker extends Actor {
   import ProjectManager._
   import helix.github.Client
-  import helix.domain.Service.updateProject
+  import helix.domain.Service
   
   def receive = {
     case UpdateAttributes(project) => 
+      println(">>>>>>>>>>>> UPDATING")
       (for {
         unr <- project.usernameAndRepository
         repo <- Client.repositoryInformation(unr)
@@ -57,10 +58,23 @@ class ProjectWorker(actor: ActorRef) extends Actor {
         contributors = Client.contributorsFor(unr)
       } yield project.copy(
         contributors = contributors,
-        createdAt = created.toDate
-      )) foreach(p => updateProject(p.id, p))
+        createdAt = created.toDate,
+        setupComplete = true
+      )) foreach(p => Service.updateProject(p.id, p))
   }
 }
+
+/**
+listProjectsAlphabetically(limit = 50).foreach { project => 
+  try {
+    val score = calculateProjectActivityScore(project).toLong
+    val newpro = project.copy(activityScore = score)
+    updateProject(project.id, newpro)
+  } catch {
+    case err => println("~~~~~~~~ ERROR: " + err) // log that error!
+  }
+}
+**/
 
 /**
  * This actor handles pure background tasks
@@ -84,7 +98,7 @@ class Statistics extends Actor {
   def receive = { 
     case UpdateTotalProjectCount => 
       TotalProjectCount send findAllProjectCount
-      Scheduler.scheduleOnce(self, UpdateTotalProjectCount, 12, HOURS)
+      Scheduler.scheduleOnce(self, UpdateTotalProjectCount, 6, HOURS)
     
     case UpdateAverageProjectContributorCount => 
     

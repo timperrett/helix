@@ -14,16 +14,16 @@ trait MongoRepositories extends Repositories {
   
   class MongoRepository extends HelixRepository {
     def listProjectsAlphabetically(limit: Int, offset: Int): List[Project] = 
-      ProjectDAO.find(MongoDBObject()).limit(limit)
+      ProjectDAO.find(MongoDBObject("setupComplete" -> true)).limit(limit)
         .sort(orderBy = MongoDBObject("name" -> 1)).toList
     
     /** lists for projects **/
     def listFiveNewestProjects: List[Project] = 
-      ProjectDAO.find(MongoDBObject()
+      ProjectDAO.find(MongoDBObject("setupComplete" -> true)
         ).limit(5).sort(orderBy = MongoDBObject("_id" -> -1)).toList
     
     def listFiveMostActiveProjects: List[Project] = 
-      ProjectDAO.find(MongoDBObject()
+      ProjectDAO.find(MongoDBObject("setupComplete" -> true)
         ).limit(5).sort(orderBy = MongoDBObject("activityScore" -> -1)).toList
     
     /** global lists **/

@@ -66,7 +66,8 @@ case class Project(
 ){
   import helix.util.Random.randomSelect
   def randomContributor: Option[Contributor] = 
-    randomSelect(1, contributors).headOption
+    if(contributors.isEmpty) None
+    else randomSelect(1, contributors).headOption
   
   def versionsDecoded = 
     versions.map(x => new String(Helpers.hexDecode(x._1)) -> x._2)
