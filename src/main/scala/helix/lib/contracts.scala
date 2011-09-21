@@ -16,6 +16,7 @@ trait Repositories {
     /** finders **/
     def findProjectByGroupAndArtifact(group: String, artifact: String): Option[Project]
     def findAllProjectCount: Long
+    def findAverageContributorCount: Double
     
     /** creator **/
     def createProject(project: Project): Option[Project]

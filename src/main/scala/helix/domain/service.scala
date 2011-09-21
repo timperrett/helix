@@ -11,15 +11,19 @@ object Service extends HelixService with MongoRepositories with GithubScoring wi
 }
 
 import helix.lib.{Repositories,Scoring}
+import helix.async.ProjectManager
+import akka.actor.Actor.registry.actorFor
 
 trait HelixService { _: Repositories with Scoring with Statistics => 
-  def calculateProjectActivityScore(p: Project) = 
-    scoring.calculateProjectActivityScore(p)
+  def calculateProjectActivityScore(p: Project): Long = 
+    scoring.calculateProjectActivityScore(p).toLong
   
   // this may need revising, it feels wrong.
   def createProject(p: Project): Boolean = 
     (for(project <- repository.createProject(p)) yield {
-      // Whatver ! project // notify the events actor that a new project has been added.
+      for(a <- actorFor[ProjectManager]){
+        a ! ProjectManager.UpdateAttributes(project)
+      }
       true
     }) getOrElse false
   
@@ -43,12 +47,19 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
   
   def findAllProjectCount: Long = 
     repository.findAllProjectCount
+    
+  def findAverageContributorCount: Double = 
+    repository.findAverageContributorCount
   
   def updateProject[T](id: T, project: Project): Unit = 
     repository.updateProject(id, project)
 }
 
+// readers for global agent state
 trait Statistics {
-  def totalProjectCount: Long = 
-    helix.async.Agents.TotalProjectCount.get
+  import helix.async.Agents._
+  def totalProjectCount: Long = TotalProjectCount.get
+  def averageProjectWatcherCount: Double = AverageProjectWatcherCount.get
+  def averageProjectForkCount: Double = AverageProjectForkCount.get
+  def averageProjectContributorCount: Double = AverageProjectContributorCount.get
 }

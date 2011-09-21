@@ -50,7 +50,6 @@ class ProjectWorker extends Actor {
   
   def receive = {
     case UpdateAttributes(project) => 
-      println(">>>>>>>>>>>> UPDATING")
       (for {
         unr <- project.usernameAndRepository
         repo <- Client.repositoryInformation(unr)
@@ -58,23 +57,16 @@ class ProjectWorker extends Actor {
         contributors = Client.contributorsFor(unr)
       } yield project.copy(
         contributors = contributors,
+        contributorCount = contributors.size,
+        watcherCount = repo.watchers.toLong,
+        forkCount = repo.forks.toLong,
         createdAt = created.toDate,
         setupComplete = true
+      )) map(_.copy(activityScore = Service.calculateProjectActivityScore(project)
       )) foreach(p => Service.updateProject(p.id, p))
+    
   }
 }
-
-/**
-listProjectsAlphabetically(limit = 50).foreach { project => 
-  try {
-    val score = calculateProjectActivityScore(project).toLong
-    val newpro = project.copy(activityScore = score)
-    updateProject(project.id, newpro)
-  } catch {
-    case err => println("~~~~~~~~ ERROR: " + err) // log that error!
-  }
-}
-**/
 
 /**
  * This actor handles pure background tasks

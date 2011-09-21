@@ -16,7 +16,7 @@ object Agents {
   val TotalProjectCount = new Agent[Long](0L)
   
   // averages for activity calculation
-  val AverageProjectWatcherCount     = new Agent[Long](1L)
-  val AverageProjectForkCount        = new Agent[Long](1L)
-  val AverageProjectContributorCount = new Agent[Long](1L)
+  val AverageProjectWatcherCount     = new Agent[Double](1.0D)
+  val AverageProjectForkCount        = new Agent[Double](1.0D)
+  val AverageProjectContributorCount = new Agent[Double](1.0D)
 }

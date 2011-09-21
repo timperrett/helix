@@ -39,13 +39,15 @@ trait MongoRepositories extends Repositories {
     
     def findAllProjectCount = ProjectDAO.count()
     
-    // def findAverageContributorCount = 
-    //   ProjectDAO.find(MongoDBObject()).group(
-    //     MongoDBObject() // condition
-    //     MongoDBObject("contributors.login" -> 1) // key
-    //     MongoDBObject("count" -> 0) //initial
-    //     "function(doc, out){ out.count++; out.total_time+=doc.response_time }"
-    //   )
+    def findAverageContributorCount: Double = 
+      ProjectDAO.group(
+        MongoDBObject(), // condition
+        MongoDBObject(), // key
+        MongoDBObject("count" -> 0, "contributors" -> 0), //initial
+        "function(doc, out){ out.count++; out.contributors+=doc.contributorCount;}",
+        "function(out){ out.average = out.contributors / out.count; }").lastOption.map(
+          _.get("average").asInstanceOf[Double]).getOrElse(0D)
+      
       
     /** creators **/
     def createProject(project: Project): Option[Project] = 
@@ -84,8 +86,24 @@ trait MongoRepositories extends Repositories {
     }
     
     /** DAOs **/
-    object ProjectDAO extends SalatDAO[Project, ObjectId](
-      collection = mongo("projects"))
+    object ProjectDAO extends SalatDAO[Project, ObjectId](collection = mongo("projects")){
+      import scala.collection.mutable.ArrayBuffer
+      import scala.collection.JavaConverters._
+      // this is a hack to work around a bug within Casbah:
+      // https://twitter.com/#!/rit/status/116531065513967617
+      def group[A <% DBObject, B <% DBObject, C <% DBObject](key: A, cond: B, initial: C, reduce: String, finalize: String): List[DBObject] = {
+        val cmd = MongoDBObject(
+          "ns" -> collection.getName,
+          "key" -> key,
+          "cond" -> cond,
+          "$reduce" -> reduce,
+          "initial" -> initial,
+          "finalize" -> finalize)
+        val result = collection.getDB.command(MongoDBObject("group" -> cmd))
+        result.get("retval").asInstanceOf[DBObject].toMap.asScala
+          .map(_._2.asInstanceOf[DBObject]).asInstanceOf[ArrayBuffer[DBObject]].toList
+      }
+    }
     
     object ScalaVersionDAO extends SalatDAO[ScalaVersion, ObjectId](
       collection = mongo("scala_versions"))

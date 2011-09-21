@@ -91,11 +91,6 @@ object ProjectWizard extends Wizard with CommonScreens {
       tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
       addedBy = CurrentContributor.is.map(_.login).toOption)
     
-    // notify the actor
-    for(a <- actorFor[ProjectManager]){
-      a ! UpdateAttributes(proj)
-    }
-    
     // add to the db
     if(createProject(proj)) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))
     else S.error("Unable to add project. Please try again.")
