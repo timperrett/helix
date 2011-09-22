@@ -14,7 +14,9 @@ trait MongoRepositories extends Repositories {
   
   class MongoRepository extends HelixRepository {
     def listProjectsAlphabetically(limit: Int, offset: Int): List[Project] = 
-      ProjectDAO.find(MongoDBObject("setupComplete" -> true)).limit(limit)
+      ProjectDAO.find(MongoDBObject("setupComplete" -> true))
+        .limit(limit)
+        .skip(offset)
         .sort(orderBy = MongoDBObject("name" -> 1)).toList
     
     /** lists for projects **/
@@ -38,6 +40,8 @@ trait MongoRepositories extends Repositories {
       ProjectDAO.findOne(MongoDBObject("groupId" -> group, "artifactId" -> artifact))
     
     def findAllProjectCount = ProjectDAO.count()
+    
+    // def findAverageWatcherCount
     
     def findAverageContributorCount: Double = 
       ProjectDAO.group(

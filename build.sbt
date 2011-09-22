@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "se.scalablesolutions.akka" % "akka-actor" % "1.1.3" % "compile",
   "se.scalablesolutions.akka" % "akka-stm" % "1.1.3" % "compile",
   "org.multiverse" % "multiverse-alpha" % "0.6.2" % "compile",
+  // "org.streum" %% "configrity" % "0.8.0" % "compile",
   "ch.qos.logback" % "logback-classic" % "0.9.26" % "compile",
   "org.mongodb" % "mongo-java-driver" % "2.5.3" % "compile",
   "com.mongodb.casbah" %% "casbah-core" % "2.1.5.0" % "compile",

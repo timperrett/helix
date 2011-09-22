@@ -21,13 +21,13 @@
   <div class="row">
     <div class="span15 columns box">
       <h2>Projects</h2>
-      <ul class="items" lift="all_projects">
+      <ul class="items" lift="all_projects.list">
         <li class="prj">
           <span class="avatar-frame">
             <img alt="avatar" src="http://0.gravatar.com/avatar/63bc2441352e761a0eff115fb713a904?s=69&d=monsterid" />
             <span class="overlay"></span>
           </span>
-          <h3><a href="project">lift-webkit</a></h3>
+          <h3><a href="project"><name /></a></h3>
           <div class="activity">
             <img alt="activity" src="/images/activity-3.png" />
             <span class="activity-text">High</span>
@@ -43,16 +43,11 @@
   
   <div class="row">
     <div class="span8 columns offset4 pagination">
-      <ul>
-        <li class="prev disabled"><a href="#">&larr; Previous</a></li>
-        <li class="active"><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">4</a></li>
-        <li><a href="#">5</a></li>
-        <li class="next"><a href="#">Next &rarr;</a></li>
+      <ul lift="all_projects.paginate">
+        <!-- <p><nav:records/></p> -->
+        <li class="prev"><nav:prev></nav:prev></li>
+        <nav:zoomedpages></nav:zoomedpages>
+        <li class="next"><nav:next></nav:next></li>
       </ul>
     </div>
   </div>

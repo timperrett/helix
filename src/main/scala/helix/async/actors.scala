@@ -88,17 +88,22 @@ class Statistics extends Actor {
   self.faultHandler = OneForOneStrategy(classOf[Exception] :: Nil, 10, 100)
   
   def receive = { 
-    case UpdateTotalProjectCount => 
+    case msg@UpdateTotalProjectCount => 
       TotalProjectCount send findAllProjectCount
-      Scheduler.scheduleOnce(self, UpdateTotalProjectCount, 6, HOURS)
+      Scheduler.scheduleOnce(self, msg, 6, HOURS)
     
-    case UpdateAverageProjectContributorCount => 
-    
+    case msg@UpdateAverageProjectContributorCount => 
+      AverageProjectContributorCount send findAverageContributorCount
+      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+      
     case UpdateAverageProjectWatcherCount =>
     
   }
   
   override def preStart {
-    List(UpdateTotalProjectCount).foreach(self ! _)
+    List(
+      UpdateTotalProjectCount, 
+      UpdateAverageProjectContributorCount
+    ).foreach(self ! _)
   }
 }

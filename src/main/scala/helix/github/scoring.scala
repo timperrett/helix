@@ -5,6 +5,11 @@ import helix.lib.Scoring
 
 trait GithubScoring extends Scoring {
   
+  /**
+    br = ( (avg_num_commits * avg_rating) + (this_num_votes * this_rating) 
+         ) / (avg_num_commits + this_num_commits)
+  */
+  
   // class BayesianGithubScoring extends ScoringStrategy {
   //   def calculateProjectActivityScore(project: Project): BigInt = (for {
   //     unr <- project.usernameAndRepository
