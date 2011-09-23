@@ -68,7 +68,9 @@ trait MongoRepositories extends Repositories {
         "function(out){ out.average = out.contributors / out.count; }").lastOption.map(
           _.get("average").asInstanceOf[Double]).getOrElse(0D)
       
-      
+    def findStaleProjects(boundry: Long): List[Project] =
+      ProjectDAO.find("updatedAt" $lt boundry).toList
+    
     /** creators **/
     def createProject(project: Project): Option[Project] = 
       for(r <- ProjectDAO.insert(project)) yield project

@@ -57,6 +57,10 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
   def findAverageWatcherCount: Double = 
     repository.findAverageWatcherCount
   
+  def findStaleProjects: List[Project] = 
+    repository.findStaleProjects(
+      new org.joda.time.DateTime().minusMinutes(3).getMillis)
+  
   def updateProject[T](id: T, project: Project): Unit = 
     repository.updateProject(id, project)
 }

@@ -19,6 +19,7 @@ trait Repositories {
     def findAverageContributorCount: Double
     def findAverageWatcherCount: Double
     def findAverageForkCount: Double
+    def findStaleProjects(boundry: Long): List[Project]
     
     /** creator **/
     def createProject(project: Project): Option[Project]
@@ -43,13 +44,8 @@ trait Scoring { _: Statistics =>
     protected def calculateProjectComunityScore(project: Project): Double
     protected def calculateProjectActivityScore(project: Project): Double
     def calculateProjectAggregateScore(project: Project): Double = {
-      println(">>>>>>>>>>>>>>>>>>>>")
-      val a = calculateProjectComunityScore(project)
-      val b = calculateProjectActivityScore(project)
-      
-      println(a)
-      println(b)
-      a + b
+      calculateProjectComunityScore(project) + 
+      calculateProjectActivityScore(project)
     }
   }
 }

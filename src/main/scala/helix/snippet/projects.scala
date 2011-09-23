@@ -29,7 +29,7 @@ object ListAllProjects extends DispatchSnippet with PaginatorSnippet[Project] wi
     case "paginate" => paginate _
   }
   // paginator overrides
-  override val itemsPerPage = 2
+  override val itemsPerPage = 20
   override val prevXml = xml.Text("Previous")
   override val nextXml = xml.Text("Next")
   override def pageXml(newFirst: Long, ns: NodeSeq): NodeSeq =

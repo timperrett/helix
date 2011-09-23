@@ -14,8 +14,8 @@ object Manager {
     Agents.all
     // start the actors
     List(
-      actorOf[Statistics], 
-      actorOf[ProjectManager]
+      actorOf[ProjectManager],
+      actorOf[ScheduledTask] 
     ).foreach(_.start())
   }
   def stop(){
@@ -48,6 +48,7 @@ class ProjectWorker(owner: ActorRef) extends Actor {
   import ProjectManager._
   import helix.github.Client
   import helix.domain.Service
+  import org.joda.time.DateTime
   
   def receive = {
     case msg@UpdateAttributes(project) => {
@@ -63,11 +64,9 @@ class ProjectWorker(owner: ActorRef) extends Actor {
         forkCount = repo.forks.toLong,
         createdAt = created.toDate,
         setupComplete = true,
-        updatedAt = new java.util.Date
+        updatedAt = new DateTime().getMillis
       )) map(_.copy(activityScore = Service.calculateProjectAggregateScore(project)
       )) foreach(p => Service.updateProject(p.id, p))
-      // this is not persisted and is only for dev purposes!
-      // Scheduler.scheduleOnce(owner, msg, 3, MINUTES)
     }
   }
 }
@@ -78,14 +77,15 @@ class ProjectWorker(owner: ActorRef) extends Actor {
  * statistics that are used by multiple parts
  * of the application
  */
-object Statistics {
+object ScheduledTask {
   case object UpdateTotalProjectCount
   case object UpdateAverageProjectForkCount
   case object UpdateAverageProjectWatcherCount
+  case object UpdateStaleProjects
 }
-class Statistics extends Actor {
+class ScheduledTask extends Actor {
   import helix.domain.Service._
-  import Statistics._ 
+  import ScheduledTask._ 
   import Agents._
   
   self.faultHandler = OneForOneStrategy(classOf[Exception] :: Nil, 10, 100)
@@ -102,14 +102,22 @@ class Statistics extends Actor {
     case msg@UpdateAverageProjectForkCount =>
       AverageProjectForkCount send findAverageForkCount
       Scheduler.scheduleOnce(self, msg, 3, MINUTES)
-      
+    
+    case msg@UpdateStaleProjects => {
+      for(actor <- registry.actorFor[ProjectManager]){
+        println(">>>> Updating stale projects.")
+        findStaleProjects.foreach(actor ! ProjectManager.UpdateAttributes(_))
+      }
+      Scheduler.scheduleOnce(self, msg, 3, MINUTES)
+    }
   }
   
   override def preStart {
     List(
       UpdateTotalProjectCount, 
       UpdateAverageProjectWatcherCount,
-      UpdateAverageProjectForkCount
+      UpdateAverageProjectForkCount,
+      UpdateStaleProjects
     ).foreach(self ! _)
   }
 }
