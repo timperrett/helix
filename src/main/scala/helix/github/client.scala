@@ -18,7 +18,7 @@ object Client {
   import net.liftweb.json.JsonAST._
   import org.joda.time.DateTime
   
-  private val tokenMap = AccessToken.is.map(t => Map("access_token" -> t)).openOr(Map.empty)
+  private def tokenMap = AccessToken.is.map(t => Map("access_token" -> t)).openOr(Map.empty)
   
   def get[T](path: String, params: Map[String,String] = tokenMap)(f: JValue => T) = {
     val http = new Http

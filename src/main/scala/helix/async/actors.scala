@@ -6,6 +6,7 @@ import akka.config.Supervision._
 import akka.dispatch._
 import akka.routing._
 import helix.domain.Project
+import java.util.concurrent.TimeUnit.{HOURS,MINUTES}
 
 object Manager {
   def start(){
@@ -41,15 +42,15 @@ class ProjectManager extends Actor
   def rampupRate = 0.1
   def partialFill = true
   def selectionCount = 1
-  def instance = actorOf[ProjectWorker]
+  def instance = actorOf(new ProjectWorker(self))
 }
-class ProjectWorker extends Actor {
+class ProjectWorker(owner: ActorRef) extends Actor {
   import ProjectManager._
   import helix.github.Client
   import helix.domain.Service
   
   def receive = {
-    case UpdateAttributes(project) => 
+    case msg@UpdateAttributes(project) => {
       (for {
         unr <- project.usernameAndRepository
         repo <- Client.repositoryInformation(unr)
@@ -61,10 +62,13 @@ class ProjectWorker extends Actor {
         watcherCount = repo.watchers.toLong,
         forkCount = repo.forks.toLong,
         createdAt = created.toDate,
-        setupComplete = true
+        setupComplete = true,
+        updatedAt = new java.util.Date
       )) map(_.copy(activityScore = Service.calculateProjectAggregateScore(project)
       )) foreach(p => Service.updateProject(p.id, p))
-    
+      // this is not persisted and is only for dev purposes!
+      // Scheduler.scheduleOnce(owner, msg, 3, MINUTES)
+    }
   }
 }
 
@@ -80,7 +84,6 @@ object Statistics {
   case object UpdateAverageProjectWatcherCount
 }
 class Statistics extends Actor {
-  import java.util.concurrent.TimeUnit.HOURS
   import helix.domain.Service._
   import Statistics._ 
   import Agents._
@@ -90,15 +93,15 @@ class Statistics extends Actor {
   def receive = { 
     case msg@UpdateTotalProjectCount => 
       TotalProjectCount send findAllProjectCount
-      Scheduler.scheduleOnce(self, msg, 6, HOURS)
+      Scheduler.scheduleOnce(self, msg, 6, MINUTES)
       
     case msg@UpdateAverageProjectWatcherCount =>
       AverageProjectWatcherCount send findAverageWatcherCount
-      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+      Scheduler.scheduleOnce(self, msg, 3, MINUTES)
     
     case msg@UpdateAverageProjectForkCount =>
       AverageProjectForkCount send findAverageForkCount
-      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+      Scheduler.scheduleOnce(self, msg, 3, MINUTES)
       
   }
   

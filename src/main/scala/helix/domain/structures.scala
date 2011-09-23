@@ -53,7 +53,8 @@ case class Project(
   sourceURL: Option[String] = None, // github repo
   addedBy: Option[String] = None, // addedBy represents the adder's github login
   addedAt: java.util.Date = Helpers.now,
-  createdAt: java.util.Date = Helpers.now,
+  createdAt: java.util.Date = Helpers.now, // when the github repo was made
+  updatedAt: java.util.Date = Helpers.now, // updated every time the async task runs
   contributors: List[Contributor] = Nil,
   tags: List[Tag] = Nil,
   // asyncrnous
