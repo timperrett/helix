@@ -41,8 +41,24 @@ trait MongoRepositories extends Repositories {
     
     def findAllProjectCount = ProjectDAO.count()
     
-    // def findAverageWatcherCount
-    
+    def findAverageForkCount: Double =
+      ProjectDAO.group(
+        MongoDBObject(), // condition
+        MongoDBObject(), // key
+        MongoDBObject("count" -> 0, "forks" -> 0), //initial
+        "function(doc, out){ out.count++; out.forks+=doc.forkCount;}",
+        "function(out){ out.average = out.forks / out.count; }").lastOption.map(
+          _.get("average").asInstanceOf[Double]).getOrElse(0D)
+      
+    def findAverageWatcherCount: Double = 
+      ProjectDAO.group(
+        MongoDBObject(), // condition
+        MongoDBObject(), // key
+        MongoDBObject("count" -> 0, "watchers" -> 0), //initial
+        "function(doc, out){ out.count++; out.watchers+=doc.watcherCount;}",
+        "function(out){ out.average = out.watchers / out.count; }").lastOption.map(
+          _.get("average").asInstanceOf[Double]).getOrElse(0D)
+
     def findAverageContributorCount: Double = 
       ProjectDAO.group(
         MongoDBObject(), // condition

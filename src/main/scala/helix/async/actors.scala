@@ -62,7 +62,7 @@ class ProjectWorker extends Actor {
         forkCount = repo.forks.toLong,
         createdAt = created.toDate,
         setupComplete = true
-      )) map(_.copy(activityScore = Service.calculateProjectActivityScore(project)
+      )) map(_.copy(activityScore = Service.calculateProjectAggregateScore(project)
       )) foreach(p => Service.updateProject(p.id, p))
     
   }
@@ -76,7 +76,7 @@ class ProjectWorker extends Actor {
  */
 object Statistics {
   case object UpdateTotalProjectCount
-  case object UpdateAverageProjectContributorCount
+  case object UpdateAverageProjectForkCount
   case object UpdateAverageProjectWatcherCount
 }
 class Statistics extends Actor {
@@ -91,19 +91,22 @@ class Statistics extends Actor {
     case msg@UpdateTotalProjectCount => 
       TotalProjectCount send findAllProjectCount
       Scheduler.scheduleOnce(self, msg, 6, HOURS)
-    
-    // case msg@UpdateAverageProjectContributorCount => 
-      // AverageProjectContributorCount send findAverageContributorCount
-      // Scheduler.scheduleOnce(self, msg, 3, HOURS)
       
-    case UpdateAverageProjectWatcherCount =>
+    case msg@UpdateAverageProjectWatcherCount =>
+      AverageProjectWatcherCount send findAverageWatcherCount
+      Scheduler.scheduleOnce(self, msg, 3, HOURS)
     
+    case msg@UpdateAverageProjectForkCount =>
+      AverageProjectForkCount send findAverageForkCount
+      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+      
   }
   
   override def preStart {
     List(
       UpdateTotalProjectCount, 
-      UpdateAverageProjectContributorCount
+      UpdateAverageProjectWatcherCount,
+      UpdateAverageProjectForkCount
     ).foreach(self ! _)
   }
 }

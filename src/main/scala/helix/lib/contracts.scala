@@ -17,6 +17,8 @@ trait Repositories {
     def findProjectByGroupAndArtifact(group: String, artifact: String): Option[Project]
     def findAllProjectCount: Long
     def findAverageContributorCount: Double
+    def findAverageWatcherCount: Double
+    def findAverageForkCount: Double
     
     /** creator **/
     def createProject(project: Project): Option[Project]
@@ -28,10 +30,27 @@ trait Repositories {
   }
 }
 
-trait Scoring {
+// trait Github {
+//   protected def github: 
+//   
+//   
+// }
+
+trait Scoring { _: Statistics => 
   protected def scoring: ScoringStrategy
   
   trait ScoringStrategy {
-    def calculateProjectActivityScore(project: Project): Double
+    protected def calculateProjectComunityScore(project: Project): Double
+    protected def calculateProjectActivityScore(project: Project): Double
+    def calculateProjectAggregateScore(project: Project): Double = 
+      calculateProjectComunityScore(project) + 
+      calculateProjectActivityScore(project)
   }
 }
+
+trait Statistics { 
+  def totalProjectCount: Long
+  def averageProjectWatcherCount: Double
+  def averageProjectForkCount: Double
+}
+

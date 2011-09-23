@@ -5,18 +5,18 @@ import net.liftweb.util.{Props,Helpers}
 import helix.db.MongoRepositories
 import helix.github.GithubScoring
 
-object Service extends HelixService with MongoRepositories with GithubScoring with Statistics {
+object Service extends HelixService with MongoRepositories with GithubScoring with AgentStatistics {
   protected val repository = new MongoRepository
   protected val scoring = new AlphaGithubScoring
 }
 
-import helix.lib.{Repositories,Scoring}
+import helix.lib.{Repositories,Scoring,Statistics}
 import helix.async.ProjectManager
 import akka.actor.Actor.registry.actorFor
 
 trait HelixService { _: Repositories with Scoring with Statistics => 
-  def calculateProjectActivityScore(p: Project): Double = 
-    scoring.calculateProjectActivityScore(p)
+  def calculateProjectAggregateScore(p: Project): Double = 
+    scoring.calculateProjectAggregateScore(p)
   
   // this may need revising, it feels wrong.
   def createProject(p: Project): Boolean = 
@@ -47,19 +47,24 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
   
   def findAllProjectCount: Long = 
     repository.findAllProjectCount
-    
+  
+  def findAverageForkCount: Double = 
+    repository.findAverageForkCount
+  
   def findAverageContributorCount: Double = 
     repository.findAverageContributorCount
+  
+  def findAverageWatcherCount: Double = 
+    repository.findAverageWatcherCount
   
   def updateProject[T](id: T, project: Project): Unit = 
     repository.updateProject(id, project)
 }
 
 // readers for global agent state
-trait Statistics {
+trait AgentStatistics extends Statistics {
   import helix.async.Agents._
   def totalProjectCount: Long = TotalProjectCount.get
   def averageProjectWatcherCount: Double = AverageProjectWatcherCount.get
   def averageProjectForkCount: Double = AverageProjectForkCount.get
-  // def averageProjectContributorCount: Double = AverageProjectContributorCount.get
 }
