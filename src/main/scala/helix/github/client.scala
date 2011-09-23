@@ -18,8 +18,9 @@ object Client {
   import net.liftweb.json.JsonAST._
   import org.joda.time.DateTime
   
-  def get[T](path: String, params: Map[String,String] = 
-      AccessToken.is.map(t => Map("access_token" -> t)).openOr(Map.empty))(f: JValue => T) = {
+  private val tokenMap = AccessToken.is.map(t => Map("access_token" -> t)).openOr(Map.empty)
+  
+  def get[T](path: String, params: Map[String,String] = tokenMap)(f: JValue => T) = {
     val http = new Http
     val req = url("https://api.github.com" + path) <<? params
     var resp = http(req ># f)
@@ -87,18 +88,21 @@ object Client {
     }
   
   // case class Commits(List[Commit])
-  case class Commit(by: String, sha: String)
+  case class Commit(owner: String, sha: String, when: Option[DateTime] = None)
   
   def commitHistoryFor(repo: String, sinceSha: Option[String] = None): List[Commit] = 
-    Client.get("/repos/%s/commits".format(repo), 
-      sinceSha.map(sha => Map("sha" -> sha)).getOrElse(Map.empty)){ json =>
+    Client.get("/repos/%s/commits".format(repo), sinceSha.map(sha => Map("sha" -> sha)
+      ).getOrElse(Map.empty) ++ Map("per_page" -> "100")){ json =>
         for {
           JArray(commits) <- json
           JObject(commit) <- commits
           JField("sha", JString(sha)) <- commit
           JField("committer", JObject(committer)) <- commit
-          JField("login", JString(by)) <- committer
-        } yield Commit(by, sha)
+          JField("login", JString(owner)) <- committer
+          JField("commit", JObject(innercommit)) <- commit
+          JField("committer", JObject(innercommiter)) <- innercommit
+          JField("date", JString(when)) <- innercommiter
+        } yield Commit(owner, sha, parseGithubDate(when))
       }
   
   // FIXME: This is FUGLY. 

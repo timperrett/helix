@@ -7,7 +7,7 @@ import helix.github.GithubScoring
 
 object Service extends HelixService with MongoRepositories with GithubScoring with Statistics {
   protected val repository = new MongoRepository
-  protected val scoring = new DefaultGithubScoring
+  protected val scoring = new AlphaGithubScoring
 }
 
 import helix.lib.{Repositories,Scoring}
@@ -15,8 +15,8 @@ import helix.async.ProjectManager
 import akka.actor.Actor.registry.actorFor
 
 trait HelixService { _: Repositories with Scoring with Statistics => 
-  def calculateProjectActivityScore(p: Project): Long = 
-    scoring.calculateProjectActivityScore(p).toLong
+  def calculateProjectActivityScore(p: Project): Double = 
+    scoring.calculateProjectActivityScore(p)
   
   // this may need revising, it feels wrong.
   def createProject(p: Project): Boolean = 
@@ -61,5 +61,5 @@ trait Statistics {
   def totalProjectCount: Long = TotalProjectCount.get
   def averageProjectWatcherCount: Double = AverageProjectWatcherCount.get
   def averageProjectForkCount: Double = AverageProjectForkCount.get
-  def averageProjectContributorCount: Double = AverageProjectContributorCount.get
+  // def averageProjectContributorCount: Double = AverageProjectContributorCount.get
 }

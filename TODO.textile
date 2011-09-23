@@ -3,18 +3,16 @@ h2. TODO
 Current list of shit that needs doing.
 
 h3. Quick Wins
-* Implement the details page:
-  * If the project is "not ready" display a friendly message 
+None.
 
 h3. Stage One
 * Implement project activity rating
-* Implement the list of all projects
-  * only pagination remains
-* Implement the list of all tags
 * Implement searching for projects... Solr???
+* Implement the list of all projects
+  * Activity description hover content
+* Implement the list of all tags
 
 h3. Stage Two
-* Implement asynchronous project setup. Add an isReady flag to the Project definition and then make the calls to the github API asynchronous (number of followers, number of forks, number of contributions, list of contributors).
 * Do a validation on the group ID and artefact ID with the repository URL - download the POM file to check dependencies? 
 
 h3. Initial Release

@@ -92,9 +92,9 @@ class Statistics extends Actor {
       TotalProjectCount send findAllProjectCount
       Scheduler.scheduleOnce(self, msg, 6, HOURS)
     
-    case msg@UpdateAverageProjectContributorCount => 
-      AverageProjectContributorCount send findAverageContributorCount
-      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+    // case msg@UpdateAverageProjectContributorCount => 
+      // AverageProjectContributorCount send findAverageContributorCount
+      // Scheduler.scheduleOnce(self, msg, 3, HOURS)
       
     case UpdateAverageProjectWatcherCount =>
     

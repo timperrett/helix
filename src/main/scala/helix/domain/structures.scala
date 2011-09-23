@@ -7,17 +7,17 @@ import com.mongodb.casbah.Imports._
 import net.liftweb.util.Helpers
 
 object ScoringPoints {
-  val Zero = 0
-  val Band1 = 5
-  val Band2 = 20
-  val Band3 = 40
-  val Band4 = 60
-  val Band5 = 80
+  val Zero = 0D
+  val Band1 = 5D
+  val Band2 = 20D
+  val Band3 = 40D
+  val Band4 = 60D
+  val Band5 = 80D
 }
 
 import ScoringPoints._
 
-sealed class Activity(val judge: Long => Boolean = _ == Zero)
+sealed class Activity(val judge: Double => Boolean = _ == Zero)
 object UnknownActivity extends Activity {
   override def toString = "Unknown"
 }
@@ -58,9 +58,9 @@ case class Project(
   tags: List[Tag] = Nil,
   // asyncrnous
   contributorCount: Long = 1L,
-  forkCount: Long = 0L,
+  forkCount: Long = 1L,
   watcherCount: Long = 1L,
-  activityScore: Long = 0L,
+  activityScore: Double = 0D,
   latestSHA: Option[String] = None,
   setupComplete: Boolean = false
 ){
