@@ -84,30 +84,34 @@ object ScheduledTask {
   case object UpdateStaleProjects
 }
 class ScheduledTask extends Actor {
+  import helix.util.Config
   import helix.domain.Service._
   import ScheduledTask._ 
   import Agents._
   
   self.faultHandler = OneForOneStrategy(classOf[Exception] :: Nil, 10, 100)
   
+  val timeMetric: java.util.concurrent.TimeUnit = 
+    if(Config.isProduction) HOURS else MINUTES
+  
   def receive = { 
     case msg@UpdateTotalProjectCount => 
       TotalProjectCount send findAllProjectCount
-      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+      Scheduler.scheduleOnce(self, msg, 3, timeMetric)
       
     case msg@UpdateAverageProjectWatcherCount =>
       AverageProjectWatcherCount send findAverageWatcherCount
-      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+      Scheduler.scheduleOnce(self, msg, 3, timeMetric)
     
     case msg@UpdateAverageProjectForkCount =>
       AverageProjectForkCount send findAverageForkCount
-      Scheduler.scheduleOnce(self, msg, 3, HOURS)
+      Scheduler.scheduleOnce(self, msg, 3, timeMetric)
     
     case msg@UpdateStaleProjects => {
       for(actor <- registry.actorFor[ProjectManager]){
         findStaleProjects.foreach(actor ! ProjectManager.UpdateAttributes(_))
       }
-      Scheduler.scheduleOnce(self, msg, 2, HOURS)
+      Scheduler.scheduleOnce(self, msg, 3, timeMetric)
     }
   }
   

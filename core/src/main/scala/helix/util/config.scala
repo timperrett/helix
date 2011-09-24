@@ -8,6 +8,12 @@ object Config {
     case _ => "development"
   }
   
+  private def testMode(m: String): Boolean = 
+    if(mode == m) true else false
+  
+  def isDevelopment = testMode("development")
+  def isProduction = testMode("production")
+  
   // fugly and dangerous, but working for the moment.
   lazy val Conf = Configuration.load(io.Source.fromInputStream(
     this.getClass.getResourceAsStream("/helix.%s.conf".format(mode))))

@@ -6,17 +6,15 @@ h3. Quick Wins
 None.
 
 h3. Stage One
-* Implement project activity rating
 * Implement searching for projects... Solr???
 * Implement the list of all projects
   * Activity description hover content
-* Implement the list of all tags
 
 h3. Stage Two
 * Do a validation on the group ID and artefact ID with the repository URL - download the POM file to check dependencies? 
+* Implement the list of all tags
 
 h3. Initial Release
-
 Speculative date: End of October
 
 h3. Profit

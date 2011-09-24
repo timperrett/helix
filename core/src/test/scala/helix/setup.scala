@@ -35,12 +35,12 @@ object Sandbox {
       addedBy = Some("timperrett")
     )
   
-  def setup {
+  def setup() {
     helix.async.Manager.start()
     projects.foreach(Service.createProject(_))
   }
   
-  def teardown {
+  def teardown() {
     helix.async.Manager.stop()
   }
 }

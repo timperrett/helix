@@ -14,6 +14,7 @@ object Service extends HelixService
   val github = new GithubClient
 }
 
+import helix.util.Config._
 import helix.lib.{Repositories,Scoring,Statistics}
 import helix.async.ProjectManager
 import akka.actor.Actor.registry.actorFor
@@ -61,9 +62,20 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
   def findAverageWatcherCount: Double = 
     repository.findAverageWatcherCount
   
-  def findStaleProjects: List[Project] = 
-    repository.findStaleProjects(
-      new org.joda.time.DateTime().minusDays(2).getMillis)
+  def findStaleProjects: List[Project] = {
+    import org.joda.time.DateTime
+    def expiryLong(d: DateTime) = {
+      val duration = Conf.get[Int]("project.stale.duration").getOrElse(1)
+      (Conf.get[String]("project.stale.measure").getOrElse("days") match {
+        case "months" | "month" => d.minusMonths(duration)
+        case "days" | "day" => d.minusDays(duration)
+        case "hours" | "hour" => d.minusHours(duration)
+        case "minutes" | "minute" => d.minusMinutes(duration)
+      }).getMillis
+    }
+    repository.findStaleProjects(expiryLong(new DateTime))
+  }
+    
   
   def updateProject[T](id: T, project: Project): Unit = 
     repository.updateProject(id, project)
