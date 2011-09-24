@@ -106,37 +106,3 @@ trait GithubAPIClients extends GithubClients {
     }
   }
 }
-
-
-
-// object Client {
-//   // import net.liftweb.http.SessionVar
-//   // import net.liftweb.common.{Box,Full,Empty}
-//   // import net.liftweb.util.Helpers
-//   
-//   object AccessToken extends SessionVar[Box[String]](Empty)
-//   object CurrentContributor extends SessionVar[Box[Contributor]](Empty)
-//   
-//   def isAuthenticated: Boolean = 
-//     !AccessToken.is.isEmpty
-//   
-//   private def tokenMap = AccessToken.is.map(t => Map("access_token" -> t)).openOr(Map.empty)
-//   
-//   // FIXME: This is FUGLY. 
-//   def requestAccessToken(clientId: String, clientSecret: String, code: String): Box[String] = {
-//     val endpoint = "https://github.com/login/oauth/access_token"
-//     val http = new Http
-//     val req = url(endpoint) << ("client_id=%s&client_secret=%s&code=%s".format(clientId,clientSecret,code),"application/x-www-form-urlencoded")
-//     // FIXME: This could explode                                                                                                                           d
-//     Helpers.tryo {
-//       // make the POST
-//       val response = http(req.secure as_str)
-//       http.shutdown()
-//       // parse the token response
-//       val TokenResponse = "access_token=(.+)&token_type=(.+)".r
-//       val TokenResponse(token,typez) = response
-//       token
-//     }
-//   }
-// }
-
