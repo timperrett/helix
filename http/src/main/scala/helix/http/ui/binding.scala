@@ -28,7 +28,7 @@ object DomainBindings {
       "headline" #> project.headline &
       "description" #> project.description.map(TextileParser.toHtml(_)).getOrElse(DefaultDescription) &
       "href=project [href]" #> "/projects/%s/%s".format(group, artifact) &
-      "alt=avatar [src]" #> project.randomContributor.map(_.picture).getOrElse(DefaultAvatar) &
+      "alt=avatar [rel]" #> project.randomContributor.map(_.picture).getOrElse(DefaultAvatar) &
       "alt=activity [src]" #> "/images/activity-%s.png".format(project.activity.toString.toLowerCase) &
       ".activity-text" #> project.activity.toString &
       ".tags *" #> project.tags.map { tag => 

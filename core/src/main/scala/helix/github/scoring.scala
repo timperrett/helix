@@ -10,21 +10,27 @@ trait GithubScoring extends Scoring { _: Statistics with GithubClients =>
   // level of abstraction
   class AlphaGithubScoring extends ScoringStrategy {
     import org.joda.time.DateTime
+    import GithubClients.Commit
     
     private val DaysOfConsideredHistory = 7
     private val Zero = 0D
     
-    protected def calculateProjectComunityScore(project: Project): Double = 
+    protected def commitsForProject(project: Project): List[Commit] = for {
+      commit <- github.commitHistoryFor(project.usernameAndRepository.get) 
+      date <- commit.when if date.isAfter(new DateTime().minusDays(DaysOfConsideredHistory))
+    } yield commit
+    
+    def calculateProjectAggregateScore(project: Project): Double =
+      calculateProjectComunityScore(project) + 
+      calculateProjectActivityScore(project)
+    
+    def calculateProjectComunityScore(project: Project): Double = 
       ((averageProjectWatcherCount * averageProjectForkCount) + 
       (project.watcherCount * project.forkCount)) / (averageProjectWatcherCount + project.watcherCount)
     
-    protected def calculateProjectActivityScore(project: Project): Double = {
-      val commits = for {
-        commit <- github.commitHistoryFor(project.usernameAndRepository.get) 
-        date <- commit.when if date.isAfter(new DateTime().minusDays(DaysOfConsideredHistory))
-      } yield commit
-      val count = commits.size.toDouble
-      if(count > Zero) ((count / 7) * (count / project.contributorCount))
+    def calculateProjectActivityScore(project: Project): Double = {
+      val count = commitsForProject(project).size.toDouble
+      if(count > Zero) ((count / DaysOfConsideredHistory) * (count / project.contributorCount))
       else Zero
     }
   }

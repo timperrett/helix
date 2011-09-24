@@ -49,7 +49,10 @@ object Build extends Build {
         "com.novus" %% "salat-core" % "0.0.8-SNAPSHOT" % "compile",
         "net.databinder" %% "dispatch-http" % "0.8.5" % "compile",
         "net.databinder" %% "dispatch-json" % "0.8.5" % "compile",
-        "net.databinder" %% "dispatch-lift-json" % "0.8.5" % "compile"
+        "net.databinder" %% "dispatch-lift-json" % "0.8.5" % "compile",
+        // testing
+        "org.specs2" %% "specs2" % "1.6.1" % "test" //,
+        // "org.specs2" %% "specs2-scalaz-core" % "6.0.1" % "test"
       )
     )
   )

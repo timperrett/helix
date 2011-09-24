@@ -35,12 +35,9 @@ trait Scoring { _: Statistics =>
   protected def scoring: ScoringStrategy
   
   trait ScoringStrategy {
-    protected def calculateProjectComunityScore(project: Project): Double
-    protected def calculateProjectActivityScore(project: Project): Double
-    def calculateProjectAggregateScore(project: Project): Double = {
-      calculateProjectComunityScore(project) + 
-      calculateProjectActivityScore(project)
-    }
+    def calculateProjectComunityScore(project: Project): Double
+    def calculateProjectActivityScore(project: Project): Double
+    def calculateProjectAggregateScore(project: Project): Double
   }
 }
 

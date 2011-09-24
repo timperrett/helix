@@ -19,8 +19,8 @@ object Manager {
     ).foreach(_.start())
   }
   def stop(){
-    Actor.registry.shutdownAll
     Agents.all.foreach(_.close())
+    Actor.registry.shutdownAll
   }
 }
 
