@@ -68,12 +68,11 @@ trait GithubClients {
   import helix.domain.Contributor
   import net.liftweb.json.JsonAST._
   
-  protected def github: Client
+  def github: Client
   
   trait Client {
-    protected def defaultRequestParameters: Map[String,String]
     protected def get[T](path: String, params: Map[String,String])(f: JValue => T): T
-    def contributor: Option[Contributor]
+    def contributor(token: String): Option[Contributor]
     def contributorsFor(repo: String): List[Contributor]
     def repositoryInformation(on: String): Option[Repo]
     def commitHistoryFor(repo: String, sinceSha: Option[String] = None): List[Commit]

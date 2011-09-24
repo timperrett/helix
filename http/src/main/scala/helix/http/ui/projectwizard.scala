@@ -68,10 +68,9 @@ object ProjectWizard extends Wizard with CommonScreens {
   
   val versioning = new AddProjectVersionScreen { }
   
-  import helix.github.Client.CurrentContributor
-  import helix.async.ProjectManager, ProjectManager.UpdateAttributes
   import akka.actor.Actor.registry.actorFor
   import helix.util.Hex
+  import helix.http.Vars.CurrentContributor
   
   def finish(){
     // this assignment is a fucking mess. Sort it out boy'o!
@@ -90,7 +89,7 @@ object ProjectWizard extends Wizard with CommonScreens {
       repositoryURL = Some(publishing.repositoryURL.is),
       versions = vs,
       tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
-      addedBy = CurrentContributor.is.map(_.login).toOption)
+      addedBy = CurrentContributor.is.map(_.login))
     
     // add to the db
     if(createProject(proj)) S.redirectTo("/projects/%s/%s".format(publishing.groupId.is,publishing.artifactId.is))

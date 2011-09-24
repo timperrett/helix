@@ -4,8 +4,8 @@ import scala.xml.NodeSeq
 import net.liftweb.util.Helpers._
 import net.liftweb.http.{S,SHtml,DispatchSnippet,PaginatorSnippet}
 import helix.domain.Service._
-import helix.util.DomainBindings._
 import helix.domain.Project
+import helix.http.ui.DomainBindings._
 
 trait ProjectLists {
   protected def bind(projects: List[Project]) = ".prj" #> 

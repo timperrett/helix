@@ -9,8 +9,9 @@ object Service extends HelixService
     with GithubScoring
     with AgentStatistics {
   protected val repository = new MongoRepository
-  protected val scoring    = new AlphaGithubScoring
-  protected val github     = new GithubClient
+  protected val scoring = new AlphaGithubScoring
+  // this needs reviewing. not sure about it yet.
+  val github = new GithubClient
 }
 
 import helix.lib.{Repositories,Scoring,Statistics}

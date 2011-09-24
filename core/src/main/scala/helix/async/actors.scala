@@ -7,7 +7,6 @@ import akka.config.Supervision._
 import akka.dispatch._
 import akka.routing._
 import helix.domain.Project
-import helix.github.GithubAPIClients
 
 object Manager {
   def start(){
@@ -46,20 +45,18 @@ class ProjectManager extends Actor
   def selectionCount = 1
   def instance = actorOf(new ProjectWorker(self))
 }
-class ProjectWorker(owner: ActorRef) extends Actor with GithubAPIClients {
+class ProjectWorker(owner: ActorRef) extends Actor {
   import ProjectManager._
   import helix.domain.Service
   import org.joda.time.DateTime
-  
-  protected val github = new GithubClient
   
   def receive = {
     case msg@UpdateAttributes(project) => {
       (for {
         unr <- project.usernameAndRepository
-        repo <- github.repositoryInformation(unr)
+        repo <- Service.github.repositoryInformation(unr)
         created <- repo.createdAt
-        contributors = github.contributorsFor(unr)
+        contributors = Service.github.contributorsFor(unr)
       } yield project.copy(
         contributors = contributors,
         contributorCount = contributors.size,

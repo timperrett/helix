@@ -21,9 +21,7 @@ trait GithubAPIClients extends GithubClients {
         case e => None
       }
     
-    protected def defaultRequestParameters: Map[String,String] = Map.empty
-    
-    def get[T](path: String, params: Map[String,String] = defaultRequestParameters)(f: JValue => T) = {
+    def get[T](path: String, params: Map[String,String] = Map.empty)(f: JValue => T) = {
       val http = new Http
       val req = url("https://api.github.com" + path) <<? params
       var resp = http(req ># f)
@@ -31,8 +29,8 @@ trait GithubAPIClients extends GithubClients {
       resp
     }
     
-    def contributor: Option[Contributor] = 
-      get("/user"){ json => (for { 
+    def contributor(token: String): Option[Contributor] = 
+      get("/user", Map("access_token" -> token)){ json => (for { 
           JObject(child) <- json
           JField("name", JString(name)) <- child
           JField("login", JString(login)) <- child

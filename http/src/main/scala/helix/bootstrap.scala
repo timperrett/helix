@@ -5,17 +5,18 @@ import net.liftweb.common.{Box,Full,Empty,LazyLoggable}
 import net.liftweb.util.{NamedPF,Props}
 import net.liftweb.http._
 import net.liftweb.sitemap._
-import helix.github.{Client => Github}
-import helix.domain.Service
 import akka.actor.Actor.actorOf
+import helix.domain.Service
+import helix.http.Vars.AccessToken
 
 class Boot extends LazyLoggable {
+  def isAuthenticated: Boolean = !AccessToken.is.isEmpty
   def boot {
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
     
-    LiftRules.dispatch.append(helix.github.OAuth)
+    LiftRules.dispatch.append(helix.http.OAuth)
     
-    LiftRules.loggedInTest = Full(() => Github.isAuthenticated)
+    LiftRules.loggedInTest = Full(() => isAuthenticated)
     
     LiftRules.htmlProperties.default.set((r: Req) =>
       new Html5Properties(r.userAgent))
@@ -24,8 +25,9 @@ class Boot extends LazyLoggable {
       case (req,failure) => NotFoundAsTemplate(ParsePath(List("404"),"html",false,false))
     })
     
+    // start the actors
     helix.async.Manager.start()
-    
+    // stop the actors (on shutdown)
     LiftRules.unloadHooks.append(() => helix.async.Manager.stop())
     
     // LiftRules.exceptionHandler.append {
@@ -51,16 +53,16 @@ class Boot extends LazyLoggable {
     /**
      * Sitemap setup
      */
-    import net.liftweb.sitemap.Loc.{Unless,If}
-    import helix.http.ProjectInformation
+    import net.liftweb.sitemap.Loc.If
+    import helix.http.ui.ProjectInformation
     
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
       Menu("Error") / "error",
       Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
-      Menu("Projects: Add") / "project" / "add" >> Unless(
-        () => !Github.isAuthenticated, 
+      Menu("Projects: Add") / "project" / "add" >> If(
+        () => isAuthenticated, 
         () => RedirectResponse("/oauth/login?return_to=%2Fproject%2Fadd")),
       Menu(ProjectInformation)
     ))

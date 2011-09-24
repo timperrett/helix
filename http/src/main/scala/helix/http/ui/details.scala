@@ -41,7 +41,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
   
   /** snippets **/
   import net.liftweb.util.Helpers._
-  import helix.util.DomainBindings._
+  import helix.http.ui.DomainBindings._
   
   override val snippets: SnippetTest = {
     case ("information", Full(pd)) => information(pd)

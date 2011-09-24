@@ -2,8 +2,7 @@ package helix.http
 
 import net.liftweb.common.{Box,Full,Empty}
 import net.liftweb.util.{NamedPF,Helpers}
-import net.liftweb.http.{Req,LiftRules}
-import net.liftweb.http._
+import net.liftweb.http.{Req,LiftRules,LiftResponse,RedirectResponse}
 
 trait Dispatcher extends LiftRules.DispatchPF {
   def dispatch: List[LiftRules.DispatchPF] = Nil
@@ -12,30 +11,31 @@ trait Dispatcher extends LiftRules.DispatchPF {
 }
 
 object OAuth extends Dispatcher {
-  import net.liftweb.util.Props
   import helix.domain.Service._
-  import Client._ 
+  import helix.util.Config._
+  import helix.http.Vars._
   
-  private val clientId = Props.get("github.clientid").openOr("unknown")
-  private val clientSecret = Props.get("github.secret").openOr("unknown")
+  private val clientId = Conf.get[String]("github.clientid").getOrElse("unknown")
+  private val clientSecret = Conf.get[String]("github.secret").getOrElse("unknown")
   
   private val callbackCodeHandler: Req => Box[LiftResponse] = r => 
-    for(code <- r.param("code"))
-      yield {
-        // set the token into the session 
-        AccessToken(requestAccessToken(clientId, clientSecret, code))
-        // set their contributor instance into the session as it'll 
-        // be needed later for making API calls
-        contributor.foreach(c => CurrentContributor(Full(c)))
-        RedirectResponse(r.param("return_to").map(Helpers.urlDecode).openOr("/"))
-      }
+    for(code <- r.param("code")) yield {
+      // set the token into the session 
+      AccessToken(github.requestAccessToken(clientId, clientSecret, code))
+      // set their contributor instance into the session as it'll 
+      // be needed later for making API calls
+      for {
+        token <- AccessToken.is
+      } CurrentContributor(github.contributor(token))
+      
+      RedirectResponse(r.param("return_to").map(Helpers.urlDecode).openOr("/"))
+    }
   
   private val callbackErrorHandler: Req => Box[LiftResponse] = r => 
-    for(e <- r.param("error"))
-     yield RedirectResponse("/500?because=%s".format(e))
+    for(e <- r.param("error")) yield RedirectResponse("/500?because=%s".format(e))
   
   override def dispatch = {
-    import net.liftweb.http.S
+    import net.liftweb.http.{S,GetRequest}
     import net.liftweb.http.provider.HTTPCookie
     
     val login: LiftRules.DispatchPF = NamedPF("Send to Github"){
@@ -43,7 +43,7 @@ object OAuth extends Dispatcher {
         val returnURL = S.param("return_to").map(Helpers.urlDecode).openOr("/")
         val callbackURL = "%s/oauth/callback?return_to=%s".format(r.hostAndPath,returnURL)
         Full((for(c <- CurrentContributor)
-          yield RedirectResponse(returnURL)) openOr RedirectResponse {
+          yield RedirectResponse(returnURL)) getOrElse RedirectResponse {
             "https://github.com/login/oauth/authorize?client_id=%s&redirect_uri=%s"
               .format(clientId, Helpers.urlEncode(callbackURL))
           } 

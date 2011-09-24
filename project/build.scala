@@ -33,7 +33,7 @@ object Build extends Build {
   
   lazy val root = Project("helix", file("."),
     settings = buildSettings
-  ) aggregate(core, frontend)
+  ) aggregate(core, http)
   
   lazy val core: Project = Project("helix-core", file("core"), 
     settings = buildSettings  ++ Seq(
@@ -64,6 +64,6 @@ object Build extends Build {
       jettyScanDirs := Nil,
       temporaryWarPath <<= (sourceDirectory in Compile)(_ / "webapp")
     )
-  ) dependsOn(core) //settings( :_*)
+  ) dependsOn(core)
   
 }
