@@ -16,9 +16,7 @@ object BuildSettings {
       ".m2" at "file://"+Path.userHome+"/.m2/repository",
       "salat" at "http://repo.novus.com/snapshots/",
       "typesafe" at "http://repo.typesafe.com/typesafe/releases/"
-    ),
-    offline := true,
-    retrieveManaged := true
+    )
   )
   
   val httpSettings = 

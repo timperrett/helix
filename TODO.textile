@@ -6,9 +6,10 @@ h3. Quick Wins
 None.
 
 h3. Stage One
-* Implement searching for projects... Solr???
-* Implement the list of all projects
-  * Activity description hover content
+* Implement searching for projects... Solr??? <-- Massively important (lolz)
+* Project editing for contributors to a particular project
+* Redo the project addition workflow
+* Multi-module projects?
 
 h3. Stage Two
 * Do a validation on the group ID and artefact ID with the repository URL - download the POM file to check dependencies? 

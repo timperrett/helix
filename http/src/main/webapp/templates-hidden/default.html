@@ -4,14 +4,14 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>Scala Helix</title>
   <meta name="author" content="Timothy Perrett">
-  <link rel="stylesheet" href="/css/bootstrap-1.1.1.min.css" />
+  <link rel="stylesheet" href="/css/bootstrap-1.3.0.min.css" />
   <link rel="stylesheet" href="/css/style.css" />
   <script type="text/javascript" src="/js/jquery-1.6.2.min.js" id="jquery"></script>
   <script type="text/javascript" src="/js/jquery.lazykarl.1.0.min.js"></script>
   <script type="text/javascript">
   //<![CDATA[
     $().ready(function() {  
-      $('.avatar-frame').lazyKarl();
+      $('.avatar-frame').lazyKarl({ loadImg: '/images/loading.gif' });
     });
   //]]>
   </script>
@@ -29,12 +29,9 @@
         </a>
       </div><!-- eo.span5 columns -->
       <div class="span11 columns header">
-        <span class="nav">
-          <!-- <lift:test_cond.loggedin> -->
-            <a href="/project/add">add library</a> &middot;
-          <!-- </lift:test_cond.loggedin>  -->
+        <span class="links">
+          <a href="/project/add">add library</a> &middot;
           <a href="/projects">all projects</a>
-          <!-- <a href="/tags">all tags</a>  -->
         </span>
         
         <lift:test_cond.loggedout>

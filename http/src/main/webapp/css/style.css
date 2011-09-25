@@ -13,35 +13,35 @@ a:link, a:visited {
 /** app styling **/
 html {
   height: 100%;
-/*  background: url('../images/bg.png') repeat-x bottom left;*/
+  background: url('../images/bg.png') repeat-x bottom left;
 }
 body {
   background: none;
 }
 .header {
+/*  background-color: red;*/
   margin-top: -20px;
+/*  margin-left: 20px;*/
 }
 .header .btn {
   color: #333333;
   float: right;
-  margin-right: 58px;
+/*  margin-right: 58px;*/
 }
 .header p { 
   float: right; 
   margin-right: 58px; 
 }
-.header .nav {
+.header .links {
   float: left;
-  margin-left: 40px;
+  margin-left: 90px;
   font-size: 11px;
   padding-top: 5px;
-}
-#main {
-/*  min-height: 500px;*/
 }
 
 /** logo **/
 .logo {
+/*  background-color:red;*/
   margin-top: -20px;
   padding: 10px;
   overflow: hidden;
@@ -69,7 +69,7 @@ body {
   width: 500px;
   border: 1px solid #CCC;
   padding: 10px;
-  padding-left: 30px;
+  padding-left: 40px;
   color: #888;
   font-size: 18px;
   -webkit-box-shadow: 0px 0px 5px #DDD;
@@ -79,7 +79,7 @@ body {
   -moz-border-radius: 4px;
   border-radius: 4px;
   margin-top: 7px;
-  margin-left: 40px;
+  margin-left: 87px;
   text-transform: lowercase;
 }
 
@@ -112,9 +112,10 @@ h2 {
 /*  font-size: 15px;*/
   color: #333;
   font-weight: bold;
-  background: #F6F6F6;
+  background: #f2f2f2;
 }
 .box {
+  background-color: #fff;
   border: 1px solid #CCC;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;

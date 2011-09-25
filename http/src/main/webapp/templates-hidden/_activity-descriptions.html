@@ -1,42 +1,47 @@
-<div class="popover left">
-  <div class="arrow"></div>
-  <div class="inner" id="activity-content">
-    <h3 class="title" id="activity-title">XXXX Activity</h3>
-    <!-- inactive -->
-    <div class="content" id="activity-inactive">
-      <p>Looks like this project is <strong>mostly inactive</strong>. 
-         This could be for several reasons, but indicates that there
-         is little community interest or recent commit activity.</p>
+<lift:children>
+  <head_merge>
+    <script type="text/javascript" src="/js/activity.js"></script>
+  </head_merge>
+  <div class="popover left">
+    <div class="arrow"></div>
+    <div class="inner" id="activity-content">
+      <h3 class="title" id="activity-title">XXXX Activity</h3>
+      <!-- inactive -->
+      <div class="content" id="activity-inactive">
+        <p>Looks like this project is <strong>mostly inactive</strong>. 
+           This could be for several reasons, but indicates that there
+           is little community interest or recent commit activity.</p>
+      </div>
+      <!-- quiet -->
+      <div class="content" id="activity-quiet">
+        <p>Looks like this project is <strong>quiet</strong>. 
+           This means the project has some recent commits and
+           there is a low level of community interest.</p>
+      </div>
+      <!-- moderate -->
+      <div class="content" id="activity-moderate">
+        <p>Looks like this project is <strong>moderately active</strong>.
+           This means there is a good degree of commit activity by a small
+           group of contributors.</p>
+      </div>
+      <!-- fair -->
+      <div class="content" id="activity-fair">
+        <p>Looks like this project is <strong>fairly busy</strong>.
+           This project appears to have had a fairly high number of recent
+           commits and there is a good degree of community interest.</p>
+      </div>
+      <!-- busy -->
+      <div class="content" id="activity-busy">
+        <p>Looks like this project is <strong>busy</strong>. A busy project
+           has had a high number number of recent commits and lots of community interest.</p>
+      </div>
+      <!-- hectic -->
+      <div class="content" id="activity-hectic">
+        <p>Looks like this project is <strong>crazy busy</strong>.
+           Only few projects attain this level of awesome and it is an indication
+           of a lot of recent commits and huge interest from the community.</p>
+      </div>
+
     </div>
-    <!-- quiet -->
-    <div class="content" id="activity-quiet">
-      <p>Looks like this project is <strong>quiet</strong>. 
-         This means the project has some recent commits and
-         there is a low level of community interest.</p>
-    </div>
-    <!-- moderate -->
-    <div class="content" id="activity-moderate">
-      <p>Looks like this project is <strong>moderately active</strong>.
-         This means there is a good degree of commit activity by a small
-         group of contributors.</p>
-    </div>
-    <!-- fair -->
-    <div class="content" id="activity-fair">
-      <p>Looks like this project is <strong>fairly busy</strong>.
-         This project appears to have had a fairly high number of recent
-         commits and there is a good degree of community interest.</p>
-    </div>
-    <!-- busy -->
-    <div class="content" id="activity-busy">
-      <p>Looks like this project is <strong>busy</strong>. A busy project
-         has had a high number number of recent commits and lots of community interest.</p>
-    </div>
-    <!-- hectic -->
-    <div class="content" id="activity-hectic">
-      <p>Looks like this project is <strong>crazy busy</strong>.
-         Only few projects attain this level of awesome and it is an indication
-         of a lot of recent commits and huge interest from the community.</p>
-    </div>
-    
   </div>
-</div>
+</lift:children>

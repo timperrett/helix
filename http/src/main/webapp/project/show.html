@@ -74,15 +74,44 @@
           </table>
 
         </div>
+        
+        <h2>Modules</h2>
+        <div class="restrict">
+          <div class="row">
+            <p class="span8 columns">The <name></name> project includes the following modules:</p>
+          </div><!-- eo.row -->
 
+          <table class="zebra-striped">
+            <thead>
+              <th>Module</th>
+              <th>Description</th>
+            </thead>
+            <tbody id="versions" lift="versions">
+              <tr>
+                <td>akka-actor</td>
+                <td>dsdf sdf sd fsdsf d</td>
+              </tr>
+              <tr>
+                <td>akka-agent</td>
+                <td>dsdf sdf sd fsdsf d</td>
+              </tr>
+              <tr>
+                <td>akka-stm</td>
+                <td>dsdf sdf sd fsdsf d</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+        
         <h2>Usage</h2>
         <div class="restrict">
           <p><strong>SBT 0.10+</strong></p>
           <pre>libraryDependencies += 
-    "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT"
+  "com.novus" %% "salat-util" % "0.0.8-SNAPSHOT"
 
-  resolvers += 
-    Resolver.url("salat", url("http://repo.novus.com/snapshots/"))</pre>
+resolvers += 
+  "salat-repo" at "http://repo.novus.com/snapshots/"</pre>
           <p><strong>Maven</strong></p>
           <pre>
   &lt;dependency&gt;
