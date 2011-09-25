@@ -220,7 +220,7 @@ h2 {
 .contributors ol li {
   padding-left: 75px;
   padding-top: 0px;
-  margin-top: -12px;
+  margin-top: -2px;
 }
 .contributors .buffer {
 /*  background-color:red;*/
@@ -261,6 +261,10 @@ ul {
   padding-left: 55px;
 /*  top: 21px;*/
 }
+#project-contributor {
+  margin-left: 18px;
+}
+
 
 /** footer **/
 #footer {

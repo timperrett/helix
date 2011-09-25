@@ -42,9 +42,22 @@
   
   <!-- content to display if the project is ready -->
   <ready>
+    
     <div class="row project">
-      <div class="span10 columns box" lift="information">
+      
+      <div class="alert-message block-message info" id="project-contributor">
+        <a href="#" class="close">×</a>
+        <p><strong>Welcome!</strong> Because you've been a contributor to this project you 
+           can edit the description, add new versions and request a sync with github.</p>
+        <div class="alert-actions">
+          <a class="btn small">Tell me more</a>
+          <a class="btn small">Don't show this again</a>
+        </div>
+      </div>
+      
+      <div class="span11 columns box" lift="information">
         <h2>Project: <name>Name</name></h2>
+        
         <div class="restrict description">
           <description />
         </div>
@@ -52,7 +65,7 @@
         <h2>Compatibility</h2>
         <div class="restrict">
           <div class="row">
-            <p class="span6 columns">Versions of <name></name> are compatible with:</p>
+            <p class="span7 columns">Versions of <name></name> are compatible with:</p>
             <div class="span2 columns">
               <a class="btn success" id="newVersionBtn" lift="test_cond.loggedin">Add version</a>
               <a class="btn success disabled" id="newVersionBtn" lift="test_cond.loggedout">Add version</a>
@@ -123,7 +136,7 @@ resolvers +=
 
       </div>
 
-      <div class="span5 columns box contributors">
+      <div class="span5 columns box contributors" style="margin-left: 16px">
         <h2>Overview</h2>
         <div class="overview">
           <ul lift="overview">
