@@ -15,7 +15,7 @@
           '<td>'+compatibiltiy+'</td>'+
         '</tr>');
         // close the modal dialog programaticlaly. 
-        // this is hacky as fuck tho.
+        // this is hacky as fuck tho: would prefer a neater solution.
         $('#newVersionModal').hide();
         $('#simplemodal-overlay').hide();
       }
@@ -45,10 +45,11 @@
     
     <div class="row project">
       
-      <div class="alert-message block-message info" id="project-contributor">
+      <div class="alert-message block-message info" id="project-contributor" lift="is_contributor">
         <a href="#" class="close">×</a>
-        <p><strong>Welcome!</strong> Because you've been a contributor to this project you 
-           can edit the description, add new versions and request a sync with github.</p>
+        <p><strong>Welcome!</strong> Because you have contributed to this project you 
+           can edit the description, add new versions and sync statistics with the
+           repository on github.com.</p>
         <div class="alert-actions">
           <a class="btn small">Tell me more</a>
           <a class="btn small">Don't show this again</a>
@@ -65,10 +66,9 @@
         <h2>Compatibility</h2>
         <div class="restrict">
           <div class="row">
-            <p class="span7 columns">Versions of <name></name> are compatible with:</p>
-            <div class="span2 columns">
-              <a class="btn success" id="newVersionBtn" lift="test_cond.loggedin">Add version</a>
-              <a class="btn success disabled" id="newVersionBtn" lift="test_cond.loggedout">Add version</a>
+            <p class="span7 columns">Versions of <strong><name></name></strong> are compatible with:</p>
+            <div class="span2 columns" lift="is_contributor">
+              <a class="btn success" id="newVersionBtn">Add version</a>
             </div>
 
           </div>

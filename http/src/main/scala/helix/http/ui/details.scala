@@ -42,6 +42,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
   /** snippets **/
   import net.liftweb.util.Helpers._
   import helix.http.ui.DomainBindings._
+  import helix.http.Vars.CurrentContributor
   
   override val snippets: SnippetTest = {
     case ("information", Full(pd)) => information(pd)
@@ -49,7 +50,15 @@ object ProjectInformation extends Loc[ProjectDetail]{
     case ("overview", Full(pd)) => overview(pd.project)
     case ("versions", Full(pd)) => versions(pd.project.map(_.versionsDecoded).getOrElse(Map.empty))
     case ("ready_or_pending", Full(pd)) => readyOrPending(pd.project)
+    case ("is_contributor", Full(pd)) => isContributor(pd.project)
   }
+  
+  def isContributor(project: Option[Project]): NodeSeq => NodeSeq = 
+    xhtml => (for {
+      u <- CurrentContributor.is
+      p <- project
+      r <- p.contributors.find(_.login == u.login)
+    } yield xhtml) getOrElse NodeSeq.Empty
   
   def contributors(project: Option[Project]): NodeSeq => NodeSeq = 
     project.map { p => 
