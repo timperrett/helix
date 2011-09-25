@@ -9,6 +9,25 @@ case class ProjectDetail(groupId: String, artifactId: String){
 }
 
 import scala.xml.{NodeSeq,Text}
+
+trait BuildSystem {
+  protected def project: Project
+  protected def usage: (String,String) => NodeSeq
+  def name: String
+  def render: NodeSeq = 
+    (for(a <- project.artifactId; g <- project.groupId)
+      yield usage(g,a)) getOrElse NodeSeq.Empty
+}
+case class SBT10Plus(project: Project) extends BuildSystem {
+  def name = "SBT 0.10+"
+  def usage = (group, artifact) =>
+    <pre>{
+      """libraryDependencies += 
+        "%s" %% "%s" % "XXXX-SNAPSHOT" """ //.format(group, artifact)
+    }</pre>
+}
+// case object Maven extends BuildSystem
+
 import net.liftweb.common.{Box,Empty,Full}
 import net.liftweb.util.NamedPF
 import net.liftweb.http._
@@ -51,7 +70,17 @@ object ProjectInformation extends Loc[ProjectDetail]{
     case ("versions", Full(pd)) => versions(pd.project.map(_.versionsDecoded).getOrElse(Map.empty))
     case ("ready_or_pending", Full(pd)) => readyOrPending(pd.project)
     case ("is_contributor", Full(pd)) => isContributor(pd.project)
+    case ("usage_examples", Full(pd)) => usageExamples(pd.project)
   }
+  
+  def buildTools(project: Option[Project]): List[BuildSystem] = 
+    project.map(p => List(SBT10Plus(p))).getOrElse(Nil)
+  
+  def usageExamples(project: Option[Project]) = 
+    "*" #> buildTools(project).map { b => 
+      "tool_name" #> b.name &
+      "usage" #> b.render
+    }
   
   def isContributor(project: Option[Project]): NodeSeq => NodeSeq = 
     xhtml => (for {
