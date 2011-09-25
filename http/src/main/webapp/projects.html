@@ -1,21 +1,7 @@
 <lift:surround with="default" at="content">
   
   <head_merge>
-    <script type="text/javascript">
-    //<![CDATA[
-    $(function(){
-      $('.activity').hover(function(){
-        var p = $(this).position();
-        $('.popover')
-          .css('top', (p.top - 48) + 'px')
-          .css('left', (p.left - 300) + 'px')
-          .css('display', 'block');
-      }, function(){
-        if('.popover:visible') $('.popover').hide();
-      });
-    })
-    //]]>
-    </script>
+    <script type="text/javascript" src="/js/activity.js"></script>
   </head_merge>
   
   <div class="row">
@@ -52,14 +38,6 @@
     </div>
   </div>
   
-  <div class="popover left">
-    <div class="arrow"></div>
-    <div class="inner">
-      <h3 class="title">High Activity</h3>
-      <div class="content">
-        <p>Looks like this project is <strong>relatively busy</strong>: you should be able to expect fair support from its community of active users.</p>
-      </div>
-    </div>
-  </div>
+  <lift:embed what="_activity-descriptions" />
   
 </lift:surround>

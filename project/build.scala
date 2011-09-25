@@ -16,16 +16,18 @@ object BuildSettings {
       ".m2" at "file://"+Path.userHome+"/.m2/repository",
       "salat" at "http://repo.novus.com/snapshots/",
       "typesafe" at "http://repo.typesafe.com/typesafe/releases/"
-    )
+    ),
+    offline := true,
+    retrieveManaged := true
   )
   
   val httpSettings = 
-    buildSettings ++ webSettings ++ deploymentSettings ++ Seq(
+    buildSettings ++ webSettings ++ Seq(
       libraryDependencies ++= Seq(
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
         "org.eclipse.jetty" % "jetty-webapp" % "7.3.0.v20110203" % "jetty"
       )
-    )
+    ) ++ deploymentSettings
 }
 
 object Build extends Build {

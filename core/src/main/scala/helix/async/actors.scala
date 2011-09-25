@@ -2,25 +2,35 @@ package helix.async
 
 import java.util.concurrent.TimeUnit.{HOURS,MINUTES}
 import akka.actor.{Actor,ActorRef}
-import akka.actor.{Actor,Scheduler}, Actor._
+import akka.actor.{Actor,Scheduler,PoisonPill}, Actor._
 import akka.config.Supervision._
 import akka.dispatch._
 import akka.routing._
 import helix.domain.Project
 
 object Manager {
+  private def hasNetworkConnection: Boolean = 
+    try {
+      java.net.InetAddress.getAllByName("api.github.com")
+      true
+    } catch {
+      case e => false
+    }
+  
+  private lazy val actors = 
+    List(actorOf[ProjectManager], actorOf[ScheduledTask])
+  
   def start(){
     // touch the agents
     Agents.all
     // start the actors
-    List(
-      actorOf[ProjectManager],
-      actorOf[ScheduledTask] 
-    ).foreach(_.start())
+    if(hasNetworkConnection)
+      actors.foreach(_.start())
   }
   def stop(){
     Agents.all.foreach(_.close())
-    Actor.registry.shutdownAll
+    actors.foreach(_ ! PoisonPill)
+    // Actor.registry.shutdownAll
   }
 }
 

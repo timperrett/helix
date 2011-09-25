@@ -22,7 +22,7 @@ object UnknownActivity extends Activity {
   override def toString = "Unknown"
 }
 object Obsolete extends Activity(_ <= Band1){
-  override def toString = "Obsolete"
+  override def toString = "Inactive"
 }
 object Quiet extends Activity(s => s > Band1 && s <= Band2){
   override def toString = "Quiet"
