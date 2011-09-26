@@ -12,7 +12,7 @@ a:link, a:visited {
 
 /** app styling **/
 html {
-  height: 100%;
+  min-height: 100%;
   background: url('../images/bg.png') repeat-x bottom left;
 }
 body {
