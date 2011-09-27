@@ -10,7 +10,7 @@ import helix.domain.Service
 import helix.http.Vars.AccessToken
 
 class Boot extends LazyLoggable {
-  def isAuthenticated: Boolean = !AccessToken.is.isEmpty
+  private def isAuthenticated: Boolean = !AccessToken.is.isEmpty
   def boot {
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
     
