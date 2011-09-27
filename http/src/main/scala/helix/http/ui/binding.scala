@@ -5,6 +5,7 @@ import net.liftweb.util.CssSel
 import net.liftweb.util.Helpers._
 import net.liftweb.textile.TextileParser
 import helix.domain._
+import org.apache.commons.lang3.StringUtils
 
 object DomainBindings {
   class Bind[T](what: T){
@@ -25,7 +26,8 @@ object DomainBindings {
       artifact <- project.artifactId
     } yield 
       "name" #> project.name &
-      "headline" #> project.headline &
+      "headline" #> StringUtils.abbreviate(project.headline.getOrElse(""), -1, 10) &
+      "headline_full" #> project.headline &
       "description" #> project.description.map(TextileParser.toHtml(_)).getOrElse(DefaultDescription) &
       "href=project [href]" #> "/projects/%s/%s".format(group, artifact) &
       "alt=avatar [rel]" #> project.randomContributor.map(_.picture).getOrElse(DefaultAvatar) &
