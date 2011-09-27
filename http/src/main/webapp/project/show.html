@@ -88,34 +88,28 @@
 
         </div>
         
-        <h2>Modules</h2>
-        <div class="restrict">
-          <div class="row">
-            <p class="span8 columns">The <name></name> project includes the following modules:</p>
-          </div><!-- eo.row -->
-
-          <table class="zebra-striped">
-            <thead>
-              <th>Module</th>
-              <th>Description</th>
-            </thead>
-            <tbody id="versions" lift="versions">
-              <tr>
-                <td>akka-actor</td>
-                <td>dsdf sdf sd fsdsf d</td>
-              </tr>
-              <tr>
-                <td>akka-agent</td>
-                <td>dsdf sdf sd fsdsf d</td>
-              </tr>
-              <tr>
-                <td>akka-stm</td>
-                <td>dsdf sdf sd fsdsf d</td>
-              </tr>
-            </tbody>
-          </table>
-
-        </div>
+        <lift:modules>
+          
+          <h2>Modules</h2>
+          <div class="restrict">
+            <div class="row">
+              <p class="span8 columns">The <name></name> project includes the following modules:</p>
+            </div><!-- eo.row -->
+            <table class="zebra-striped">
+              <thead>
+                <th>Module</th>
+                <th>Description</th>
+              </thead>
+              <tbody id="versions">
+                <tr>
+                  <td><module_name></module_name></td>
+                  <td><module_description></module_description></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </lift:modules>
         
         <h2>Usage</h2>
         <div class="restrict" lift="usage_examples">

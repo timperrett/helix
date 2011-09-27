@@ -17,6 +17,7 @@ object Sandbox {
   private val projects = for{
     r <- repositories
     name = r.split('/').last
+    lsv = Service.listScalaVersions.take(2)
   } yield Project(
       name = name, 
       headline = Some("in fringilla quis, ornare eu odio. Vestibulum a nulla vel est"), 
@@ -28,11 +29,12 @@ object Sandbox {
         imperdiet sit amet dapibus in, dapibus in urna. Pellen"""), 
       sourceURL = Some("https://github.com/%s".format(r)),
       groupId = Some("com.sandbox"), 
+      _versions = List(Version("0.1", "some description goes here", lsv)),
       artifactId = Some(name), 
       repositoryURL = Some("http://scala-tools.org/repo-releases/"),
-      versions = Map(Hex.encode("0.1".getBytes) -> "2.9.1.Final"),
       tags = List("some", "web", "thing").map(Tag(_)),
-      addedBy = Some("timperrett")
+      addedBy = Some("timperrett")//,
+      // setupComplete = true // DONT DO THIS. 
     )
   
   def setup() {

@@ -1,6 +1,6 @@
 package helix.http.ui
 
-import helix.domain.{Project,ScalaVersion}
+import helix.domain.{Project,ScalaVersion,Version,Module}
 
 case class ProjectDetail(groupId: String, artifactId: String){
   import helix.domain.Service._
@@ -19,8 +19,8 @@ trait BuildSystem {
       a <- project.artifactId
       g <- project.groupId
       s <- project.repositoryURL
-      v <- project.versionsDecoded.headOption
-    } yield usage(project.name, g,a,v._1,s)) getOrElse NodeSeq.Empty
+      v <- project.versions.headOption
+    } yield usage(project.name, g,a,v.identifier,s)) getOrElse NodeSeq.Empty
 }
 case class SBT10Plus(project: Project) extends BuildSystem {
   def name = "SBT 0.10+"
@@ -81,10 +81,11 @@ object ProjectInformation extends Loc[ProjectDetail]{
     case ("information", Full(pd)) => information(pd)
     case ("contributors", Full(pd)) => contributors(pd.project)
     case ("overview", Full(pd)) => overview(pd.project)
-    case ("versions", Full(pd)) => versions(pd.project.map(_.versionsDecoded).getOrElse(Map.empty))
+    case ("versions", Full(pd)) => versions(pd.project.map(_.versions).getOrElse(Nil))
     case ("ready_or_pending", Full(pd)) => readyOrPending(pd.project)
     case ("is_contributor", Full(pd)) => isContributor(pd.project)
     case ("usage_examples", Full(pd)) => usageExamples(pd.project)
+    case ("modules", Full(pd)) => modules(pd.project.map(_.modules).getOrElse(Nil))
   }
   
   def buildTools(project: Option[Project]): List[BuildSystem] = 
@@ -112,12 +113,18 @@ object ProjectInformation extends Loc[ProjectDetail]{
       }
     } getOrElse "*" #> NodeSeq.Empty
   
-  def versions(versions: Map[String, String]) = {
-    "tr" #> versions.map { case (version, scalaversion) =>
-      "version" #> version &
-      "scalaversion" #> scalaversion
+  def versions(versions: List[Version]) = 
+    "tr" #> versions.map { version =>
+      "version" #> version.identifier &
+      "scalaversion" #> version.compatibility
     }
-  }
+  
+  def modules(modules: List[Module]) = 
+    if(modules.isEmpty) "*" #> NodeSeq.Empty
+    else "tr" #> modules.map { module => 
+      "module_name" #> module.name &
+      "module_description" #> module.description
+    }
   
   def overview(project: Option[Project]): NodeSeq => NodeSeq = {
     import org.joda.time.{Period,DateTime}
@@ -131,8 +138,9 @@ object ProjectInformation extends Loc[ProjectDetail]{
       .printZeroNever()
       .toFormatter()
     
+    // TODO: Refactor into a for comprehension
     project.map { p => 
-      "latest_version" #> p.versionsDecoded.head._1 & 
+      "latest_version" #> p.versions.headOption.map(_.identifier).getOrElse("unknown.") & 
       "age" #> formatter.print(
         new Period(
           new DateTime(p.createdAt), 

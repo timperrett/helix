@@ -13,8 +13,8 @@ case class Project(
   description: Option[String] = None,
   groupId: Option[String] = None,
   artifactId: Option[String] = None,
-  versions: Map[String, String] = Map.empty,
-  modules: Map[String, String] = Map.empty,
+  _versions: List[Version] = Nil,
+  _modules: List[Module] = Nil,
   usagePhase: Option[String] = None, // compile, test, jetty etc
   repositoryURL: Option[String] = None, // maven repo
   sourceURL: Option[String] = None, // github repo
@@ -24,7 +24,7 @@ case class Project(
   updatedAt: Long = new DateTime().getMillis, // updated every time the async task runs
   contributors: List[Contributor] = Nil,
   tags: List[Tag] = Nil,
-  // asyncrnous
+  // asyncrnously updated
   contributorCount: Long = 1L,
   forkCount: Long = 1L,
   watcherCount: Long = 1L,
@@ -38,8 +38,11 @@ case class Project(
     if(contributors.isEmpty) None
     else randomSelect(1, contributors).headOption
   
-  def versionsDecoded = 
-    versions.map(x => new String(Hex.decode(x._1)) -> x._2)
+  // list the versions this project in the chronological 
+  // order in which they were added.
+  def versions: List[Version] = _versions.sortBy(_.timestamp).reverse
+  
+  def modules: List[Module] = _modules.sortBy(_.name)
   
   def activity: Activity = 
     List(Obsolete, Quiet, Moderate, Fair, Busy, Hectic
@@ -48,7 +51,16 @@ case class Project(
   val usernameAndRepository = sourceURL.map(_.substring(19))
 }
 
-case class Version(number: String, description: String, scalaVersions: List[ScalaVersion])
+case class Version(
+  identifier: String, 
+  description: String, 
+  _scalaVersions: List[ScalaVersion], 
+  timestamp: Long = System.nanoTime){
+    def compatibility: String = 
+      _scalaVersions.map(_.asVersion).sortBy(identity).reverse.mkString(", ")
+  }
+
+case class Module(name: String, description: String)
 
 case class Contributor(
   login: String, 

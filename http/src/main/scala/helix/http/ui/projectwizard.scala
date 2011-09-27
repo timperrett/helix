@@ -87,7 +87,7 @@ object ProjectWizard extends Wizard with CommonScreens {
       groupId = Some(publishing.groupId.is), 
       artifactId = Some(publishing.artifactId.is), 
       repositoryURL = Some(publishing.repositoryURL.is),
-      versions = vs,
+      // versions = N,
       tags = general.tags.is.split(',').map(t => Tag(t.trim)).toList,
       addedBy = CurrentContributor.is.map(_.login))
     
