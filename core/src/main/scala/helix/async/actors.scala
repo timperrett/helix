@@ -36,6 +36,7 @@ object Manager {
 
 object ProjectManager {
   case class UpdateAttributes(project: Project)
+  case class UpdateSearchIndex(withProject: Project)
 }
 class ProjectManager extends Actor 
     with DefaultActorPool 
@@ -61,6 +62,8 @@ class ProjectWorker(owner: ActorRef) extends Actor {
   import org.joda.time.DateTime
   
   def receive = {
+    // case UpdateSearchIndex(project) => 
+    
     case msg@UpdateAttributes(project) => {
       (for {
         unr <- project.usernameAndRepository
@@ -76,7 +79,11 @@ class ProjectWorker(owner: ActorRef) extends Actor {
         setupComplete = true,
         updatedAt = new DateTime().getMillis
       )) map(_.copy(activityScore = Service.calculateProjectAggregateScore(project)
-      )) foreach(p => Service.updateProject(p.id, p))
+      )) foreach { p =>
+        Service.updateProject(p.id, p)
+        // send to solr
+        // self ! UpdateSearchIndex(p)
+      }
     }
   }
 }

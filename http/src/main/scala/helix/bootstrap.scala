@@ -50,6 +50,10 @@ class Boot extends LazyLoggable {
       case "statistics" => helix.http.ui.ProjectStatistics
     }
     
+    LiftRules.statelessTest.append {
+      case "search" :: Nil => true
+    }
+    
     /**
      * Sitemap setup
      */
@@ -59,7 +63,9 @@ class Boot extends LazyLoggable {
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
       Menu("Error") / "error",
-      Menu("Tags: List") / "tags",
+      Menu("About") / "about",
+      Menu("Search") / "search",
+      // Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
       Menu("Projects: Add") / "project" / "add" >> If(
         () => isAuthenticated, 

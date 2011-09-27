@@ -34,7 +34,7 @@ resolvers += "%s-repo" at "%s" """.format(group, artifact, version, name, repo)
 case class Maven(project: Project) extends BuildSystem {
   def name = "Maven"
   def usage = (name, group, artifact, version, repo) => <pre> {
-    """<dependency>
+"""<dependency>
   <groupId>%s</groupId>
   <artifactId>%s</artifactId>
   <version>%s</version>
