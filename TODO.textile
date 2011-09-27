@@ -3,7 +3,16 @@ h2. TODO
 Current list of shit that needs doing.
 
 h3. Quick Wins
-None.
+* None. is anything every easy? ;-) .
+
+h3. Random Thoughts
+* What about making the projects service based?:
+  GET /project/com.twitter/gizzard - Displays the project via the UI
+  PUT /project/com.twitter/gizzard - Would update the existing project or create a new one
+  POST /project/com.twitter/gizzard/0.1.2 - Add a new project version (append only)
+  
+* How about making versions based upon a case class rather than a limited map?:
+case class Version(number: String, description: String, scalaVersions: List[ScalaVersion])
 
 h3. Stage One
 * Implement searching for projects... Solr??? <-- Massively important (lolz)
