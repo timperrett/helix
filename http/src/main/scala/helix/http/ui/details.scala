@@ -12,21 +12,41 @@ import scala.xml.{NodeSeq,Text}
 
 trait BuildSystem {
   protected def project: Project
-  protected def usage: (String,String) => NodeSeq
+  protected def usage: (String,String,String,String,String) => NodeSeq
   def name: String
   def render: NodeSeq = 
-    (for(a <- project.artifactId; g <- project.groupId)
-      yield usage(g,a)) getOrElse NodeSeq.Empty
+    (for {
+      a <- project.artifactId
+      g <- project.groupId
+      s <- project.repositoryURL
+      v <- project.versionsDecoded.headOption
+    } yield usage(project.name, g,a,v._1,s)) getOrElse NodeSeq.Empty
 }
 case class SBT10Plus(project: Project) extends BuildSystem {
   def name = "SBT 0.10+"
-  def usage = (group, artifact) =>
+  def usage = (name, group, artifact, version, repo) =>
     <pre>{
-      """libraryDependencies += 
-        "%s" %% "%s" % "XXXX-SNAPSHOT" """ //.format(group, artifact)
+      """libraryDependencies += "%s" %%%% "%s" %% "%s"
+       
+resolvers += "%s-repo" at "%s" """.format(group, artifact, version, name, repo)
     }</pre>
 }
-// case object Maven extends BuildSystem
+case class Maven(project: Project) extends BuildSystem {
+  def name = "Maven"
+  def usage = (name, group, artifact, version, repo) => <pre> {
+    """<dependency>
+  <groupId>%s</groupId>
+  <artifactId>%s</artifactId>
+  <version>%s</version>
+</dependency>
+
+<repository>
+  <id>%s-repo</id>
+  <name>%s Repo</name>
+  <url>%s</url>
+</repository>""".format(group, artifact, version, name, name, repo)
+  } </pre>
+}
 
 import net.liftweb.common.{Box,Empty,Full}
 import net.liftweb.util.NamedPF
@@ -43,13 +63,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
   
   val link = new Loc.Link[ProjectDetail](path, false)
   
-  import net.liftweb.sitemap.Loc.Unless
-  
-  // loc params
   def params = Nil
-  /*  Unless(
-    () => S.param("groupId").isEmpty,
-    () => RedirectResponse("/"))*/
     
   def defaultValue = Empty
   
@@ -74,7 +88,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
   }
   
   def buildTools(project: Option[Project]): List[BuildSystem] = 
-    project.map(p => List(SBT10Plus(p))).getOrElse(Nil)
+    project.map(p => List(SBT10Plus(p), Maven(p))).getOrElse(Nil)
   
   def usageExamples(project: Option[Project]) = 
     "*" #> buildTools(project).map { b => 
