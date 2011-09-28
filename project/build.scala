@@ -19,7 +19,7 @@ object BuildSettings {
       "apache" at "https://repository.apache.org/content/groups/public/"
     )
   )
-  
+
   val httpSettings = 
     buildSettings ++ webSettings ++ Seq(
       libraryDependencies ++= Seq(
@@ -34,7 +34,7 @@ object Build extends Build {
   
   lazy val root = Project("helix", file("."),
     settings = buildSettings
-  ) aggregate(core, http)
+  ) aggregate(core, http, plugin)
   
   lazy val core: Project = Project("helix-core", file("core"), 
     settings = buildSettings  ++ Seq(
@@ -71,4 +71,9 @@ object Build extends Build {
     )
   ) dependsOn(core)
   
+  lazy val plugin: Project = Project("sbt-helix-plugin", file("sbt-plugin"),
+    settings = buildSettings ++ Seq(
+      sbtPlugin := true
+      )
+    )
 }
