@@ -1,3 +1,15 @@
 h2. Helix
 
 The package database for Scala.
+
+
+h2. sbt-helix-plugin
+
+h3. configuration
+
+Most likely the only configuration needed is:
+<pre>
+    seq(helix.settings:_*)
+  
+    HelixKeys.headline := "An automated resource management library for Scala."
+</pre>

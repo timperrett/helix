@@ -15,6 +15,8 @@ object HelixKeys {
   val helixLocation = SettingKey[String]("helix-location", "The URL to helix.")
   val projectInfo = TaskKey[HelixProjectInfo]("helix-project-info", "The URL to helix.")
   val addProject = TaskKey[Unit]("helix-add-project", "Adds this project to the helix index or updates helix information with the current information for this project.")
+  val notesDir = SettingKey[File]("helix-notes-dir", "The directory that contains meta information for helix.")
+  val aboutFile = SettingKey[File]("helix-about-file", "The file that contains the description of the project.")
 }
 
 /** This class stores all configuration about a project for helix in one convenient type. */
@@ -31,8 +33,15 @@ case class HelixProjectInfo(
 
 object HelixPlugin extends Plugin {
   object helix {
+    // Here's a few hacky plugin interop things.  We declare some keys that are the same as other plugin's keys.  Then we optionally use them if they're defined.
+    private[this] val posterousAboutFile = SettingKey[File]("about-file")
+    private[this] val gitRemoteRepo = SettingKey[String]("git-remote-repo", "The remote git repository assoicated with this project") 
+
     val settings = Seq(
-      // TODO - Let's pull description from a file...  Specifically, let's look for it in the posterous about.markdown file.  That makes this a Task.
+      HelixKeys.helixLocation := "helix.scala-lang.org",
+      HelixKeys.notesDir <<= baseDirectory / "notes",
+      // Use posterous file if configured, otherwise use notes directory.
+      HelixKeys.aboutFile <<= posterousAboutFile or (HelixKeys.notesDir / "about.markdown"),
       // We might even be able to grab the 'headline' from there.
       HelixKeys.name <<= name.identity,
       HelixKeys.artifactId <<= name.identity,
@@ -40,8 +49,11 @@ object HelixPlugin extends Plugin {
       HelixKeys.repository <<= publishTo apply { 
         case Some(MavenRepository(_, url))  => url
         // TODO - Support other types of repos.
-        case _                              => /* Asume maven central */ "http://repo2.maven.org/maven2"
+        case e                              => error("Unknown publishing repository: " + e)
       },
+      HelixKeys.description <<= HelixKeys.aboutFile map slurpFile,
+      // TODO - Don't bomb if this is not defined!
+      HelixKeys.githubUrl <<= extractGithubFromGit,
       HelixKeys.tags <<= HelixKeys.tags ?? Seq(),
       // TODO - Pull githubUrl from configured gitRemoteUrl if one exists.
       HelixKeys.projectInfo <<= (HelixKeys.name, HelixKeys.headline, HelixKeys.description, HelixKeys.githubUrl, 
@@ -50,5 +62,32 @@ object HelixPlugin extends Plugin {
         s.log.info("Would have pushed: " + info + " to " + loc)
       }
     )
+    /** Attempts to extract the project location from a git remote uri. */
+    private[this] def extractGithubFromGit = gitRemoteRepo apply { repo =>
+      val Http = new util.matching.Regex("https://github.com/(\\S+)/(\\S+)\\.git")
+      val Git  = new util.matching.Regex("git://github.com/(\\S+)/(\\S+)\\.git")
+      val Git2 = new util.matching.Regex("git@github.com:(\\S+)/(\\S+)\\.git")
+      def makeGitHubUrl(user: String, project: String) = "http://github.com/"+user+"/"+project
+      repo match {
+        case Http(user, project) => makeGitHubUrl(user, project)
+        case Git(user, project)  => makeGitHubUrl(user, project)
+        case Git2(user, project) => makeGitHubUrl(user, project)
+        case _                   => error("Could not extract github url from git-remote-repository key.   Please specify helix-github-url in your project.")
+      }
+    }
+    /** Slurps an entire file into a string, for good luck. */
+    private[this] def slurpFile(f: File): String = 
+      IO.reader(f) { reader =>
+        val ls = System getProperty "line.separator"
+        @annotation.tailrec def read(sb: StringBuilder): String =
+          reader.readLine match {
+            case null => sb.toString
+            case line => 
+              sb.append(line)
+              sb.append(ls)
+              read(sb)
+          }
+        read(new StringBuilder)
+      }
   }
 }

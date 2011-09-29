@@ -73,7 +73,12 @@ object Build extends Build {
   
   lazy val plugin: Project = Project("sbt-helix-plugin", file("sbt-plugin"),
     settings = buildSettings ++ Seq(
-      sbtPlugin := true
+        sbtPlugin := true,
+        version <<= (version, sbtVersion)("%s-%s".format(_,_)),
+        scalaVersion <<= sbtVersion apply {
+           case "0.10.0" | "0.10.1" => "2.8.1"
+           case "0.11.0"            => "2.9.1"
+        }
       )
     )
 }
