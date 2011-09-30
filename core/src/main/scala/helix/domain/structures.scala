@@ -31,16 +31,6 @@ case class Project(
   activityScore: Double = 0D,
   setupComplete: Boolean = false
 ){
-  // convenient builder
-  def this(name: String, headline: String,
-    description: String, groupId: String,
-    artifactId: String, sourceURL: String, 
-    repositoryURL: String) = this(
-      name = name, headline = Some(headline),
-      description = Some(description), groupId = Some(groupId),
-      artifactId = Some(artifactId), sourceURL = Some(sourceURL),
-      repositoryURL = Some(repositoryURL)
-    )
   
   import helix.util.Random.randomSelect
   import helix.util.Hex

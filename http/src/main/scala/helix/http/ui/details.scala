@@ -111,7 +111,7 @@ object ProjectInformation extends Loc[ProjectDetail]{
         "p *" #> "%s commits".format(c.contributions) & 
         "img [src]" #> c.avatar
       }
-    } getOrElse "*" #> NodeSeq.Empty
+    } getOrElse dontDisplayAnything
   
   def versions(versions: List[Version]) = 
     "tr" #> versions.map { version =>
@@ -147,19 +147,20 @@ object ProjectInformation extends Loc[ProjectDetail]{
           new DateTime
         )) &
       "contributor_count" #> p.contributors.size
-    } getOrElse "*" #> NodeSeq.Empty
+    } getOrElse dontDisplayAnything
   }
   
   def information(details: ProjectDetail) = 
-    (for(project <- details.project)
-      yield project.bind) getOrElse suggestAddingProject
+    (for(project <- details.project) 
+      yield project.bind) getOrElse dontDisplayAnything
   
-  def suggestAddingProject = 
-    "*" #> <lift:embed what="_nonexistant_project" />
+  val dontDisplayAnything = "*" #> NodeSeq.Empty
+  val suggestAddingProject = 
+    "*" #> <lift:embed what="_nonexistant_project"></lift:embed>
   
   def readyOrPending(project: Option[Project]) = 
     (for(p <- project) yield {
       if(p.setupComplete) "ready ^*" #> NodeSeq.Empty
       else "pending ^*" #> NodeSeq.Empty
-    }) getOrElse "*" #> NodeSeq.Empty
+    }) getOrElse suggestAddingProject
 }

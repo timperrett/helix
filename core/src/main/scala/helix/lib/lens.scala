@@ -2,7 +2,7 @@ package helix
 package lib
 
 case class Lens[A,B](get: A => B, set: (A,B) => A) extends Immutable {
-  /** A Lens[A,B] can be used as a function from A => B, or implicitly via Lens.asState as a State[A,B] action */
+  /** A Lens[A,B] can be used as a function from A => B */
   def apply(whole:A): B = get(whole)
 
   /** Modify the value viewed through the lens */

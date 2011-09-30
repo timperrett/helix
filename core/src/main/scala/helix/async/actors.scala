@@ -79,8 +79,8 @@ class ProjectWorker(owner: ActorRef) extends Actor {
         setupComplete = true,
         updatedAt = new DateTime().getMillis
       )) map(_.copy(activityScore = Service.calculateProjectAggregateScore(project)
-      )) foreach { p =>
-        Service.updateProject(p.id, p)
+      )) foreach { p => 
+        Service.save(p)
         // send to solr
         // self ! UpdateSearchIndex(p)
       }

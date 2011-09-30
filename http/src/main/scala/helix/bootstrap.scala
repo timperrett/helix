@@ -14,6 +14,7 @@ class Boot extends LazyLoggable {
   def boot {
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
     
+    LiftRules.dispatch.append(helix.http.ProjectServices)
     LiftRules.dispatch.append(helix.http.OAuth)
     
     LiftRules.loggedInTest = Full(() => isAuthenticated)
@@ -40,7 +41,7 @@ class Boot extends LazyLoggable {
     // }
     
     LiftRules.snippetDispatch.append {
-      case "project_wizard" => helix.http.ui.ProjectWizard
+      // case "project_wizard" => helix.http.ui.ProjectWizard
       case "version_wizard" => helix.http.ui.VersionWizard
       case "recently_added_projects" => helix.http.ui.RecentlyAddedProject
       case "all_projects" => helix.http.ui.ListAllProjects
@@ -67,9 +68,9 @@ class Boot extends LazyLoggable {
       Menu("Search") / "search",
       // Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
-      Menu("Projects: Add") / "project" / "add" >> If(
-        () => isAuthenticated, 
-        () => RedirectResponse("/oauth/login?return_to=%2Fproject%2Fadd")),
+      // Menu("Projects: Add") / "project" / "add" >> If(
+      //   () => isAuthenticated, 
+      //   () => RedirectResponse("/oauth/login?return_to=%2Fproject%2Fadd")),
       Menu(ProjectInformation)
     ))
   }

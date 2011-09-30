@@ -5,39 +5,43 @@ import net.liftweb.util.{NamedPF,Helpers}
 import net.liftweb.http._
 import helix.domain.{Project,Service}, Service._
 
-object Services extends Dispatcher {
+object ProjectServices extends Dispatcher {
   import net.liftweb.json._
+  
+  // god aweful work around to the issue between
+  // salat and lift-json. The former expects a single
+  // constructor ONLY, whilst lift-json can handle
+  // multiple ones. Having both however causes a meltdown.
+  private case class WireProject(
+    name: String, headline: String,
+    description: String, sourceURL: String, 
+    repositoryURL: String){
+      def toProject = Project(
+          name = name, headline = Some(headline),
+          description = Some(description), sourceURL = Some(sourceURL),
+          repositoryURL = Some(repositoryURL)
+        )
+    }
   
    /**
    {
      "name": "Lift",
      "headline": "Lift is an expressive web framework",
      "description": "blah blah blah blah",
-     "groupId": "net.liftweb",
-     "artifactId": "lift-webkit",
      "sourceURL": "http://github.com/lift/framework",
      "repositoryURL": "http://scala-tools.org/repo-releases/"
    }
     */
   private implicit val formats = DefaultFormats
-  private def jsonToProject(json: JsonAST.JValue): Box[Project] = 
-     Helpers.tryo(json.extract[Project])
+
+  private def given(request: Req, group: String, artifact: String)(f: Project => LiftResponse): LiftResponse = 
+    (for {
+      j <- request.json
+      p <- Helpers.tryo(j.extract[WireProject].toProject)
+    } yield {
+       f(p.copy(groupId = Some(group), artifactId = Some(artifact)))
+     }) openOr BadResponse()
    
-   private def given(request: Req)(f: Project => LiftResponse): LiftResponse = 
-     (for {
-       j <- request.json
-       p <- jsonToProject(j)
-     } yield f(p)) openOr BadResponse()
-   
-   private def insertOrUpdate(project: Project): Option[Project] = 
-     (for {
-       group <- project.groupId
-       artifact <- project.artifactId
-       p <- findProjectByGroupAndArtifact(group, artifact)
-     } yield {
-       updateProject(project.id, project)
-       project
-     }) //orElse None //createProject(project)
   
   override def dispatch = {
     /*
@@ -47,10 +51,11 @@ object Services extends Dispatcher {
     */
     val feed: LiftRules.DispatchPF = NamedPF("Helix Services"){
       // add/update project
-      case request@Req("project" :: group :: artifact :: Nil, "rss", PutRequest) => () => 
-        Box(given(request){ project => 
-          insertOrUpdate(project).map(_ => OkResponse()
-            ).getOrElse(InternalServerErrorResponse())
+      case request@Req("project" :: group :: artifact :: Nil, "", PutRequest) => () => 
+        Box !! (given(request, group, artifact){ project => 
+          save(project){ pr =>
+            asyncronuslyUpdate(pr)
+          }.map(_ => OkResponse()).getOrElse(InternalServerErrorResponse())
         })
         
       // add/update project version

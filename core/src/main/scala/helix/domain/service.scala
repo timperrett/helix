@@ -20,17 +20,14 @@ import helix.async.ProjectManager
 import akka.actor.Actor.registry.actorFor
 
 trait HelixService { _: Repositories with Scoring with Statistics => 
+  
+  // kestral combinator ftw!
+  protected def kestrel[T](x: T)(f: T => Unit): T = {
+    f(x); x 
+  }
+  
   def calculateProjectAggregateScore(p: Project): Double = 
     scoring.calculateProjectAggregateScore(p)
-  
-  // this may need revising, it feels wrong.
-  def createProject(p: Project): Boolean = 
-    (for(project <- repository.createProject(p)) yield {
-      for(a <- actorFor[ProjectManager]){
-        a ! ProjectManager.UpdateAttributes(project)
-      }
-      true
-    }) getOrElse false
   
   def createScalaVersion(v: ScalaVersion) = 
     repository.createScalaVersion(v)
@@ -75,10 +72,25 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
     }
     repository.findStaleProjects(expiryLong(new DateTime))
   }
-    
   
-  def updateProject[T](id: T, project: Project): Unit = 
-    repository.updateProject(id, project)
+  def asyncronuslyUpdate(project: Project) {
+    for(a <- actorFor[ProjectManager]){
+      a ! ProjectManager.UpdateAttributes(project)
+    }
+  }
+  
+  def save(project: Project)(implicit f: Project => Unit = p => ()): Option[Project] = 
+    kestrel {
+      (for {
+        group <- project.groupId
+        artifact <- project.artifactId
+        loaded <- findProjectByGroupAndArtifact(group, artifact)
+      } yield kestrel(project){ p => 
+        repository.updateProject(loaded.id, project.copy(id = loaded.id))
+      }) orElse repository.createProject(project)
+    }{ proj => 
+      for(p <- proj){ f(p) }
+    }
 }
 
 // readers for global agent state
