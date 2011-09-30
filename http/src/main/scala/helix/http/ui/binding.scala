@@ -26,7 +26,7 @@ object DomainBindings {
       artifact <- project.artifactId
     } yield 
       "name" #> project.name &
-      "headline" #> StringUtils.abbreviate(project.headline.getOrElse(""), -1, 10) &
+      "headline" #> StringUtils.abbreviate(project.headline.getOrElse(""), -1, 50) &
       "headline_full" #> project.headline &
       "description" #> project.description.map(TextileParser.toHtml(_)).getOrElse(DefaultDescription) &
       "href=project [href]" #> "/projects/%s/%s".format(group, artifact) &
