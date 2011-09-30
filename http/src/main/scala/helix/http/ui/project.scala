@@ -109,7 +109,8 @@ object ProjectInformation extends Loc[ProjectDetail]{
       "li" #> p.contributors.map { c =>
         "h4 *" #> c.login &
         "p *" #> "%s commits".format(c.contributions) & 
-        "img [src]" #> c.avatar
+        "img [src]" #> c.avatar &
+        "a [href]" #> c.url
       }
     } getOrElse dontDisplayAnything
   

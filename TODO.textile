@@ -9,11 +9,10 @@ h3. Stage One
 * Contributor area to C/R/U/D keys.
 * Keyring bucket: id field, crypt field. Keys are also related to contributors.
 * Implement searching for projects... Solr??? <-- Massively important (lolz)
-* Project editing for contributors to a particular project
 
 h3. Stage Two
 * Do a validation on the group ID and artefact ID with the repository URL - download the POM file to check dependencies? 
-* Implement the list of all tags
+* Project editing for contributors to a particular project
 
 h3. Initial Release
 Speculative date: End of October

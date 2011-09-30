@@ -75,6 +75,7 @@ case class Contributor(
   style: String = "User"
 ){
   def picture = avatar getOrElse "http://gravatar.com/unknown"
+  val url = "/contributors/%s".format(login)
 }
 
 case class Tag(name: String)

@@ -8,7 +8,7 @@ import helix.http.Vars.CurrentContributor
 object CurrentContributorInfo extends Snippet {
   def render = CurrentContributor.is.map { c =>
     "a *" #> c.login &
-    "a [href]" #> "/contributors/%s".format(c.login) &
+    "a [href]" #> c.url &
     "img [src]" #> c.avatar    
   } getOrElse "*" #> NodeSeq.Empty
 }
