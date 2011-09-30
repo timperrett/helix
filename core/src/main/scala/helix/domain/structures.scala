@@ -45,6 +45,9 @@ case class Project(
   
   def modules: List[Module] = _modules.sortBy(_.name)
   
+  def hasVersion(versionId: Version): Boolean = 
+    !versions.find(_.identifier == versionId).isEmpty
+  
   def activity: Activity = 
     List(Obsolete, Quiet, Moderate, Fair, Busy, Hectic
       ).find(_.judge(activityScore)).getOrElse(UnknownActivity)
@@ -64,6 +67,7 @@ case class Version(
 case class Module(name: String, description: String)
 
 case class Contributor(
+  @Key("_id") id: ObjectId = new ObjectId, 
   login: String, 
   name: Option[String] = None, 
   avatar: Option[String] = None,

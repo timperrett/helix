@@ -54,7 +54,7 @@ import net.liftweb.http._
 import net.liftweb.sitemap.Loc
 
 object ProjectInformation extends Loc[ProjectDetail]{
-  val name = "details"
+  val name = "project details"
   
   private val path = "project" :: "show" :: Nil
   

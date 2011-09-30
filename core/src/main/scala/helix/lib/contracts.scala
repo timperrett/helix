@@ -20,14 +20,16 @@ trait Repositories {
     def findAverageWatcherCount: Double
     def findAverageForkCount: Double
     def findStaleProjects(boundry: Long): List[Project]
+    def findContributorByLogin(login: String): Option[Contributor]
     
     /** creator **/
     def createProject(project: Project): Option[Project]
     def createScalaVersion(version: ScalaVersion): Boolean
+    def createContributor(contributor: Contributor): Option[Contributor]
     
     /** updaters **/
     def updateProject[T](id: T, project: Project): Unit
-    
+    def updateContributor[T](id: T, contrib: Contributor): Unit
   }
 }
 

@@ -41,8 +41,6 @@ class Boot extends LazyLoggable {
     // }
     
     LiftRules.snippetDispatch.append {
-      // case "project_wizard" => helix.http.ui.ProjectWizard
-      case "version_wizard" => helix.http.ui.VersionWizard
       case "recently_added_projects" => helix.http.ui.RecentlyAddedProject
       case "all_projects" => helix.http.ui.ListAllProjects
       case "most_active_projects" => helix.http.ui.ListMostActiveProjects
@@ -59,19 +57,18 @@ class Boot extends LazyLoggable {
      * Sitemap setup
      */
     import net.liftweb.sitemap.Loc.If
-    import helix.http.ui.ProjectInformation
+    import helix.http.ui.{ProjectInformation,ContributorInformation}
     
     LiftRules.setSiteMap(SiteMap(
       Menu("Home") / "index",
-      Menu("Error") / "error",
       Menu("About") / "about",
       Menu("Search") / "search",
-      // Menu("Tags: List") / "tags",
       Menu("Projects: List") / "projects",
       // Menu("Projects: Add") / "project" / "add" >> If(
       //   () => isAuthenticated, 
       //   () => RedirectResponse("/oauth/login?return_to=%2Fproject%2Fadd")),
-      Menu(ProjectInformation)
+      Menu(ProjectInformation),
+      Menu(ContributorInformation)
     ))
   }
 }

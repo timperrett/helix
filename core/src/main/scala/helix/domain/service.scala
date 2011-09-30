@@ -26,12 +26,18 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
     f(x); x 
   }
   
+  def asyncronuslyUpdate(project: Project) {
+    for(a <- actorFor[ProjectManager]){
+      a ! ProjectManager.UpdateAttributes(project)
+    }
+  }
+  
   def calculateProjectAggregateScore(p: Project): Double = 
     scoring.calculateProjectAggregateScore(p)
   
   def createScalaVersion(v: ScalaVersion) = 
     repository.createScalaVersion(v)
-    
+  
   def listScalaVersions: List[ScalaVersion] = 
     repository.listScalaVersions
   
@@ -73,11 +79,14 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
     repository.findStaleProjects(expiryLong(new DateTime))
   }
   
-  def asyncronuslyUpdate(project: Project) {
-    for(a <- actorFor[ProjectManager]){
-      a ! ProjectManager.UpdateAttributes(project)
-    }
-  }
+  def findContributorByLogin(login: String): Option[Contributor] = 
+    repository.findContributorByLogin(login)
+  
+  def saveContributor(contributor: Contributor): Option[Contributor] =
+    (for(loaded <- repository.findContributorByLogin(contributor.login))
+      yield kestrel(contributor){ c =>
+        repository.updateContributor(loaded.id, contributor.copy(id = loaded.id))
+      }) orElse repository.createContributor(contributor)
   
   def save(project: Project)(implicit f: Project => Unit = p => ()): Option[Project] = 
     kestrel {

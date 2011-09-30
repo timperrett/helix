@@ -19,15 +19,15 @@ object OAuth extends Dispatcher {
   private val clientSecret = Conf.get[String]("github.secret").getOrElse("unknown")
   
   private val callbackCodeHandler: Req => Box[LiftResponse] = r => 
-    for(code <- r.param("code")) yield {
-      // set the token into the session 
-      AccessToken(github.requestAccessToken(clientId, clientSecret, code))
-      // set their contributor instance into the session as it'll 
-      // be needed later for making API calls
-      for {
-        token <- AccessToken.is
-      } CurrentContributor(github.contributor(token))
-      
+    for {
+      code <- r.param("code")
+      token = github.requestAccessToken(clientId, clientSecret, code)
+      t <- token
+      c <- github.contributor(t)
+    } yield {
+      // side effects
+      AccessToken(token)
+      CurrentContributor(saveContributor(c))
       RedirectResponse(r.param("return_to").map(Helpers.urlDecode).openOr("/"))
     }
   

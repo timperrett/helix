@@ -72,12 +72,18 @@ trait MongoRepositories extends Repositories {
     def findStaleProjects(boundry: Long): List[Project] =
       ProjectDAO.find("updatedAt" $lt boundry).toList
     
+    def findContributorByLogin(login: String): Option[Contributor] = 
+      ContributorDAO.findOne(MongoDBObject("login" -> login))
+    
     /** creators **/
     def createProject(project: Project): Option[Project] = 
       for(r <- ProjectDAO.insert(project)) yield project
     
     def createScalaVersion(version: ScalaVersion) = 
       !ScalaVersionDAO.insert(version).isEmpty
+    
+    def createContributor(contributor: Contributor): Option[Contributor] = 
+      for(c <- ContributorDAO.insert(contributor)) yield contributor
     
     /** updaters **/
     // this is less than ideal, but there appears to be some 
@@ -87,8 +93,10 @@ trait MongoRepositories extends Repositories {
         MongoDBObject("_id" -> id), project, false, false,
         new WriteConcern)
     
-    // def createProjectVersion(project: Project) = 
-      // ProjectDAO.update()
+    def updateContributor[T](id: T, contrib: Contributor): Unit = 
+      ContributorDAO.update(
+        MongoDBObject("_id" -> id), contrib, false, false,
+        new WriteConcern)
     
     /** internals **/
     private lazy val mongo: MongoDB = {
@@ -130,5 +138,8 @@ trait MongoRepositories extends Repositories {
     
     object ScalaVersionDAO extends SalatDAO[ScalaVersion, ObjectId](
       collection = mongo("scala_versions"))
+      
+    object ContributorDAO extends SalatDAO[Contributor, ObjectId](
+      collection = mongo("contributors"))
   }
 }

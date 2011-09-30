@@ -1,22 +1,52 @@
 package helix.http.ui
 
-import scala.xml.NodeSeq
-import net.liftweb.util.Helpers._
-import net.liftweb.http.DispatchSnippet
-import helix.http.Vars.CurrentContributor
+import helix.domain.{Service,Contributor}
 
-object CurrentContributorInfo extends Snippet {
-  def render = CurrentContributor.is.map { c =>
-    "a *" #> c.login &
-    "a [href]" #> "http://github.com/%s".format(c.login) &
-    "img [src]" #> c.avatar    
-  } getOrElse "*" #> NodeSeq.Empty
+case class ContributorDetail(login: String){
+  lazy val contributor: Option[Contributor] = 
+    Service.findContributorByLogin(login)
 }
 
-import net.liftweb.http.S
+import scala.xml.{NodeSeq,Text}
+import net.liftweb.common.{Box,Empty,Full}
+import net.liftweb.util.NamedPF
+import net.liftweb.util.Helpers._
+import net.liftweb.http._
+import net.liftweb.sitemap.Loc
+import helix.http.ui.DomainBindings._
 
-object LoginLink extends Snippet {
-  def render = 
-    "a [href]" #> "/oauth/login?return_to=%s".format(
-      urlEncode(S.attr("return_to").openOr(S.uri)))
+object ContributorInformation extends Loc[ContributorDetail]{
+  val name = "contributor details"
+  
+  private val path = "contributor" :: "show" :: Nil
+  
+  val text = new Loc.LinkText[ContributorDetail](detail =>
+    Text((for(c <- detail.contributor; n <- c.name) yield n).getOrElse("Unknown")))
+  
+  val link = new Loc.Link[ContributorDetail](path, false)
+  
+  import net.liftweb.sitemap.Loc.{If,EarlyResponse}
+  def params = EarlyResponse(() => {
+    println(">>>>>>>>>>>>>>")
+    println(currentValue)
+    Empty
+  }) :: Nil
+    
+  def defaultValue = Empty
+  
+  override val rewrite: LocRewrite = Full(NamedPF("Contributor Rewrite"){
+    case RewriteRequest(ParsePath("contributors" :: login :: Nil,"",true,_),_,_) =>
+        (RewriteResponse(path), ContributorDetail(login))
+  })
+  
+  override val snippets: SnippetTest = {
+    case ("information", Full(cd)) => information(cd)
+  }
+  
+  val dontDisplayAnything = "*" #> NodeSeq.Empty
+  
+  def information(details: ContributorDetail) = 
+    (for(contributor <- details.contributor) 
+      yield contributor.bind) getOrElse dontDisplayAnything
+  
 }
