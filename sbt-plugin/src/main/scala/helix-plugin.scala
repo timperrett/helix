@@ -67,7 +67,7 @@ object HelixPlugin extends Plugin {
       val Http = new util.matching.Regex("https://github.com/(\\S+)/(\\S+)\\.git")
       val Git  = new util.matching.Regex("git://github.com/(\\S+)/(\\S+)\\.git")
       val Git2 = new util.matching.Regex("git@github.com:(\\S+)/(\\S+)\\.git")
-      def makeGitHubUrl(user: String, project: String) = "http://github.com/"+user+"/"+project
+      def makeGitHubUrl(user: String, project: String) = "https://github.com/"+user+"/"+project
       repo match {
         case Http(user, project) => makeGitHubUrl(user, project)
         case Git(user, project)  => makeGitHubUrl(user, project)
