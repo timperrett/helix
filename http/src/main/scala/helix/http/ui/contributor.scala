@@ -25,12 +25,13 @@ object ContributorInformation extends Loc[ContributorDetail]{
   
   val link = new Loc.Link[ContributorDetail](path, false)
   
-  import net.liftweb.sitemap.Loc.{If,EarlyResponse}
-  def params = EarlyResponse(() => {
-    println(">>>>>>>>>>>>>>")
-    println(currentValue)
-    Empty
-  }) :: Nil
+  def params = Nil
+  // import net.liftweb.sitemap.Loc.{If,EarlyResponse}
+  // def params = EarlyResponse(() => {
+  //   println(">>>>>>>>>>>>>>")
+  //   println(currentValue)
+  //   Empty
+  // }) :: Nil
     
   def defaultValue = Empty
   
