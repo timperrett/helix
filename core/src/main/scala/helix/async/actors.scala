@@ -18,7 +18,7 @@ object Manager {
     }
   
   private lazy val actors = 
-    List(actorOf[ProjectManager], actorOf[ScheduledTask])
+    List(actorOf[Search], actorOf[ProjectManager], actorOf[ScheduledTask])
   
   def start(){
     // touch the agents
@@ -62,8 +62,6 @@ class ProjectWorker(owner: ActorRef) extends Actor {
   import org.joda.time.DateTime
   
   def receive = {
-    // case UpdateSearchIndex(project) => 
-    
     case msg@UpdateAttributes(project) => {
       (for {
         unr <- project.usernameAndRepository
@@ -81,8 +79,10 @@ class ProjectWorker(owner: ActorRef) extends Actor {
       )) map(_.copy(activityScore = Service.calculateProjectAggregateScore(project)
       )) foreach { p => 
         Service.save(p)
-        // send to solr
-        // self ! UpdateSearchIndex(p)
+        // send to the updated project to the search engine
+        registry.actorFor[Search].foreach { 
+          _ ! Search.UpdateIndexFor(p)
+        }
       }
     }
   }
@@ -141,3 +141,21 @@ class ScheduledTask extends Actor {
     ).foreach(self ! _)
   }
 }
+
+import helix.search.{ElasticSearchProvider,ProjectIndexing}
+
+object Search {
+  case class UpdateIndexFor(project: Project)
+}
+class Search extends Actor with ElasticSearchProvider with ProjectIndexing {
+  import Search._ 
+  
+  def receive = { 
+    case UpdateIndexFor(project) => index(project)
+  }
+  
+  // hook into actor lifecycle
+  override def preStart = server.start()
+  override def postStop = server.stop()
+}
+

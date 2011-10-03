@@ -32,7 +32,7 @@ object ContributorInformation extends Loc[ContributorDetail]{
   //   println(currentValue)
   //   Empty
   // }) :: Nil
-    
+  
   def defaultValue = Empty
   
   override val rewrite: LocRewrite = Full(NamedPF("Contributor Rewrite"){

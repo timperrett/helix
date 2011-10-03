@@ -1,6 +1,6 @@
 import sbt._, Keys._
 import com.github.siasia.WebPlugin._
-import bees.RunCloudPlugin._
+// import bees.RunCloudPlugin._
 
 object BuildSettings {
   val buildOrganization = "eu.getintheloop"
@@ -14,9 +14,10 @@ object BuildSettings {
     scalacOptions += "-deprecation",
     resolvers ++= Seq(
       ".m2" at "file://"+Path.userHome+"/.m2/repository",
-      "salat" at "http://repo.novus.com/snapshots/",
+      "novus" at "http://repo.novus.com/snapshots/",
       "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
-      "apache" at "https://repository.apache.org/content/groups/public/"
+      "apache" at "https://repository.apache.org/content/groups/public/",
+      "sonatype" at "https://oss.sonatype.org/content/repositories/releases/"
     )
   )
   
@@ -26,7 +27,7 @@ object BuildSettings {
         "javax.servlet" % "servlet-api" % "2.5" % "provided",
         "org.eclipse.jetty" % "jetty-webapp" % "7.3.0.v20110203" % "jetty"
       )
-    ) ++ deploymentSettings
+    ) //++ deploymentSettings
 }
 
 object Build extends Build {
@@ -52,6 +53,7 @@ object Build extends Build {
         "net.databinder" %% "dispatch-http" % "0.8.5" % "compile",
         "net.databinder" %% "dispatch-json" % "0.8.5" % "compile",
         "net.databinder" %% "dispatch-lift-json" % "0.8.5" % "compile",
+        "org.elasticsearch" % "elasticsearch" % "0.17.7" % "compile",
         // testing
         "org.specs2" %% "specs2" % "1.6.1" % "test" //,
         // "org.specs2" %% "specs2-scalaz-core" % "6.0.1" % "test"

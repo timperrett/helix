@@ -8,7 +8,7 @@ h3. Quick Wins
 h3. Stage One
 * Contributor area to C/R/U/D keys.
 * Keyring bucket: id field, crypt field. Keys are also related to contributors.
-* Implement searching for projects... Solr??? <-- Massively important (lolz)
+* Implement searching for projects... Elastic Search??? <-- Massively important (lolz)
 
 h3. Stage Two
 * Do a validation on the group ID and artefact ID with the repository URL - download the POM file to check dependencies? 
