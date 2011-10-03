@@ -43,6 +43,15 @@ trait Scoring { _: Statistics =>
   }
 }
 
+trait Searching {
+  def searching: SearchProvider
+  
+  trait SearchProvider {
+    def index(project: Project): Unit
+    def search(term: String): List[String]
+  }
+}
+
 trait Statistics { 
   def totalProjectCount: Long
   def averageProjectWatcherCount: Double

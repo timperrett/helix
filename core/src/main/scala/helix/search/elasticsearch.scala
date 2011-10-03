@@ -1,41 +1,66 @@
 package helix.search
 
+import helix.lib.Searching
 import helix.domain.Project
+import org.elasticsearch.node.{Node,NodeBuilder}
 
-trait ElasticSearchProvider {
-  protected lazy val server = new ElasticSearchServer
-}
-
-trait ProjectIndexing { _: ElasticSearchProvider => 
-  import org.elasticsearch.common.xcontent.XContentFactory._
+trait ESSearching extends Searching {
+  def searching: SearchProvider
   
-  def index(project: Project){
-    for {
-      client <- server.client
-      description <- project.description
-      group <- project.groupId
-      artifact <- project.artifactId
-      uid = "%s.%s".format(group, artifact)
-    }{
-      client.prepareIndex("helix", "project", uid)
-        .setSource(jsonBuilder()
-          .startObject()
-          .field("name", project.name)
-          .field("description", description)
-          .endObject()
-        ).execute().actionGet()
+  class ESSearchProvider extends SearchProvider {
+    import NodeBuilder.nodeBuilder
+    
+    private lazy val client = nodeBuilder.client(true).node.client
+    
+    def index(project: Project){
+      import org.elasticsearch.common.xcontent.XContentFactory._
+      for {
+        description <- project.description
+        group <- project.groupId
+        artifact <- project.artifactId
+        uid = "%s.%s".format(group, artifact)
+      }{
+        client.prepareIndex("helix", "project", uid)
+          .setSource(jsonBuilder()
+            .startObject()
+            .field("name", project.name)
+            .field("description", description)
+            .endObject()
+          ).execute().actionGet()
+      }
     }
+    
+    import org.elasticsearch.index.query.FilterBuilders._
+    import org.elasticsearch.index.query.QueryBuilders._
+    import org.elasticsearch.action.search.SearchType
+    import org.elasticsearch.search.SearchHit
+    import scala.collection.JavaConversions._
+    
+    def search(term: String): List[String] = 
+      client.prepareSearch("helix")
+        .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+        .setQuery(termQuery("_all", term))
+        .setFrom(0).setSize(60).setExplain(true)
+        .execute().actionGet().hits.getHits.toList.map(_.id)
   }
 }
 
 
+// import helix.domain.Project
+// 
+// trait ElasticSearchProvider {
+//   protected lazy val server = new SearchServer
+//   protected lazy val client = SearchClient().node.client
+// }
+// 
+
+
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus
 import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.node.{Node,NodeBuilder}
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.loader.YamlSettingsLoader
 
-class ElasticSearchServer {
+class SearchServer {
   import NodeBuilder.nodeBuilder
   import ImmutableSettings.settingsBuilder
   

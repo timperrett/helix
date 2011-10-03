@@ -5,7 +5,20 @@ import net.liftweb.util.{NamedPF,Helpers}
 import net.liftweb.http._
 import helix.domain.{Project,Service}, Service._
 
-object ProjectServices extends Dispatcher {
+// object SearchServices extends Dispatcher with helix.search.ProjectSearching with helix.search.ElasticSearchProvider {
+//   import akka.actor.Actor.registry
+//   
+//   override def dispatch = {
+//     val srch: LiftRules.DispatchPF = NamedPF("Helix Search"){
+//       case Req("searchx" :: Nil, "", GetRequest) => () => 
+//         for(term <- S.param("q")
+//           ) yield PlainTextResponse(search(term).map(_.id).mkString(", "))
+//     }
+//     super.dispatch ::: List(srch)
+//   }
+// }
+
+object PublishingServices extends Dispatcher {
   import net.liftweb.json._
   
   // god aweful work around to the issue between
@@ -41,7 +54,7 @@ object ProjectServices extends Dispatcher {
     PUT /project/com.twitter/gizzard - Would update the existing project or create a new one
     POST /project/com.twitter/gizzard- Add a new project version (append only)
     */
-    val feed: LiftRules.DispatchPF = NamedPF("Helix Services"){
+    val feed: LiftRules.DispatchPF = NamedPF("Helix Publishing"){
       /**
        {
          "name": "Lift",

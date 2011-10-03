@@ -6,7 +6,7 @@ import akka.actor.{Actor,Scheduler,PoisonPill}, Actor._
 import akka.config.Supervision._
 import akka.dispatch._
 import akka.routing._
-import helix.domain.Project
+import helix.domain.{Project,Service}
 
 object Manager {
   private def hasNetworkConnection: Boolean = 
@@ -58,7 +58,6 @@ class ProjectManager extends Actor
 }
 class ProjectWorker(owner: ActorRef) extends Actor {
   import ProjectManager._
-  import helix.domain.Service
   import org.joda.time.DateTime
   
   def receive = {
@@ -142,16 +141,18 @@ class ScheduledTask extends Actor {
   }
 }
 
-import helix.search.{ElasticSearchProvider,ProjectIndexing}
-
 object Search {
   case class UpdateIndexFor(project: Project)
+  // case class SimpleSearch(term: String)
 }
-class Search extends Actor with ElasticSearchProvider with ProjectIndexing {
+class Search extends Actor {
   import Search._ 
   
+  private lazy val server = new helix.search.SearchServer
+  
   def receive = { 
-    case UpdateIndexFor(project) => index(project)
+    case UpdateIndexFor(project) => Service.searching.index(project)
+    // case SimpleSearch(term) => println(search(term))
   }
   
   // hook into actor lifecycle

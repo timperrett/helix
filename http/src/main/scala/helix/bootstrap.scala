@@ -14,7 +14,7 @@ class Boot extends LazyLoggable {
   def boot {
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
     
-    LiftRules.dispatch.append(helix.http.ProjectServices)
+    LiftRules.statelessDispatchTable.append(helix.http.PublishingServices)
     LiftRules.dispatch.append(helix.http.OAuth)
     
     LiftRules.loggedInTest = Full(() => isAuthenticated)
@@ -47,6 +47,7 @@ class Boot extends LazyLoggable {
       case "contributor_info" => helix.http.ui.CurrentContributorInfo
       case "login_link" => helix.http.ui.LoginLink
       case "statistics" => helix.http.ui.ProjectStatistics
+      case "search" => helix.http.ui.Search
     }
     
     LiftRules.statelessTest.append {

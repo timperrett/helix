@@ -2,24 +2,27 @@ package helix.domain
 
 import helix.db.MongoRepositories
 import helix.github.{GithubScoring,GithubAPIClients}
+import helix.search.ESSearching
 
 object Service extends HelixService 
     with MongoRepositories 
     with GithubAPIClients
     with GithubScoring
-    with AgentStatistics {
+    with AgentStatistics
+    with ESSearching {
   protected val repository = new MongoRepository
   protected val scoring = new AlphaGithubScoring
+  val searching = new ESSearchProvider
   // this needs reviewing. not sure about it yet.
   val github = new GithubClient
 }
 
 import helix.util.Config._
-import helix.lib.{Repositories,Scoring,Statistics}
+import helix.lib.{Repositories,Scoring,Statistics,Searching}
 import helix.async.ProjectManager
 import akka.actor.Actor.registry.actorFor
 
-trait HelixService { _: Repositories with Scoring with Statistics => 
+trait HelixService { _: Repositories with Scoring with Statistics with Searching => 
   
   // kestral combinator ftw!
   protected def kestrel[T](x: T)(f: T => Unit): T = {
@@ -100,6 +103,13 @@ trait HelixService { _: Repositories with Scoring with Statistics =>
     }{ proj => 
       for(p <- proj){ f(p) }
     }
+  
+  def search(term: String): List[String] = 
+    searching.search(term)
+  
+  def addToSearchIndex(project: Project) = 
+    searching.index(project)
+  
 }
 
 // readers for global agent state
