@@ -9,7 +9,7 @@ object Search extends Snippet with ProjectLists {
     // get the list of projects
     val results: List[Project] = 
       S.param("q").map { term => 
-        Service.search(term).map(x => Project(name = x, artifactId = Some("thing"), groupId = Some("another")))
+        Service.search(term)
       } openOr Nil
     // render that project list
     bind(results)

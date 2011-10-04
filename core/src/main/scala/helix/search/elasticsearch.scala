@@ -15,6 +15,7 @@ trait ESSearching extends Searching {
     def index(project: Project){
       import org.elasticsearch.common.xcontent.XContentFactory._
       for {
+        headline <- project.headline
         description <- project.description
         group <- project.groupId
         artifact <- project.artifactId
@@ -24,7 +25,11 @@ trait ESSearching extends Searching {
           .setSource(jsonBuilder()
             .startObject()
             .field("name", project.name)
+            .field("headline", headline)
             .field("description", description)
+            .field("groupId", group)
+            .field("artifactId", artifact)
+            .field("contributors", project.contributors.map(_.login).mkString(" "))
             .endObject()
           ).execute().actionGet()
       }
@@ -34,26 +39,25 @@ trait ESSearching extends Searching {
     import org.elasticsearch.index.query.QueryBuilders._
     import org.elasticsearch.action.search.SearchType
     import org.elasticsearch.search.SearchHit
-    import scala.collection.JavaConversions._
+    import scala.collection.JavaConverters._
     
-    def search(term: String): List[String] = 
+    def search(term: String): List[Project] = 
       client.prepareSearch("helix")
         .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
         .setQuery(termQuery("_all", term))
         .setFrom(0).setSize(60).setExplain(true)
-        .execute().actionGet().hits.getHits.toList.map(_.id)
+        .execute().actionGet().hits.getHits.toList.map { hit =>
+          val result = hit.getSource.asScala.map { case (k,v) => k -> v.asInstanceOf[String] }
+          Project(
+            name = result.get("name").getOrElse("unknown"),
+            groupId = result.get("groupId"), 
+            artifactId = result.get("artifactId"),
+            headline = result.get("headline"), 
+            description = result.get("description")
+          )
+        }
   }
 }
-
-
-// import helix.domain.Project
-// 
-// trait ElasticSearchProvider {
-//   protected lazy val server = new SearchServer
-//   protected lazy val client = SearchClient().node.client
-// }
-// 
-
 
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthStatus
 import org.elasticsearch.common.settings.ImmutableSettings

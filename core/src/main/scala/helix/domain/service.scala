@@ -104,7 +104,7 @@ trait HelixService { _: Repositories with Scoring with Statistics with Searching
       for(p <- proj){ f(p) }
     }
   
-  def search(term: String): List[String] = 
+  def search(term: String): List[Project] = 
     searching.search(term)
   
   def addToSearchIndex(project: Project) = 

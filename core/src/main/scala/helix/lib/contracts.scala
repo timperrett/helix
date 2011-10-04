@@ -48,7 +48,7 @@ trait Searching {
   
   trait SearchProvider {
     def index(project: Project): Unit
-    def search(term: String): List[String]
+    def search(term: String): List[Project]
   }
 }
 
