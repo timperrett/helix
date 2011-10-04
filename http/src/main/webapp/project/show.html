@@ -1,28 +1,5 @@
 <lift:surround with="default" at="content">
   
-  <head_merge>
-    <script type="text/javascript" src="/js/jquery.simplemodal.1.4.1.min.js"></script>
-    <script type="text/javascript" lift="test_cond.loggedin">
-    //<![CDATA[
-      $(function(){
-        $('#newVersionBtn').click(function(){
-          $('#newVersionModal').modal({ closeClass: 'closer' });
-        });
-      });
-      function prependNewVersionRow(version, compatibiltiy){
-        $('#versions').prepend('<tr>'+
-          '<td>'+version+'</td>'+
-          '<td>'+compatibiltiy+'</td>'+
-        '</tr>');
-        // close the modal dialog programaticlaly. 
-        // this is hacky as fuck tho: would prefer a neater solution.
-        $('#newVersionModal').hide();
-        $('#simplemodal-overlay').hide();
-      }
-    //]]>
-    </script>
-  </head_merge>
-  
   <lift:ready_or_pending>
   
   <!-- content to display if the project.isReady is false -->
