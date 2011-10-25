@@ -1,46 +1,78 @@
 <lift:surround with="default" at="content">
+  
+  <head_merge>
+    <link href='http://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css' />
+  </head_merge>
+  
   <div class="row">
     
     <div class="span16 columns box" lift="information">
       <h2><name></name></h2>
-      <div class="row contributor-info">
+      <div class="row">
         
-        <div class="offset2 span2 columns">
-          &nbsp;
-          <span class="avatar-frame">
-            <img alt="avatar" rel="http://0.gravatar.com/avatar/63bc2441352e761a0eff115fb713a904" />
-            <span class="big-overlay"></span>
-          </span>
+        <div class="offset1 span3 columns">
+          <ul class="media-grid">
+            <li>
+              <a>
+                <img class="thumbnail" src="https://secure.gravatar.com/avatar/51fe8139c227985278ff8d316650dc2f?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png&amp;s=80" alt="">
+              </a>
+            </li>
+          </ul>
         </div>
         
         <div class="span9 columns">
+        
           <div class="span3 statistic">
             <em>1,235</em>
-            <span>commits</span>
+            <span>contributions</span>
           </div>
           
-          <div class="span2 statistic">
-            <em>3</em>
+          <div class="span1 statistic seperator">&middot;</div>
+          
+          <div class="span1 statistic">
+            <em>4</em>
             <span>projects</span>
           </div>
           
-          <div class="span2 statistic">
+          <div class="span1 statistic seperator">&middot;</div>
+          
+          <div class="span1 statistic">
             <em>13</em>
-            <span>whatever</span>
+            <span>geeks</span>
           </div>
+          
           
         </div>
         
         
-      </div>
+      </div><!-- eo.row -->
       
-    </div>
+      <ul class="pills breadcrumb">
+        <li class="active"><a href="javascript://">Projects</a></li>
+        <li><a href="javascript://">PGP Keys</a></li>
+      </ul>
+      
+      <div class="row span15 columns">
+        
+        <!-- <div class="span3">
+          <a class="breadcrumb">Projects</a>
+          <h3>PGP Public Keys</h3>
+        </div>
+        
+        <div class="span11">
+          <div class="span6">
+            sdfsd
+          </div>
+          <div class="span4">
+            <p>We use these to allow SBT to push project information to Helix. Need help with public keys?</p>
+          </div>
+        </div> -->
+        
+      </div>
+            
+    </div> <!-- eo.box -->
     
   </div>
-  <div class="row">
-    <div class="span16 columns box">
-      <h2>Projects</h2>
-    </div>
-  </div>
+
   
 </lift:surround>

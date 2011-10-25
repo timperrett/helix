@@ -9,6 +9,18 @@
 a:link, a:visited {
   color: #b71719;
 }
+.media-grid a:hover {
+  border-color: #b71719;
+}
+.pills a:hover {
+  color: #fff;
+}
+.pills .active a {
+  background-color: #b71719;
+}
+.breadcrumb .active a {
+    color: #fff;
+}
 
 /** app styling **/
 html {
@@ -106,25 +118,8 @@ body {
   top: 0px;
   left: 0px;
 }
-.contributor-info {
-  height: 130px;
-}
-.contributor-info .avatar-frame img {
-  width: 80px;
-  width: 90px;
-  position: absolute;
-  top: 15px;
-  left: 13px;
-}
-.big-overlay {
-  width: 128px;
-  height: 128px;
-  float: left;
-  background: url('../images/avatar-mask-large.png') no-repeat;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-}
+
+
 
 /*** boxes ***/
 h2 {
@@ -287,13 +282,17 @@ ul {
   text-align: center;
   float: left;
 }
+.seperator {
+  line-height: 80px;
+}
 .statistic em {
   font-size: 60px;
   line-height: 68px;
+  font-family: 'Dancing Script', cursive;
 }
 .statistic span {
   font-weight: light;
-  font-size: 20px;
+  font-size: 14px;
   text-indent: -4px;
 }
 

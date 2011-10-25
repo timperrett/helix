@@ -39,7 +39,7 @@ object Sandbox {
   
   def setup() {
     helix.async.Manager.start()
-    projects.foreach(Service.createProject(_))
+    projects.foreach(Service.save(_))
   }
   
   def teardown() {
